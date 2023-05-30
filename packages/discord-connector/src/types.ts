@@ -1,6 +1,6 @@
 
 
-interface DiscordRoleTagsObject {
+interface RoleTagsObject {
     bot_id?: string;
     integration_id?: string;
     premium_subscriber?: null;
@@ -9,7 +9,7 @@ interface DiscordRoleTagsObject {
     guild_connections?: null
 }
 
-export interface DiscordCreateRoleObject {
+export interface CreateRoleObject {
     name: string;
     permissions: string;
     color: number;
@@ -19,16 +19,16 @@ export interface DiscordCreateRoleObject {
     mentionable: boolean;
 }
 
-export type DiscordRoleObject = DiscordCreateRoleObject & {
+export type RoleObject = CreateRoleObject & {
     id: string;
     icon?: string | null;
     unicode_emoji?: string | null;
     position: number;
     managed: boolean;
-    tags?: DiscordRoleTagsObject
+    tags?: RoleTagsObject
 }
 
-export interface DiscordAddGuildMember {
+export interface AddGuildMember {
     access_token: string;
     nick?: string;
     roles?: string[];
@@ -36,11 +36,23 @@ export interface DiscordAddGuildMember {
     deaf?: boolean;
 }
 
-export type DiscordModifyGuildMember = Omit<DiscordAddGuildMember, "access_token"> &  {
+export type ModifyGuildMember = Omit<AddGuildMember, "access_token"> &  {
     channel_id?: string;
     communication_disabled_until?: string;
     flags?: number;
 };
+
+
+export type GuildObject = {
+    id: string;
+    name: string;
+    icon: string | null;
+    description: string | null;
+    banner: string | null;
+    approximate_member_count?: number;
+    approximate_presence_count?: number;
+
+} & Record<string, unknown>;
 
 
 
