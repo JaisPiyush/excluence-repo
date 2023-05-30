@@ -2,17 +2,18 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "dotenv -- turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "@thirdweb-dev/cli": "^0.6.15",
     "@turbo/gen": "^1.9.7",
+    "dotenv-cli": "^7.2.1",
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.5.1",
-    "turbo": "^1.9.7"
+    "turbo": "^1.9.9"
   },
   "name": "excluence-repo",
   "packageManager": "yarn@1.22.19",
