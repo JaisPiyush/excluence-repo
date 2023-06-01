@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import  mongoose, { HydratedDocument } from 'mongoose';
 import { SyntheticRole } from './synthetic-role.schema';
-import { NFTStudioGuild } from '../nft-studio/nft-studio-guilds.schema';
+import { NFTStudioGuild } from '../nft-studio/nft-studio-guild.schema';
 
 export type SyntheticRoleGuildRoleDocument = HydratedDocument<SyntheticRoleGuildRole>;
 
@@ -20,8 +20,6 @@ export class SyntheticRoleGuildRole {
     })
     syntheticRole: SyntheticRole;
 
-    @Prop({required: true})
-    syntheticRoleId: string;
 
     @Prop({
         type: {
@@ -32,9 +30,6 @@ export class SyntheticRoleGuildRole {
         required: true
     })
     guild: NFTStudioGuild;
-
-    @Prop({required: true})
-    guildId: string;
 
 
 }
