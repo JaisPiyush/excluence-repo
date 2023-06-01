@@ -5,6 +5,10 @@ import { NFTStudioGuild } from '../nft-studio/nft-studio-guild.schema';
 
 export type SyntheticRoleGuildRoleDocument = HydratedDocument<SyntheticRoleGuildRole>;
 
+/***
+ * SyntheticRole association with roleId on particular guild
+ * 
+ */
 @Schema()
 export class SyntheticRoleGuildRole {
     @Prop({unique: true, required: true})

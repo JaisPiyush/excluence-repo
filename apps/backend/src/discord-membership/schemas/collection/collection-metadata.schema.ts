@@ -6,6 +6,7 @@ export type CollectionMetadataDocument = HydratedDocument<CollectionMetadata>;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: true } })
 export class CollectionMetadata {
+    // Contract address of the NFT collection
     @Prop({ required: true, unique: true })
     address: string;
 

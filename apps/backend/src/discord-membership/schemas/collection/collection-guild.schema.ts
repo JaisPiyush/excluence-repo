@@ -2,10 +2,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { CollectionMetadata } from './collection-metadata.schema';
 
-export type CollectionUserIdDocument = HydratedDocument<CollectionUserId>;
+export type CollectionGuildDocument = HydratedDocument<CollectionGuild>;
 
+/**
+ * NFT Collection can have multiple guilds and reverse
+ * also holds the truth.
+ * 
+ */
 @Schema()
-export class CollectionUserId {
+export class CollectionGuild {
     // Address of the collection
     @Prop({ required: true })
     address: string;
@@ -24,9 +29,9 @@ export class CollectionUserId {
     guildId: string;
 }
 
-export const CollectionUserIdSchema =
-    SchemaFactory.createForClass(CollectionUserId);
-CollectionUserIdSchema.index(
+export const CollectionGuildSchema =
+    SchemaFactory.createForClass(CollectionGuild);
+CollectionGuildSchema.index(
     {
         address: 1,
         guildId: 1,
