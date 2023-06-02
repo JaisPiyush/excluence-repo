@@ -12,6 +12,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@fontsource/public-sans": "^5.0.2",
+    "@infura/sdk": "^2.4.1",
     "@mui/joy": "^5.0.0-alpha.82",
     "@types/node": "20.2.5",
     "@types/react": "18.2.8",
