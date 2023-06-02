@@ -24,12 +24,6 @@ export class NFTStudioGuild {
 
     @Prop({ unique: true, required: true })
     guildId: string;
-
-    @Prop({ required: true })
-    name: string;
-
-    @Prop()
-    banner: string;
 }
 
 export const NFTStudioGuildSchema =
