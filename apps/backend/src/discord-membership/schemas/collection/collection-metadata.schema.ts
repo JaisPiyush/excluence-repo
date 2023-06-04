@@ -7,10 +7,10 @@ export type CollectionMetadataDocument = HydratedDocument<CollectionMetadata>;
 @Schema({ timestamps: { createdAt: true, updatedAt: true } })
 export class CollectionMetadata {
     // Contract address of the NFT collection
-    @Prop({ required: true, unique: true })
+    @Prop({ unique: true })
     address: string;
 
-    @Prop({ required: true })
+    @Prop({})
     name: string;
 
     @Prop()
@@ -20,12 +20,11 @@ export class CollectionMetadata {
     description: string;
 
     @Prop({
-        required: true,
         type: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: NFTStudio.name
-        }
+            ref: NFTStudio.name,
+        },
     })
     nftStudio: NFTStudio;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
-    NFTStudioDto,
+    CreateNFTStudioDto,
     NFTStudioGuildDto,
 } from 'src/discord-membership/dto/nft-studio/index.dto';
 import {
@@ -69,8 +69,10 @@ export class NftStudioService {
         );
     }
 
-    async createNFTStudio(nftStudioDto: NFTStudioDto): Promise<NFTStudio> {
-        const nftStudio = new this.nftStudioModel(nftStudioDto);
+    async createNFTStudio(
+        nFTStudioDto: CreateNFTStudioDto,
+    ): Promise<NFTStudio> {
+        const nftStudio = new this.nftStudioModel(nFTStudioDto);
         return await nftStudio.save();
     }
 

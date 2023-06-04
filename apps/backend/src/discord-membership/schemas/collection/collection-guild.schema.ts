@@ -7,7 +7,6 @@ export type CollectionGuildDocument = HydratedDocument<CollectionGuild>;
 /**
  * NFT Collection can have multiple guilds and reverse
  * also holds the truth.
- * 
  */
 @Schema()
 export class CollectionGuild {
@@ -20,8 +19,8 @@ export class CollectionGuild {
         type: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: CollectionMetadata.name
-        }
+            ref: CollectionMetadata.name,
+        },
     })
     collection: CollectionMetadata;
 

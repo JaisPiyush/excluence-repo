@@ -1,4 +1,7 @@
-export class NFTStudioDto {
+import { IsNotEmpty } from 'class-validator';
+
+export class CreateNFTStudioDto {
+    @IsNotEmpty()
     readonly name: string;
 }
 

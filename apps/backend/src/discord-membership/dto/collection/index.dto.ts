@@ -1,5 +1,9 @@
+import { IsNotEmpty } from 'class-validator';
+
 export class CollectionMetadataDto {
+    @IsNotEmpty()
     readonly address: string;
+    @IsNotEmpty()
     readonly name: string;
     readonly logo?: string;
     readonly description?: string;

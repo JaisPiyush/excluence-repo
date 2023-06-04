@@ -10,6 +10,15 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "backend#build": {
+      "dependsOn": ["@excluence-repo/discord-connector#build"],
+      "outputs": ["dist/**"]
+    },
+    "backend#dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["@excluence-repo/discord-connector#build"]
     }
   }
 }

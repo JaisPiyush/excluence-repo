@@ -1,7 +1,7 @@
 {
   "name": "@excluence-repo/discord-connector",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "types": "src/index.ts",
   "license": "MIT",
   "dependencies": {
@@ -10,5 +10,8 @@
     "eslint-config-custom": "*",
     "tsconfig": "*",
     "typescript": "^4.5.2"
+  },
+  "scripts": {
+    "build": "tsc -p ."
   }
 }
