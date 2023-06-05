@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
 import { NftStudioService } from './nft-studio.service';
 import {
-    NFTStudioDto,
+    CreateNFTStudioDto,
     NFTStudioGuildDto,
 } from 'src/discord-membership/dto/nft-studio/index.dto';
 import { NFTStudio } from 'src/discord-membership/schemas/nft-studio/nft-studio.schema';
@@ -11,7 +11,7 @@ export class NftStudioController {
     constructor(private nftStudioService: NftStudioService) {}
 
     @Post()
-    async create(nftStudioDto: NFTStudioDto): Promise<NFTStudio> {
+    async create(nftStudioDto: CreateNFTStudioDto): Promise<NFTStudio> {
         return await this.nftStudioService.createNFTStudio(nftStudioDto);
     }
 

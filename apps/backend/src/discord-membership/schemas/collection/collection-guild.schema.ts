@@ -11,11 +11,10 @@ export type CollectionGuildDocument = HydratedDocument<CollectionGuild>;
 @Schema()
 export class CollectionGuild {
     // Address of the collection
-    @Prop({ required: true })
+    @Prop()
     address: string;
 
     @Prop({
-        required: true,
         type: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
@@ -24,7 +23,7 @@ export class CollectionGuild {
     })
     collection: CollectionMetadata;
 
-    @Prop({ required: true })
+    @Prop()
     guildId: string;
 }
 

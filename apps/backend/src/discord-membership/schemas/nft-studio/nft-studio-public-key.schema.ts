@@ -6,11 +6,11 @@ export type NFTStudioPublicKeyDocument = HydratedDocument<NFTStudioPublicKey>;
 
 /**
  * Model holds all the cryptographic public keys associated with the NFTStudio.
- * 
+ *
  * Currently, it only supports top-level owner's public keys but later more complex
  * role based key associations can be added for managing the NFTStudio on multiple
  * levels
- * 
+ *
  */
 @Schema()
 export class NFTStudioPublicKey {
@@ -23,9 +23,8 @@ export class NFTStudioPublicKey {
     })
     studio: NFTStudio;
 
-    @Prop({ unique: true, required: true })
+    @Prop({ unique: true })
     publicKey: string;
-
 }
 
 export const NFTStudioPublicKeySchema =

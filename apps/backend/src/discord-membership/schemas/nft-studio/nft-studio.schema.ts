@@ -5,7 +5,7 @@ export type NFTStudioDocument = HydratedDocument<NFTStudio>;
 
 @Schema({ timestamps: { createdAt: true, updatedAt: true } })
 export class NFTStudio {
-    @Prop({ required: true })
+    @Prop()
     name: string;
 }
 

@@ -6,9 +6,9 @@ export type NFTStudioGuildDocument = HydratedDocument<NFTStudioGuild>;
 
 /**
  * NFTStudio's association with discord guild or server is recorded.
- * 
+ *
  * An NFTStudio can hold multiple guilds while the reverse is not true.
- * 
+ *
  */
 @Schema()
 export class NFTStudioGuild {
@@ -20,9 +20,8 @@ export class NFTStudioGuild {
         },
     })
     studio: NFTStudio;
-    
 
-    @Prop({ unique: true, required: true })
+    @Prop({ unique: true })
     guildId: string;
 }
 
