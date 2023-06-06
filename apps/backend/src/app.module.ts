@@ -3,14 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DiscordMembershipModule } from './discord-membership/discord-membership.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DiscordMembershipModule,
-    MongooseModule.forRoot(
-      process.env['MONGO_ATLAS_URL'] as string
-    )
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot(),
+        DiscordMembershipModule,
+        MongooseModule.forRoot('mongodb://localhost:27017'),
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}

@@ -21,7 +21,7 @@ export class CollectionGuild {
             ref: CollectionMetadata.name,
         },
     })
-    collection: CollectionMetadata;
+    collectionMetaData: CollectionMetadata;
 
     @Prop()
     guildId: string;

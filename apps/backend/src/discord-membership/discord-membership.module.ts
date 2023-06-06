@@ -8,11 +8,21 @@ import { NftStudioService } from './routes/nft-studio/nft-studio.service';
 import { CollectionService } from './routes/collection/collection.service';
 import { SyntheticRoleService } from './routes/synthetic-role/synthetic-role.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import discordMembershipMongoSchemas from "./schemas/index.schema";
+import discordMembershipMongoSchemas from './schemas/index.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature(discordMembershipMongoSchemas)],
-  controllers: [UserIdController, NftStudioController, SyntheticRoleController, CollectionController],
-  providers: [UserIdService, NftStudioService, CollectionService, SyntheticRoleService]
+    imports: [MongooseModule.forFeature(discordMembershipMongoSchemas)],
+    controllers: [
+        UserIdController,
+        NftStudioController,
+        SyntheticRoleController,
+        CollectionController,
+    ],
+    providers: [
+        UserIdService,
+        NftStudioService,
+        CollectionService,
+        SyntheticRoleService,
+    ],
 })
 export class DiscordMembershipModule {}

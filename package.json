@@ -4,7 +4,8 @@
     "build": "turbo run build",
     "dev": "dotenv -- turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "dev:backend": "turbo run dev --filter=backend"
   },
   "devDependencies": {
     "@thirdweb-dev/cli": "^0.6.15",

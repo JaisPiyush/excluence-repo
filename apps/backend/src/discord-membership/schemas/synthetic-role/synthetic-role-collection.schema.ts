@@ -15,7 +15,7 @@ export class SyntheticRoleCollection {
             ref: CollectionMetadata.name,
         },
     })
-    collection: CollectionMetadata;
+    collectionMetaData: CollectionMetadata;
 
     @Prop({
         type: {
