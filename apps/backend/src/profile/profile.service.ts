@@ -29,11 +29,16 @@ export class ProfileService {
         return await profileUserAddress.save();
     }
 
-    async findByPublicKey(publicKey: string): Promise<ProfileUserAddress[]> {
-        return await this.profileUserAddressModel
+    async findByPublicKey(
+        publicKey: string,
+    ): Promise<ProfileUserAddress | null> {
+        const profileUserAddressQuerySet = await this.profileUserAddressModel
             .find({ publicKey: publicKey })
             .select('discordUserId _id createdAt updatedAt')
             .exec();
+        return profileUserAddressQuerySet.length > 0
+            ? profileUserAddressQuerySet[0]
+            : null;
     }
 
     async findByDiscordUserId(
