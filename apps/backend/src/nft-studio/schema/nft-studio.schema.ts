@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { ProfileUserAddress } from 'src/profile/schema/profile-user-address.schema';
+import { HydratedDocument } from 'mongoose';
 
 export type NFTStudioDocument = HydratedDocument<NFTStudio>;
 
@@ -9,14 +8,8 @@ export class NFTStudio {
     @Prop()
     name: string;
 
-    @Prop({
-        type: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: ProfileUserAddress.name,
-            required: true,
-        },
-    })
-    profileUserAddress: ProfileUserAddress;
+    @Prop({ unique: true })
+    studioId: string;
 }
 
 export const NFTStudioSchema = SchemaFactory.createForClass(NFTStudio);
