@@ -19,6 +19,6 @@ export class NftStudioService {
     }
 
     async find(studioId: string): Promise<NFTStudio[]> {
-        return await this.nftStudioModel.find({studioId}).exec();
+        return await this.nftStudioModel.find({ studioId }).exec();
     }
 }

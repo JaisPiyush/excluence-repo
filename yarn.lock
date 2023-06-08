@@ -1307,6 +1307,11 @@
   dependencies:
     "@magic-sdk/types" "^11.6.2"
 
+"@magic-sdk/commons@^13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/commons/-/commons-13.3.0.tgz#4c3fc606262312c292bb9bb0494661e415e5df1f"
+  integrity sha512-4NWUefmyK6h7jy1X1q3ohN4foafQ2DbZ/C1pFTvY2dHAfJMz7FBAWW5HMamLnuMhc1SjOM9MWiThA+BgCySRYw==
+
 "@magic-sdk/commons@^9.6.2":
   version "9.6.2"
   resolved "https://registry.npmjs.org/@magic-sdk/commons/-/commons-9.6.2.tgz"
@@ -1321,10 +1326,24 @@
     eventemitter3 "^4.0.4"
     web3-core "1.5.2"
 
+"@magic-sdk/provider@^17.3.0":
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/provider/-/provider-17.3.0.tgz#fd2b1184cbdd495423e107b25f5151e63db3cd41"
+  integrity sha512-8+oapQnjK59uNvyU/a9BoBD3A9+sT0s4pykGpnUdkT2jvMVlS+HdSyzVokpDUmW8PdZNj35waQv0q+jOs2Mdyw==
+  dependencies:
+    "@magic-sdk/types" "^15.3.0"
+    eventemitter3 "^4.0.4"
+    web3-core "1.5.2"
+
 "@magic-sdk/types@^11.6.2":
   version "11.6.2"
   resolved "https://registry.npmjs.org/@magic-sdk/types/-/types-11.6.2.tgz"
   integrity sha512-+Emd+9HeeVi2E0bktJ33YleA/ozEuKYCBfmSbGRxlntdyUvaojeC+WPf2jN1WH8FjUEiljAjrEJTTZyRGCL8SQ==
+
+"@magic-sdk/types@^15.3.0":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-15.3.0.tgz#b6e3ffc334b14578cf786b6ceb3fdb48cd803c4e"
+  integrity sha512-/zD17ka40IQ95PEI1mxZTuVFrqbpDA4MZjSR8jeOhXCvFaLHeSgdwJQ76ZuFQrtFWjJUVMFx0pVcu5XZNwjSJg==
 
 "@metamask/safe-event-emitter@2.0.0", "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
@@ -2687,7 +2706,7 @@
     "@types/range-parser" "*"
     "@types/send" "*"
 
-"@types/express@^4.17.13":
+"@types/express@*", "@types/express@^4.17.13":
   version "4.17.17"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.17.tgz#01d5437f6ef9cfa8668e616e13c2f2ac9a491ae4"
   integrity sha512-Q4FmmuLGBG58btUnfS1c1r/NQdlp3DMfGDGig8WhfpA2YRUtEkxAjkZb0yvplJGYdF1fsQ81iMDcH24sSCNC/Q==
@@ -2762,6 +2781,13 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
+"@types/jsonwebtoken@*":
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-9.0.2.tgz#9eeb56c76dd555039be2a3972218de5bd3b8d83e"
+  integrity sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==
+  dependencies:
+    "@types/node" "*"
+
 "@types/jsonwebtoken@9.0.1":
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-9.0.1.tgz#29b1369c4774200d6d6f63135bf3d1ba3ef997a4"
@@ -2830,6 +2856,39 @@
   version "4.0.0"
   resolved "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+
+"@types/passport-jwt@^3.0.8":
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/@types/passport-jwt/-/passport-jwt-3.0.8.tgz#c8a95bf7d8f330f2560f1b3d07605e23ac01469a"
+  integrity sha512-VKJZDJUAHFhPHHYvxdqFcc5vlDht8Q2pL1/ePvKAgqRThDaCc84lSYOTQmnx3+JIkDlN+2KfhFhXIzlcVT+Pcw==
+  dependencies:
+    "@types/express" "*"
+    "@types/jsonwebtoken" "*"
+    "@types/passport-strategy" "*"
+
+"@types/passport-local@^1.0.35":
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/@types/passport-local/-/passport-local-1.0.35.tgz#233d370431b3f93bb43cf59154fb7519314156d9"
+  integrity sha512-K4eLTJ8R0yYW8TvCqkjB0pTKoqfUSdl5PfZdidTjV2ETV3604fQxtY6BHKjQWAx50WUS0lqzBvKv3LoI1ZBPeA==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+    "@types/passport-strategy" "*"
+
+"@types/passport-strategy@*":
+  version "0.2.35"
+  resolved "https://registry.yarnpkg.com/@types/passport-strategy/-/passport-strategy-0.2.35.tgz#e52f5212279ea73f02d9b06af67efe9cefce2d0c"
+  integrity sha512-o5D19Jy2XPFoX2rKApykY15et3Apgax00RRLf0RUotPDUsYrQa7x4howLYr9El2mlUApHmCMv5CZ1IXqKFQ2+g==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+
+"@types/passport@*":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@types/passport/-/passport-1.0.12.tgz#7dc8ab96a5e895ec13688d9e3a96920a7f42e73e"
+  integrity sha512-QFdJ2TiAEoXfEQSNDISJR1Tm51I78CymqcBa8imbjo6dNNu+l2huDxxbDEIoFIwOSKMkOfHEikyDuZ38WwWsmw==
+  dependencies:
+    "@types/express" "*"
 
 "@types/pbkdf2@^3.0.0":
   version "3.1.0"
@@ -8301,6 +8360,16 @@ magic-sdk@^13.6.2:
     "@magic-sdk/commons" "^9.6.2"
     "@magic-sdk/provider" "^13.6.2"
     "@magic-sdk/types" "^11.6.2"
+    localforage "^1.7.4"
+
+magic-sdk@^17.3.0:
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/magic-sdk/-/magic-sdk-17.3.0.tgz#d32b8c8585f1b772b28dece994a72ac72b3b20dc"
+  integrity sha512-Vh2kxRqP1LSSc0BF4z7BgGdY+iAUOEtlFUJlvTbEOZv4rzgUHopPqBhg/6JhgMOmsi1kx0iXTXjLodON3sBDdQ==
+  dependencies:
+    "@magic-sdk/commons" "^13.3.0"
+    "@magic-sdk/provider" "^17.3.0"
+    "@magic-sdk/types" "^15.3.0"
     localforage "^1.7.4"
 
 magic-string@0.30.0:

@@ -7,8 +7,3 @@ export class CreateNFTStudioDto {
     @IsNotEmpty()
     studioId: string;
 }
-
-
-export class CreateNFTStudioGuildFto {
-    
-}

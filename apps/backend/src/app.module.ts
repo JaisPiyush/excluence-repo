@@ -7,15 +7,17 @@ import { NftCollectionModule } from './nft-collection/nft-collection.module';
 import { NftStudioModule } from './nft-studio/nft-studio.module';
 import { DiscordSyntheticRoleModule } from './discord-synthetic-role/discord-synthetic-role.module';
 import { ProfileModule } from './profile/profile.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
-        MongooseModule.forRoot('mongodb://localhost:27017'),
+        MongooseModule.forRoot(process.env['MONGO_URL'] as string),
         NftCollectionModule,
         NftStudioModule,
         DiscordSyntheticRoleModule,
         ProfileModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],
