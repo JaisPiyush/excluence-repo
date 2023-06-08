@@ -19,3 +19,5 @@ async function validateDiscordUserAccessToken(accessToken: string): Promise<stri
         return null;
     }
 }
+
+export {validateDiscordUserAccessToken};

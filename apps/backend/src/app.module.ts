@@ -8,6 +8,8 @@ import { NftStudioModule } from './nft-studio/nft-studio.module';
 import { DiscordSyntheticRoleModule } from './discord-synthetic-role/discord-synthetic-role.module';
 import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard, RoleGuard } from './auth/auth.guard';
 
 @Module({
     imports: [
@@ -20,6 +22,16 @@ import { AuthModule } from './auth/auth.module';
         AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: RoleGuard,
+        },
+    ],
 })
 export class AppModule {}

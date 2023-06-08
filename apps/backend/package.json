@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@excluence-repo/discord-connector": "*",
+    "@magic-sdk/admin": "^1.10.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
@@ -29,6 +30,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "class-validator": "^0.14.0",
+    "ethers": "^6.5.1",
     "magic-sdk": "^17.3.0",
     "mongoose": "^7.2.2",
     "passport-jwt": "^4.0.1",
