@@ -10,6 +10,13 @@ export class AddProfileUserAddressDto {
     publicKey: string;
 }
 
+export class AddProfileUserAddressRequestDto {
+    @IsNotEmpty()
+    publicKey: string;
+    @IsNotEmpty()
+    signature: string;
+}
+
 export class ProfileUserAddressDto extends AddProfileUserAddressDto {}
 
 export class ProfileUserAddressQueryDto {

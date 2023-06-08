@@ -3,7 +3,6 @@ import { Magic } from '@magic-sdk/admin';
 import { Request } from 'express';
 import { CreateAuthUserDto, DiscordUserValidationDto } from './dto/index.dto';
 import { validateDiscordUserAccessToken } from '@excluence-repo/discord-connector';
-import { ethers } from 'ethers';
 import {
     DiscordAccessTokenValidationFailed,
     WalletSignatureVerificationFailed,
@@ -13,15 +12,18 @@ import { AuthUser } from './schema/auth-user.schema';
 import { Model } from 'mongoose';
 import { AuthenticationPlatform } from './auth.types';
 import { JwtService } from '@nestjs/jwt';
+import { recoverAddressFromAccessTokenOrIdSignature } from 'src/helpers';
 
 @Injectable()
 export class AuthService {
+    private readonly magic: Magic;
     constructor(
-        private readonly magic = new Magic(process.env['MAGIC_SECRET_KEY']),
         @InjectModel(AuthUser.name)
         private readonly authUserModel: Model<AuthUser>,
         private readonly jwtService: JwtService,
-    ) {}
+    ) {
+        this.magic = new Magic(process.env['MAGIC_SECRET_KEY']);
+    }
     // Using Bearer ${didToken}
     async validateDIDToken(req: Request): Promise<string> {
         const didToken = req.headers.authorization?.substring(7);
@@ -33,18 +35,11 @@ export class AuthService {
         }
     }
 
-    private getSignatureFunction(accessToken: string): string {
-        const msg = `Excluence is asking permission to connect with your discord. Discord access token ${accessToken}`;
-        return ethers.keccak256(
-            `\x19Ethereum Signed Message:\n` + msg.length + msg,
-        );
-    }
-
     async validateDiscordUser(
         discordUserValidationDto: DiscordUserValidationDto,
     ): Promise<string> {
-        const address = ethers.recoverAddress(
-            this.getSignatureFunction(discordUserValidationDto.accessToken),
+        const address = recoverAddressFromAccessTokenOrIdSignature(
+            discordUserValidationDto.accessToken,
             discordUserValidationDto.signature,
         );
         if (address !== discordUserValidationDto.address) {
