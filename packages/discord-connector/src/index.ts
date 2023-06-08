@@ -2,6 +2,7 @@ export * from "./guild";
 export * from "./member";
 export * from "./role";
 export * from "./types";
+export * from './oauth';
 
 const discordBaseCDN = "https://cdn.discordapp.com";
 
