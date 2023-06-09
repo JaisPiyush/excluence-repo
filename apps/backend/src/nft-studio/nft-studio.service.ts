@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NFTStudio } from './schema/nft-studio.schema';
 import { Model } from 'mongoose';
-import { CreateNFTStudioDto } from './dto/index.dto';
+import { AuthUser } from 'src/auth/schema/auth-user.schema';
 
 @Injectable()
 export class NftStudioService {
@@ -10,15 +10,24 @@ export class NftStudioService {
         @InjectModel(NFTStudio.name)
         private readonly nftStudioModel: Model<NFTStudio>,
     ) {}
-    // TODO: This function requires superuser to run
-    // After proper the implementation of authentications
-    // NFT Studio will also require the implementation of password for login
-    async create(createNFTStudioDto: CreateNFTStudioDto): Promise<NFTStudio> {
-        const nftStudio = new this.nftStudioModel(createNFTStudioDto);
-        return await nftStudio.save();
+
+    async create(authUser: AuthUser, name: string): Promise<NFTStudio> {
+        try {
+            const studio = new this.nftStudioModel({
+                name,
+                owner: authUser,
+            });
+            return await studio.save();
+        } catch (e) {
+            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    async find(studioId: string): Promise<NFTStudio[]> {
-        return await this.nftStudioModel.find({ studioId }).exec();
+    async getNftStudio(user: AuthUser): Promise<NFTStudio | null> {
+        return await this.nftStudioModel
+            .findOne({
+                owner: user,
+            })
+            .exec();
     }
 }
