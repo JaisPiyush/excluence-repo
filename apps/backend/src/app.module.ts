@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ProfileModule } from './profile/profile.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_GUARD } from '@nestjs/core';
-import { Web3AuthJwtGuard } from './auth/auth.guard';
+import { JwtAuthGuard } from './auth/auth.guard';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -18,7 +18,7 @@ import { AuthModule } from './auth/auth.module';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: Web3AuthJwtGuard,
+      useClass: JwtAuthGuard,
     },
   ],
 })

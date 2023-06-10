@@ -10,11 +10,11 @@ const activeChain = ChainId.Mumbai;
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThirdwebProvider activeChain={activeChain}>
+    // <ThirdwebProvider activeChain={activeChain}>
       <SessionProvider session={pageProps.session}>
           <Component {...pageProps} />
       </SessionProvider> 
-    </ThirdwebProvider>
+    // </ThirdwebProvider>
   );
 }
 

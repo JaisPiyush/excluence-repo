@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import { signIn, useSession } from "next-auth/react";
 import {Magic} from 'magic-sdk';
+import { Web3Auth } from "@web3auth/modal";
 
 
 const customNodeOptions = {
@@ -10,17 +11,33 @@ const customNodeOptions = {
   chainId: 80001, // Polygon chain id
 }
 
+//Initialize within your constructor
+
+
 const Home: NextPage = () => {
   const {data} = useSession();
 
   let magic : Magic;
+  let web3auth: Web3Auth;
 
   console.log(data)
   if(typeof window !== "undefined"){
 
-    magic = new Magic("pk_live_85C6F4B87F5AAAD0", {
-        network: customNodeOptions
-    });
+    // magic = new Magic("pk_live_85C6F4B87F5AAAD0", {
+    //     network: customNodeOptions
+    // });
+    web3auth = new Web3Auth({
+      clientId: process.env['NEXT_PUBLIC_WEB3AUTH_CLIENT_ID'] as string, // Get your Client ID from Web3Auth Dashboard
+      chainConfig: {
+        chainNamespace: "eip155",
+        chainId: "0x89", // Use 0x13881 for Mumbai Testnet
+      },
+
+     uiConfig: {
+      
+     }
+    })
+    web3auth.initModal().then(() => {});
 
   }
 
@@ -36,10 +53,8 @@ const Home: NextPage = () => {
           {/* <ConnectWallet /> */}
           <button
         onClick={async () => {
-          console.log(await magic.auth.loginWithEmailOTP({
-            email: 'iampiyushjaiswal103@gmail.com',
-            showUI: true
-          }))
+          console.log(await web3auth.connect());
+          console.log(await web3auth.authenticateUser());
         }}
         className={`${styles.mainButton} ${styles.spacerTop}`}
       >
