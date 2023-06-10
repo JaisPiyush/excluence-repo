@@ -22,8 +22,8 @@ export class SyntheticRole {
   @Prop()
   permissions: string;
 
-  @Prop()
-  color: string;
+  @Prop({ default: 0 })
+  color: number;
 
   @Prop({ default: true })
   hoist: boolean;

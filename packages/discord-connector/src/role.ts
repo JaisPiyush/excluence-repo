@@ -1,5 +1,6 @@
 import { makeDiscordRequest } from "./discord-axios";
 import { CreateRoleObject, RoleObject } from "./types";
+import { Guild } from 'discord.js';
 
 
 export async function getGuildRoles(guildId: string): Promise<RoleObject[]> {
@@ -56,3 +57,4 @@ export async function removeGuildMemberRole(
         method: 'delete'
     })
 }
+

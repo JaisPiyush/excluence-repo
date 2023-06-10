@@ -14,6 +14,10 @@ import {
   SyntheticRoleGuildRole,
   SyntheticRoleGuildRoleSchema,
 } from './schema/synthetic-role-guild-role.schema';
+import { ProfileModule } from 'src/profile/profile.module';
+import { NftCollectionModule } from 'src/nft-collection/nft-collection.module';
+import { SyntheticRoleCollectionController } from './synthetic-role-collection.controller';
+import { SyntheticRoleGuildController } from './synthetic-role-guild.controller';
 
 @Module({
   imports: [
@@ -28,8 +32,14 @@ import {
         schema: SyntheticRoleGuildRoleSchema,
       },
     ]),
+    ProfileModule,
+    NftCollectionModule,
   ],
   providers: [SyntheticRoleService],
-  controllers: [SyntheticRoleController],
+  controllers: [
+    SyntheticRoleController,
+    SyntheticRoleCollectionController,
+    SyntheticRoleGuildController,
+  ],
 })
 export class SyntheticRoleModule {}

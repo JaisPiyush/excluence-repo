@@ -1,13 +1,19 @@
-import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+} from 'class-validator';
 export class CreateSyntheticRoleDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
+  @IsNumberString()
   permissions: string;
 
-  @IsNotEmpty()
-  color: string;
+  @IsNumber()
+  color: number;
 
   @IsOptional()
   @IsBoolean()

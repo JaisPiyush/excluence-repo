@@ -22,6 +22,23 @@ export class ProfileService {
     return await this.profileModel.findOne({ discordUserId }).exec();
   }
 
+  async filterGuildsForPublicKey(
+    publicKey: string,
+    guilds: string[],
+  ): Promise<string[]> {
+    return (
+      await this.profileGuildModel
+        .find({
+          $and: [
+            { publicKey: { $eq: publicKey } },
+            { guildId: { $in: guilds } },
+          ],
+        })
+        .select('guildId')
+        .exec()
+    ).map((profileGuild) => profileGuild.guildId);
+  }
+
   async createProfile(
     publicKey: string,
     accessToken: string,
