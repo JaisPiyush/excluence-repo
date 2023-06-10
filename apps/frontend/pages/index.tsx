@@ -19,6 +19,7 @@ const Home: NextPage = () => {
 
   let magic : Magic;
   let web3auth: Web3Auth;
+  console.log('Session', data)
 
   console.log(data)
   if(typeof window !== "undefined"){
@@ -26,18 +27,18 @@ const Home: NextPage = () => {
     // magic = new Magic("pk_live_85C6F4B87F5AAAD0", {
     //     network: customNodeOptions
     // });
-    web3auth = new Web3Auth({
-      clientId: process.env['NEXT_PUBLIC_WEB3AUTH_CLIENT_ID'] as string, // Get your Client ID from Web3Auth Dashboard
-      chainConfig: {
-        chainNamespace: "eip155",
-        chainId: "0x89", // Use 0x13881 for Mumbai Testnet
-      },
+    // web3auth = new Web3Auth({
+    //   clientId: process.env['NEXT_PUBLIC_WEB3AUTH_CLIENT_ID'] as string, // Get your Client ID from Web3Auth Dashboard
+    //   chainConfig: {
+    //     chainNamespace: "eip155",
+    //     chainId: "0x89", // Use 0x13881 for Mumbai Testnet
+    //   },
 
-     uiConfig: {
+    //  uiConfig: {
       
-     }
-    })
-    web3auth.initModal().then(() => {});
+    //  }
+    // })
+    // web3auth.initModal().then(() => {});
 
   }
 
@@ -52,9 +53,8 @@ const Home: NextPage = () => {
         <div className={styles.connect}>
           {/* <ConnectWallet /> */}
           <button
-        onClick={async () => {
-          console.log(await web3auth.connect());
-          console.log(await web3auth.authenticateUser());
+        onClick={() => {
+          signIn('discord_bot')
         }}
         className={`${styles.mainButton} ${styles.spacerTop}`}
       >

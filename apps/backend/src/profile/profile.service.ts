@@ -3,12 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Profile } from './schema/profile.schema';
 import { Model } from 'mongoose';
 import { validateDiscordUserAccessToken } from '@excluence-repo/discord-connector';
+import { ProfileGuild } from './schema/profile-guilds.schema';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectModel(Profile.name)
     private readonly profileModel: Model<Profile>,
+    @InjectModel(ProfileGuild.name)
+    private readonly profileGuildModel: Model<ProfileGuild>,
   ) {}
 
   async findByPublicKey(publicKey: string): Promise<Profile | null> {
@@ -35,5 +38,10 @@ export class ProfileService {
       discordUserId: discordId,
     });
     return await profile.save();
+  }
+
+  async addGuild(publicKey: string, guildId: string) {
+    const profileGuild = new this.profileGuildModel({ guildId, publicKey });
+    return await profileGuild.save();
   }
 }
