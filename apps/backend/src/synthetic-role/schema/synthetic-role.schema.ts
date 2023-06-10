@@ -36,6 +36,9 @@ export class SyntheticRole {
 
   @Prop({ default: true })
   mentionable: boolean;
+
+  @Prop()
+  creatorPublicKey: string;
 }
 
 export const SyntheticRoleSchema = SchemaFactory.createForClass(SyntheticRole);
