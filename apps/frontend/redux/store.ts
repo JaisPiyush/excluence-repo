@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loginReducer from './login';
+import globalReducer from './global';
 
 export const store = configureStore({
   reducer: {
-    login: loginReducer
+    login: loginReducer,
+    global: globalReducer
   },
 })
 
