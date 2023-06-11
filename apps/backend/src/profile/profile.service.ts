@@ -14,8 +14,8 @@ export class ProfileService {
     private readonly profileGuildModel: Model<ProfileGuild>,
   ) {}
 
-  async findByPublicKey(publicKey: string): Promise<Profile | null> {
-    return await this.profileModel.findOne({ publicKey }).exec();
+  async findGuildsByPublicKey(publicKey: string): Promise<ProfileGuild[]> {
+    return await this.profileGuildModel.find({ publicKey }).exec();
   }
 
   async findByDiscordUserId(discordUserId: string): Promise<Profile | null> {
