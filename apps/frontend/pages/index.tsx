@@ -5,6 +5,7 @@ import { Header } from "../components/header/Header";
 import { Box , Tabs, Tab} from "@mui/material";
 import { useState } from "react";
 import DiscordServers from "../components/dashboard/DiscordServers";
+import Created from "../components/dashboard/Created";
 
 
 const customNodeOptions = {
@@ -27,6 +28,8 @@ const Home: NextPage = () => {
 
   function getTabPanel() {
     switch(value) {
+      case 0: 
+        return <Created />;
       case 2:
         return <DiscordServers />;
     }

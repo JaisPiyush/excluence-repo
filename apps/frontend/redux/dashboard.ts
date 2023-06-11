@@ -49,7 +49,7 @@ export const getMyProfiles = createAsyncThunk(
             });
             return res.data.result;
         }catch(e) {
-            thunkAPI.dispatch(globalActions.setError("Failed to load discord servers." + e.message))
+            thunkAPI.dispatch(globalActions.setError("Failed to load discord servers."))
         }
     }
 );
