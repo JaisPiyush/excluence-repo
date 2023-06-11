@@ -11,16 +11,23 @@
     "deploy": "next build && next export && npx thirdweb@latest upload out"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@excluence-repo/discord-connector": "*",
+    "@fontsource/roboto": "^5.0.3",
+    "@mui/material": "^5.13.4",
+    "@reduxjs/toolkit": "^1.9.5",
     "@thirdweb-dev/react": "^3.12.2",
     "@thirdweb-dev/sdk": "^3",
     "@web3auth/modal": "^6.0.1-alpha.0",
     "@web3auth/web3auth-wagmi-connector": "^3.0.2",
+    "axios": "^1.4.0",
     "ethers": "5",
     "next": "^13",
     "next-auth": "^4.22.1",
     "react": "^18.2",
-    "react-dom": "^18.2"
+    "react-dom": "^18.2",
+    "react-redux": "^8.0.7"
   },
   "devDependencies": {
     "@types/node": "^18.11.11",

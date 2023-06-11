@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './auth.decorator';
 
@@ -17,5 +24,12 @@ export class AuthController {
     } catch (e) {
       throw new UnauthorizedException();
     }
+  }
+
+  @Get()
+  async getAddress(@Req() req: any) {
+    return {
+      result: req.user.publicKey,
+    };
   }
 }

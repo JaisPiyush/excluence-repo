@@ -20,5 +20,6 @@ import {
   ],
   providers: [NftCollectionService],
   controllers: [NftCollectionController],
+  exports: [NftCollectionService],
 })
 export class NftCollectionModule {}
