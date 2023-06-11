@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import loginReducer from './login';
 import globalReducer from './global';
+import dashboardReducer from './dashboard';
 
 export const store = configureStore({
   reducer: {
     login: loginReducer,
-    global: globalReducer
+    global: globalReducer,
+    dashboard: dashboardReducer
   },
 })
 

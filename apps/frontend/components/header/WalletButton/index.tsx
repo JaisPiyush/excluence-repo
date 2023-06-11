@@ -31,11 +31,11 @@ export default function WalletButton() {
     useEffect(() => {
         if (typeof window !==  'undefined') {
             const token = getAuthorizationToken()
-            if (token !== null) {
-                dispatch(getAddress());
+            if (address === undefined) {
+               handleOnConnectClick();
             }
         }
-    })
+    }, [])
     return (
         <>
             {

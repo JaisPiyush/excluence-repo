@@ -5,10 +5,10 @@ export type ProfileGuildDocument = HydratedDocument<ProfileGuild>;
 
 @Schema()
 export class ProfileGuild {
-  @Prop()
+  @Prop({ unique: true })
   guildId: string;
 
-  @Prop({ unique: true })
+  @Prop()
   publicKey: string;
 }
 

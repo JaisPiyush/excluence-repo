@@ -21,6 +21,7 @@ export const globalSlice = createSlice({
             // state.error = action.payload ? null : state.error;
         },
         setError(state: GlobalState, action: PayloadAction<string | null>) {
+            state.loading = action.payload !== null ? false: state.loading;
             state.error = action.payload;
             // state.loading = action.payload !== null ? false: state.loading;
         }

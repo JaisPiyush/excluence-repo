@@ -36,7 +36,7 @@ async function makeDiscordRequest<T = any, D = any>(config: AxiosRequestConfig<D
     if (throwError && data[1] !== null) {
         throw new DiscordAPIError(data[1]);
     }
-    return data as T;
+    return data[0] as T;
 }
 
 export {makeDiscordRequest};

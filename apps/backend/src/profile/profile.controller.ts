@@ -11,6 +11,8 @@ import { Profile } from './schema/profile.schema';
 import { ProfileService } from './profile.service';
 import { ControllerResult } from 'src/types';
 import { ProfileGuild } from './schema/profile-guilds.schema';
+import { ProfileGuildWithMetadata } from './dto';
+import { getGuild } from '@excluence-repo/discord-connector';
 
 @Controller('profile')
 export class ProfileController {
@@ -19,12 +21,24 @@ export class ProfileController {
   @Get('@me')
   async getMyGuilds(
     @Req() req: any,
-  ): Promise<ControllerResult<ProfileGuild[]>> {
-    const profile = req.user as Partial<Profile>;
+  ): Promise<ControllerResult<ProfileGuildWithMetadata[]>> {
+    const user = req.user as Partial<Profile>;
+    const profiles = await this.profileService.findGuildsByPublicKey(
+      user.publicKey,
+    );
+    const profilesWithGuildInfo = await Promise.all(
+      profiles.map<Promise<ProfileGuildWithMetadata>>(async (profile) => {
+        const guildInfo = await getGuild({ id: profile.guildId });
+        return {
+          guildId: profile.guildId,
+          publicKey: profile.publicKey,
+          icon: guildInfo.icon,
+          name: guildInfo.name,
+        };
+      }),
+    );
     return {
-      result: await this.profileService.findGuildsByPublicKey(
-        profile.publicKey,
-      ),
+      result: profilesWithGuildInfo,
     };
   }
 

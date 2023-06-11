@@ -15,10 +15,12 @@ const initialState: LoginState = {
 
 export const getAddress = createAsyncThunk(
     'login/getAddress',
-    async (thunkAPI) => {
+    async (obj, thunkAPI) => {
+        // thunkAPI.dispatch(globalActions.setLoading(true));
         const res = await backendApi.get<{result: string}>('auth', {
             headers: {...getAuthorizationHeader()}
         });
+        // thunkAPI.dispatch(globalActions.setLoading(false));
         return res.data.result;
     }
 )
@@ -35,6 +37,7 @@ export const login = createAsyncThunk(
             thunkAPI.dispatch(globalActions.setLoading(false));
             return token;
         }catch(e){
+            // thunkAPI.dispatch(globalActions.setLoading(false));
             thunkAPI.dispatch(globalActions.setError("login failed"))
         }        
     }

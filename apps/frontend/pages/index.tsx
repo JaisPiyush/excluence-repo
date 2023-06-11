@@ -4,6 +4,7 @@ import { signIn, useSession } from "next-auth/react";
 import { Header } from "../components/header/Header";
 import { Box , Tabs, Tab} from "@mui/material";
 import { useState } from "react";
+import DiscordServers from "../components/dashboard/DiscordServers";
 
 
 const customNodeOptions = {
@@ -24,6 +25,12 @@ const Home: NextPage = () => {
   };
 
 
+  function getTabPanel() {
+    switch(value) {
+      case 2:
+        return <DiscordServers />;
+    }
+  }
 
 
   return (
@@ -39,6 +46,16 @@ const Home: NextPage = () => {
               <Tab label="Discord Roles" />
         </Tabs>
           </Box>
+        </Box>
+        <Box sx={{
+          width: '100%', 
+          display: 'flex', 
+          justifyContent: 'center',
+          paddingY: '2rem'
+          }}>
+          {
+            getTabPanel()
+          }
         </Box>
       </main>
     </div>
