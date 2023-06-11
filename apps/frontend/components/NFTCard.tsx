@@ -12,7 +12,9 @@ export default function NFTCard() {
     if (error || !nft) return <div>NFT not found</div>;
     return <Card variant="outlined" sx={{
         paddingX: '1rem',
-        borderRadius: '2rem'
+        borderRadius: '2rem',
+        marginX: '2rem',
+        marginBottom: '2rem'
     }}>
         <ThirdwebNftMedia metadata={nft.metadata} />
         <CardContent>

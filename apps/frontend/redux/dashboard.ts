@@ -11,16 +11,25 @@ export interface ProfileGuild {
     publicKey: string;
     name?: string;
     icon?: string | null;
+    
 }
 
 export interface DashboardState {
     profiles: ProfileGuild[],
     fetchedProfiles: boolean,
+    roleAddedGuilds: string[],
+    fetchedGuildRoles: boolean;
+    createdCollections: string[];
+    fetchedCollections: boolean;
 }
 
 const initialState: DashboardState = {
     profiles: [],
-    fetchedProfiles: false
+    fetchedProfiles: false, 
+    roleAddedGuilds: [],
+    fetchedGuildRoles: false,
+    createdCollections: [],
+    fetchedCollections: false
 }
 
 
@@ -54,6 +63,29 @@ export const getMyProfiles = createAsyncThunk(
     }
 );
 
+export const getSelectedGuildsBySyntheticRoleId = createAsyncThunk(
+    'dashboard/getSelectedGuildsBySyntheticRoleId',
+    async (roleId: string | undefined, thunkAPI) => {
+        try {
+            thunkAPI.dispatch(globalActions.setLoading(true));
+            if (!roleId) return [];
+            const res = await backendApi.get<{result: {guildId: string}[]}>(`synthetic-role/guild/role/${roleId}`);
+            thunkAPI.dispatch(globalActions.setLoading(false));
+            return res.data.result.map((guildRole) => guildRole.guildId);
+        }catch(e) {
+            thunkAPI.dispatch(globalActions.setError("Failed to load connected guilds."))
+        }
+    }
+);
+
+export const getAllMyNFTCollections = createAsyncThunk(
+    'dashboard/getAllMyNFTCollections',
+    async (obj, thunkAPI) => {
+        const res = await backendApi.get<{result: {address: string}[]}>('nft-collection');
+        return res.data.result.map((collection) => collection.address);
+    }
+);
+
 const dashboardSlice = createSlice({
     name: 'dashboard',
     initialState,
@@ -62,6 +94,14 @@ const dashboardSlice = createSlice({
         builder.addCase(getMyProfiles.fulfilled, (state: DashboardState, action) => {
             state.profiles = action.payload as ProfileGuild[] || [];
             state.fetchedProfiles = true
+        });
+        builder.addCase(getSelectedGuildsBySyntheticRoleId.fulfilled, (state: DashboardState, action) => {
+            state.roleAddedGuilds = action.payload as string[];
+            state.fetchedGuildRoles = true;
+        });
+        builder.addCase(getAllMyNFTCollections.fulfilled, (state: DashboardState, action) => {
+            state.createdCollections = action.payload as string[];
+            state.fetchedCollections = true;
         })
     }
 })

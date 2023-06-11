@@ -11,12 +11,13 @@ export default function DiscordServers() {
     const [profiles, fetchedProfiles] = useAppSelector((state) => [
         state.dashboard.profiles, state.dashboard.fetchedProfiles]);
     const dispatch = useAppDispatch();
-    console.log(data)
     useEffect(() => {
         if(!fetchedProfiles) {
             dispatch(getMyProfiles());
         }
-        if ((data as any).guildId !== undefined && fetchedProfiles &&
+        console.log(data &&  (data as any).guildId !== undefined && fetchedProfiles &&
+        profiles.filter((profile) => profile.guildId === (data as any).guildId ).length === 0)
+        if (data &&  (data as any).guildId !== undefined && fetchedProfiles &&
             profiles.filter((profile) => profile.guildId === (data as any).guildId ).length === 0) {
                 dispatch(addGuild((data as any).guildId));
             }
