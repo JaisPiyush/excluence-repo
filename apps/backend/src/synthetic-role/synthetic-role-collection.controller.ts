@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Param,
@@ -33,5 +34,33 @@ export class SyntheticRoleCollectionController {
       syntheticRole,
       collections,
     );
+  }
+
+  @Get(':address')
+  async findAllRolesByAddress(
+    @Req() req: any,
+    @Param('address') address: string,
+  ) {
+    return {
+      result:
+        await this.syntheticRoleService.findAllCollectionRoleByCollectionAddress(
+          req.user.publicKey,
+          address,
+        ),
+    };
+  }
+
+  @Get('role/:id')
+  async findAllCollectionRoleByRoleId(
+    @Req() req: any,
+    @Param('id') id: string,
+  ) {
+    return {
+      result:
+        await this.syntheticRoleService.findAllCollectionRoleBySyntheticRoleId(
+          req.user.publicKey,
+          id,
+        ),
+    };
   }
 }

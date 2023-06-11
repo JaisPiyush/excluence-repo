@@ -67,17 +67,29 @@ export class SyntheticRoleService {
     );
   }
 
-  async findAllCollectionRoleByCollectionAddress(address: string) {
-    return await this.syntheticRoleCollectionModel
+  async findAllCollectionRoleByCollectionAddress(
+    publicKey: string,
+    address: string,
+  ) {
+    const roles = await this.syntheticRoleCollectionModel
       .find({ contractAddress: address })
       .populate('syntheticRole')
       .exec();
+    return roles.filter(
+      (role) => role.syntheticRole.creatorPublicKey === publicKey,
+    );
   }
 
-  async findAllCollectionRoleBySyntheticRoleId(syntheticRoleId: string) {
-    return await this.syntheticRoleCollectionModel
+  async findAllCollectionRoleBySyntheticRoleId(
+    publicKey: string,
+    syntheticRoleId: string,
+  ) {
+    const roles = await this.syntheticRoleCollectionModel
       .find({ syntheticRole: syntheticRoleId })
       .exec();
+    return roles.filter(
+      (role) => role.syntheticRole.creatorPublicKey === publicKey,
+    );
   }
 
   async _addRolesToCollections(

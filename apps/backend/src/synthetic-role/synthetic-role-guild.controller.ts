@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Param,
@@ -8,10 +9,12 @@ import {
   Req,
 } from '@nestjs/common';
 import { SyntheticRoleService } from './synthetic-role.service';
+import { Profile } from 'src/profile/schema/profile.schema';
 
 @Controller('synthetic-role/guild')
 export class SyntheticRoleGuildController {
   constructor(private readonly syntheticRoleService: SyntheticRoleService) {}
+
   @Post(':id')
   async addSyntheticRoleToGuilds(
     @Req() req: any,
@@ -33,5 +36,34 @@ export class SyntheticRoleGuildController {
       syntheticRole,
       guilds,
     );
+  }
+
+  @Get('role/:id')
+  async findAllGuildRoles(@Param('id') id: string) {
+    //TODO: Improve all queries to only show user owned data
+    return {
+      result: await this.syntheticRoleService.findAllGuildRoleBySyntheticRoleId(
+        id,
+      ),
+    };
+  }
+
+  @Get(':id')
+  async findAllGuildRolesByGuildId(@Param('id') id: string) {
+    return {
+      result: await this.syntheticRoleService.findAllGuildRoleByGuildId(id),
+    };
+  }
+
+  @Get('collection/:address')
+  async findAllGuildRolesByCollectionAddress(
+    @Param('address') address: string,
+  ) {
+    return {
+      result:
+        await this.syntheticRoleService.findAllGuildRolesByCollectionAddress(
+          address,
+        ),
+    };
   }
 }
