@@ -1,9 +1,10 @@
-import { Button, Card, Grid, Typography, FormControlLabel, Checkbox } from "@mui/material";
+import { Button, Card, Grid, Typography, FormControlLabel, Checkbox, CardHeader, Avatar } from "@mui/material";
 import React from "react";
 
 interface SelectablePacket {
     id: string;
     name: string;
+    avatar?: string;
 }
 
 export interface MultipleSelectCardProp {
@@ -15,6 +16,7 @@ export interface MultipleSelectCardProp {
     title: string;
     nextButtonTitle?: string
     editable?: boolean;
+    hideButton?: boolean;
 }
 
 
@@ -30,16 +32,17 @@ export default function MultipleSelectCard(props: MultipleSelectCardProp) {
     }
 
     const getControl = (option: SelectablePacket) => {
-        // if (props.editable === false) {
-        //     return <></>
-        // }
         return <Checkbox 
         onChange={(e) => {
             if (!props.immutableSelections.includes(option.id)) {
                 props.onSelect(option.id, !props.selected[option.id] === true)
             }
         }}
-    checked={props.selected[option.id] === true} />
+    checked={props.selected[option.id] === true || props.immutableSelections.includes(option.id)} />
+    }
+
+    const getNonEditableAvatar = (option: SelectablePacket) => {
+        if (option.avatar) return <Avatar src={option.avatar} />
     }
     return <Card sx={{
         width: '60%',
@@ -59,17 +62,33 @@ export default function MultipleSelectCard(props: MultipleSelectCardProp) {
             {props.options.map((option) => (
                 <Grid item md={6} key={option.id}>
                     <Item>
-                     <FormControlLabel
+                        {
+                            props.editable === false? 
+                          
+                                <CardHeader 
+                                    avatar={getNonEditableAvatar(option)}
+                                    subheader={option.name}
+                                    subheaderTypographyProps={{
+                                        color: 'black'
+                                    }}
+                                />
+                           
+                            :<FormControlLabel
                         label={option.name}
                         control = {getControl(option)}
                         />
+                    
+                        }
                     </Item>
+                     
                 </Grid>
             ))}
         </Grid>
-        <Button onClick={() => {handleNextClick()}} variant="contained" disableElevation sx={{
-            marginTop: '2rem'
-        }}>{props.nextButtonTitle || 'Next'}</Button>
+        {
+            props.editable === false || props.hideButton === true? <></>: <Button onClick={() => {handleNextClick()}} variant="contained" disableElevation sx={{
+                marginTop: '2rem'
+            }}>{props.nextButtonTitle || 'Next'}</Button>
+        }
 
     </Card>
 }

@@ -34,7 +34,7 @@ const initialState: DashboardState = {
     createdCollections: [],
     fetchedCreatedCollections: false,
     syntheticRoles: [],
-    fetchedSyntheticRoles: false
+    fetchedSyntheticRoles: false,
 }
 
 
@@ -154,6 +154,7 @@ export const createSyntheticRole = createAsyncThunk(
     }
 );
 
+
 const dashboardSlice = createSlice({
     name: 'dashboard',
     initialState,
@@ -177,7 +178,7 @@ const dashboardSlice = createSlice({
         builder.addCase(findMySyntheticRoles.fulfilled, (state: DashboardState, action) => {
             state.syntheticRoles = action.payload as SyntheticRole[] || [];
             state.fetchedSyntheticRoles = true;
-        })
+        });
     }
 })
 

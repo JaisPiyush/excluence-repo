@@ -3,7 +3,8 @@ import { ThirdwebNftMedia, useContract, useNFT } from "@thirdweb-dev/react";
 
 export interface NFTCardProps {
     address: string;
-    tokenId?: string
+    tokenId?: string;
+    onClick?: () => void
 }
 
 export default function NFTCard(props: NFTCardProps) {
@@ -22,7 +23,13 @@ export default function NFTCard(props: NFTCardProps) {
         marginX: '2rem',
         marginBottom: '2rem',
         paddingY: '1rem'
-    }}>
+    }}
+    onClick={() => { 
+        if(props.onClick !== undefined) {
+            props.onClick();
+        }
+    }}
+    >
         <ThirdwebNftMedia metadata={nft.metadata} />
         <CardContent>
             <Typography sx={{ fontWeight: 'medium', marginBottom: '1rem' }} >{nft?.metadata.name}</Typography>

@@ -76,6 +76,25 @@ export class SyntheticRoleService {
     }
   }
 
+  async addSyntheticRolesToCollection(
+    contract: string,
+    syntheticRoleIds: string[],
+  ) {
+    try {
+      const models = await Promise.all(
+        syntheticRoleIds.map((roleId) => {
+          return new this.syntheticRoleCollectionModel({
+            contractAddress: contract,
+            syntheticRole: roleId,
+          });
+        }),
+      );
+      return await this.syntheticRoleCollectionModel.insertMany(models);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findAllCollectionRoleByCollectionAddress(
     publicKey: string,
     address: string,
@@ -84,9 +103,9 @@ export class SyntheticRoleService {
       .find({ contractAddress: address })
       .populate('syntheticRole')
       .exec();
-    return roles.filter(
-      (role) => role.syntheticRole.creatorPublicKey === publicKey,
-    );
+    return roles
+      .filter((role) => role.syntheticRole.creatorPublicKey === publicKey)
+      .map((role) => role.syntheticRole);
   }
 
   async findAllCollectionRoleBySyntheticRoleId(
@@ -200,19 +219,31 @@ export class SyntheticRoleService {
       .exec();
   }
 
-  async findAllGuildRolesByCollectionAddress(contractAddress: string) {
+  async findAllGuildRolesByCollectionAddress(
+    contractAddress: string,
+    publicKey: string,
+  ) {
     const syntheticRoleCollections = await this.syntheticRoleCollectionModel
       .find({
         contractAddress: contractAddress,
       })
       .select('syntheticRole')
       .exec();
-    return await this.syntheticRoleGuildRoleModel
+    const guilds = await this.syntheticRoleGuildRoleModel
       .find({
         syntheticRole: {
-          $in: syntheticRoleCollections.map((r) => r.syntheticRole),
+          $in: syntheticRoleCollections.map(
+            (r) => (r.syntheticRole as any)._id,
+          ),
         },
       })
       .exec();
+    const guildIds: string[] = [];
+    for (const guild of guilds) {
+      if (!guildIds.includes(guild.guildId)) {
+        guildIds.push(guild.guildId);
+      }
+    }
+    return guildIds;
   }
 }

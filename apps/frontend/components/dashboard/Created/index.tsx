@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ImportCollection from "./ImportCollection";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { getAllMyNFTCollections } from "../../../redux/dashboard";
+import { useRouter } from "next/router";
 
 export default function Created() {
     const [openModal, setOpenModal] = useState(false)
@@ -14,7 +15,9 @@ export default function Created() {
         if(!fetchedCreatedCollections) {
             dispatch(getAllMyNFTCollections())
         }
-    },[])
+    },[]);
+
+    const router = useRouter();
     return <Box >
             <Box sx={{
                 width: '100vw',
@@ -39,7 +42,9 @@ export default function Created() {
                 }}>
                     {
                         createdCollections.map((collection, index) => {
-                            return <NFTCard key={index} address={collection} />
+                            return <NFTCard key={index} address={collection} onClick={() => {
+                                router.push(`/collection/${collection}`)
+                            }} />
                         } )
                     }
             </Box>

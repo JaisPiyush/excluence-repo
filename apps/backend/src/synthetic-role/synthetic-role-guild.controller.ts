@@ -9,6 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { SyntheticRoleService } from './synthetic-role.service';
+import { getGuild } from '@excluence-repo/discord-connector';
 
 @Controller('synthetic-role/guild')
 export class SyntheticRoleGuildController {
@@ -38,7 +39,7 @@ export class SyntheticRoleGuildController {
   }
 
   @Get('role/:id')
-  async findAllGuildRoles(@Param('id') id: string) {
+  async findAllGuildRoles(@Param('id') id: string, @Req() req: any) {
     //TODO: Improve all queries to only show user owned data
     return {
       result: await this.syntheticRoleService.findAllGuildRoleBySyntheticRoleId(
@@ -57,12 +58,25 @@ export class SyntheticRoleGuildController {
   @Get('collection/:address')
   async findAllGuildRolesByCollectionAddress(
     @Param('address') address: string,
+    @Req() req: any,
   ) {
+    const guildIds =
+      await this.syntheticRoleService.findAllGuildRolesByCollectionAddress(
+        address,
+        req.user.publicKey,
+      );
+
     return {
-      result:
-        await this.syntheticRoleService.findAllGuildRolesByCollectionAddress(
-          address,
-        ),
+      result: await Promise.all(
+        guildIds.map(async (guildId) => {
+          const guild = await getGuild({ id: guildId });
+          return {
+            guildId: guildId,
+            name: guild.name,
+            icon: guild.icon,
+          };
+        }),
+      ),
     };
   }
 }

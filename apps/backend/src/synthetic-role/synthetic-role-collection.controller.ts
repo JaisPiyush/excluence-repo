@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { SyntheticRoleService } from './synthetic-role.service';
 
@@ -29,11 +30,46 @@ export class SyntheticRoleCollectionController {
       await this.syntheticRoleService.findSyntheticRoleUsingId(syntheticRoleId);
     if (syntheticRole === null)
       throw new HttpException('no synthetic role found', HttpStatus.NOT_FOUND);
-    return await this.syntheticRoleService._addRolesToCollections(
-      user,
-      syntheticRole,
-      collections,
-    );
+    if (syntheticRole.creatorPublicKey !== user.publicKey) {
+      throw new UnauthorizedException();
+    }
+    const createdCollections =
+      await this.syntheticRoleService._addRolesToCollections(
+        user,
+        syntheticRole,
+        collections,
+      );
+    return {
+      result: createdCollections,
+    };
+  }
+
+  @Post('roles/:address')
+  async addSyntheticRolesToCollection(
+    @Req() req: any,
+    @Param('address') contract: string,
+    @Body('roles') roles: string[],
+  ) {
+    const user = req.user as { publicKey: string };
+    if (!contract || !roles || roles.length === 0)
+      throw new HttpException(
+        'invalid role ids or collection',
+        HttpStatus.BAD_REQUEST,
+      );
+    const collections =
+      await this.syntheticRoleService.findAllCollectionRoleByCollectionAddress(
+        user.publicKey,
+        contract,
+      );
+    if (collections.length === 0) throw new UnauthorizedException();
+    const createdRoles =
+      await this.syntheticRoleService.addSyntheticRolesToCollection(
+        contract,
+        roles,
+      );
+    return {
+      result: createdRoles,
+    };
   }
 
   @Get(':address')
