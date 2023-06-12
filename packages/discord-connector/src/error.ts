@@ -1,6 +1,8 @@
 
 export class DiscordAPIError extends Error {
-    constructor(message: string) {
+    readonly code?: number;
+    constructor(message: string, code?: number) {
         super(`DiscordAPIError: ${message}`);
+        this.code = code;
     }
 }

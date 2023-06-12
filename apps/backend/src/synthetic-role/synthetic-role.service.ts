@@ -5,9 +5,14 @@ import { Model } from 'mongoose';
 import { CreateSyntheticRoleDto } from './dto/index.dto';
 import { SyntheticRoleCollection } from './schema/synthetic-role-collection.schema';
 import { SyntheticRoleGuildRole } from './schema/synthetic-role-guild-role.schema';
-import { createGuildRole } from '@excluence-repo/discord-connector';
+import {
+  addGuildMemberRole,
+  createGuildRole,
+  getGuildMember,
+} from '@excluence-repo/discord-connector';
 import { NftCollectionService } from 'src/nft-collection/nft-collection.service';
 import { ProfileService } from 'src/profile/profile.service';
+import { DiscordAPIError } from '@excluence-repo/discord-connector/src/error';
 
 @Injectable()
 export class SyntheticRoleService {
@@ -219,7 +224,7 @@ export class SyntheticRoleService {
       .exec();
   }
 
-  async findAllGuildRolesByCollectionAddress(
+  async findAllGuildsByCollectionAddress(
     contractAddress: string,
     publicKey: string,
   ) {

@@ -22,6 +22,10 @@ export class ProfileService {
     return await this.profileModel.findOne({ discordUserId }).exec();
   }
 
+  async findProfilesByPublicKey(publicKey: string) {
+    return await this.profileModel.find({ publicKey }).exec();
+  }
+
   async filterGuildsForPublicKey(
     publicKey: string,
     guilds: string[],

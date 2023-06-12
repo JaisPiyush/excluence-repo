@@ -56,12 +56,12 @@ export class SyntheticRoleGuildController {
   }
 
   @Get('collection/:address')
-  async findAllGuildRolesByCollectionAddress(
+  async findAllGuildsByCollectionAddress(
     @Param('address') address: string,
     @Req() req: any,
   ) {
     const guildIds =
-      await this.syntheticRoleService.findAllGuildRolesByCollectionAddress(
+      await this.syntheticRoleService.findAllGuildsByCollectionAddress(
         address,
         req.user.publicKey,
       );
@@ -77,6 +77,21 @@ export class SyntheticRoleGuildController {
           };
         }),
       ),
+    };
+  }
+
+  @Get('collection/:address/status')
+  async fetchAllNonJoinedRolesInContract(
+    @Param('address') address: string,
+    @Req() req: any,
+  ) {
+    const roles =
+      await this.syntheticRoleService.fetchAllNonJoinedRolesInContract(
+        req.user.publicKey,
+        address,
+      );
+    return {
+      result: roles,
     };
   }
 }

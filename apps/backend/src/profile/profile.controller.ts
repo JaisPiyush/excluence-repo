@@ -10,7 +10,6 @@ import {
 import { Profile } from './schema/profile.schema';
 import { ProfileService } from './profile.service';
 import { ControllerResult } from 'src/types';
-import { ProfileGuild } from './schema/profile-guilds.schema';
 import { ProfileGuildWithMetadata } from './dto';
 import { getGuild } from '@excluence-repo/discord-connector';
 
@@ -42,6 +41,16 @@ export class ProfileController {
     };
   }
 
+  @Get('')
+  async getMyProfile(@Req() req: any) {
+    const profiles = await this.profileService.findProfilesByPublicKey(
+      req.user.publicKey,
+    );
+    return {
+      result: profiles,
+    };
+  }
+
   @Post('guild')
   async addGuild(@Req() request: any, @Body('guildId') guildId: string) {
     if (guildId === undefined)
@@ -49,6 +58,20 @@ export class ProfileController {
     const user = request.user;
     return {
       result: await this.profileService.addGuild(user.publicKey, guildId),
+    };
+  }
+
+  @Post('')
+  async createProfile(
+    @Req() req: any,
+    @Body('access_token') accessToken: string,
+  ) {
+    const profile = await this.profileService.createProfile(
+      req.user.publicKey,
+      accessToken,
+    );
+    return {
+      result: profile,
     };
   }
 }

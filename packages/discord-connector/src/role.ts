@@ -41,7 +41,7 @@ export async function addGuildMemberRole(
     roleId: string
 ): Promise<void> {
     return await makeDiscordRequest<void>({
-        url: `guilds/${guildId}/members/${userId}`,
+        url: `guilds/${guildId}/members/${userId}/roles/${roleId}`,
         method: 'put'
     });
 }

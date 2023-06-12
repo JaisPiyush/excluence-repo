@@ -42,6 +42,10 @@ export type ModifyGuildMember = Omit<AddGuildMember, "access_token"> &  {
     flags?: number;
 };
 
+export interface GuildMember extends Record<string, any> {
+    roles: RoleObject[]
+}
+
 
 export type GuildObject = {
     id: string;

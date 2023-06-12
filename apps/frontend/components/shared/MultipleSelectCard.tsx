@@ -17,6 +17,7 @@ export interface MultipleSelectCardProp {
     nextButtonTitle?: string
     editable?: boolean;
     hideButton?: boolean;
+    onClick?: (id: string) => void;
 }
 
 
@@ -65,7 +66,12 @@ export default function MultipleSelectCard(props: MultipleSelectCardProp) {
                         {
                             props.editable === false? 
                           
-                                <CardHeader 
+                                <CardHeader
+                                    onClick={() => {
+                                        if(props.onClick) {
+                                            props.onClick(option.id)
+                                        }
+                                    }} 
                                     avatar={getNonEditableAvatar(option)}
                                     subheader={option.name}
                                     subheaderTypographyProps={{

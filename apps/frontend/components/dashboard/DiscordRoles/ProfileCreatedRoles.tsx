@@ -23,7 +23,8 @@ export default function ProfileCreatedRoles() {
         selected={{}}
         onNext={() => {}}
         onSelect={(id, selected) => {}}
-        title="Roles"
+        title=""
         immutableSelections={[]}
+        editable={false}
     />
 }

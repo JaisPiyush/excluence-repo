@@ -1,5 +1,5 @@
 import { makeDiscordRequest } from "./discord-axios"
-import { AddGuildMember } from "./types"
+import { AddGuildMember, GuildMember } from "./types"
 
 
 
@@ -22,5 +22,12 @@ export async function removeGuildMember(
     return await makeDiscordRequest<void>({
         url: `guilds/${guildId}/members/${userId}`,
         method: 'delete'
+    });
+}
+
+export async function getGuildMember(guildId: string, userId: string) {
+    return await makeDiscordRequest<GuildMember>({
+        url: `guilds/${guildId}/members/${userId}`,
+        method: 'get'
     });
 }
