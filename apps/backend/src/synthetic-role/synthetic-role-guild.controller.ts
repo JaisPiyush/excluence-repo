@@ -10,10 +10,14 @@ import {
 } from '@nestjs/common';
 import { SyntheticRoleService } from './synthetic-role.service';
 import { getGuild } from '@excluence-repo/discord-connector';
+import { ProfileService } from 'src/profile/profile.service';
 
 @Controller('synthetic-role/guild')
 export class SyntheticRoleGuildController {
-  constructor(private readonly syntheticRoleService: SyntheticRoleService) {}
+  constructor(
+    private readonly syntheticRoleService: SyntheticRoleService,
+    private readonly profileService: ProfileService,
+  ) {}
 
   @Post(':id')
   async addSyntheticRoleToGuilds(
@@ -85,13 +89,38 @@ export class SyntheticRoleGuildController {
     @Param('address') address: string,
     @Req() req: any,
   ) {
+    const profiles = await this.profileService.findProfilesByPublicKey(
+      req.user.publicKey,
+    );
+    if (profiles.length === 0) return { result: null };
     const roles =
-      await this.syntheticRoleService.fetchAllNonJoinedRolesInContract(
-        req.user.publicKey,
+      await this.syntheticRoleService.findAllGuildAndRolesNotJoinedByProfile(
+        profiles[0],
         address,
       );
     return {
       result: roles,
+    };
+  }
+
+  @Post('collection/:address/join')
+  async addUserToRolesOfCollection(
+    @Param('address') address: string,
+    @Req() req: any,
+    @Body('access_token') accessToken: string,
+  ) {
+    const profiles = await this.profileService.findProfilesByPublicKey(
+      req.user.publicKey,
+    );
+    if (profiles.length === 0)
+      throw new HttpException('Profile does not exists', HttpStatus.NOT_FOUND);
+    await this.syntheticRoleService.addUserToRolesOfCollection(
+      profiles[0],
+      address,
+      accessToken,
+    );
+    return {
+      result: true,
     };
   }
 }

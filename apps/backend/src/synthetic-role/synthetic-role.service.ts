@@ -6,6 +6,7 @@ import { CreateSyntheticRoleDto } from './dto/index.dto';
 import { SyntheticRoleCollection } from './schema/synthetic-role-collection.schema';
 import { SyntheticRoleGuildRole } from './schema/synthetic-role-guild-role.schema';
 import {
+  addGuildMember,
   addGuildMemberRole,
   createGuildRole,
   getGuildMember,
@@ -13,6 +14,9 @@ import {
 import { NftCollectionService } from 'src/nft-collection/nft-collection.service';
 import { ProfileService } from 'src/profile/profile.service';
 import { DiscordAPIError } from '@excluence-repo/discord-connector/src/error';
+import { Profile } from 'src/profile/schema/profile.schema';
+import { ProfileRole } from './schema/profile-role.schema';
+import { Mode } from 'fs';
 
 @Injectable()
 export class SyntheticRoleService {
@@ -23,6 +27,8 @@ export class SyntheticRoleService {
     private readonly syntheticRoleCollectionModel: Model<SyntheticRoleCollection>,
     @InjectModel(SyntheticRoleGuildRole.name)
     private readonly syntheticRoleGuildRoleModel: Model<SyntheticRoleGuildRole>,
+    @InjectModel(ProfileRole.name)
+    private readonly profileRoleModel: Model<ProfileRole>,
     private readonly nftCollectionService: NftCollectionService,
     private readonly profileService: ProfileService,
   ) {}
@@ -250,5 +256,62 @@ export class SyntheticRoleService {
       }
     }
     return guildIds;
+  }
+
+  async findAllGuildAndRolesNotJoinedByProfile(
+    profile: Profile,
+    contract: string,
+  ) {
+    try {
+      const syntheticRoles = await this.syntheticRoleCollectionModel
+        .find({ contractAddress: contract })
+        .exec();
+      const guildRoles = await this.syntheticRoleGuildRoleModel.find({
+        syntheticRole: {
+          $in: syntheticRoles.map((r) => (r as any)._id),
+        },
+      });
+      const roleIds = guildRoles.map((guildRole) => guildRole.roleId);
+      const profileRoles = (
+        await this.profileRoleModel.find({
+          discordUserId: profile.discordUserId,
+          roleId: {
+            $in: roleIds,
+          },
+        })
+      ).map((profileRole) => profileRole.roleId);
+
+      return guildRoles
+        .filter((role) => !profileRoles.includes(role.roleId))
+        .map((role) => ({
+          roleId: role.roleId,
+          guildId: role.guildId,
+        }));
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async addUserToRolesOfCollection(
+    profile: Profile,
+    contract: string,
+    accessToken: string,
+  ) {
+    const roles = await this.findAllGuildAndRolesNotJoinedByProfile(
+      profile,
+      contract,
+    );
+    await Promise.all(
+      roles.map(async (role) => {
+        await addGuildMember(role.guildId, profile.discordUserId, {
+          access_token: accessToken,
+        });
+        await addGuildMemberRole(
+          role.guildId,
+          profile.discordUserId,
+          role.roleId,
+        );
+      }),
+    );
   }
 }
