@@ -62,14 +62,15 @@ export class SyntheticRoleService {
     contractAddressArray: string[],
   ): Promise<SyntheticRoleCollection[]> {
     try {
-      return await this.syntheticRoleCollectionModel.insertMany(
+      const models = await Promise.all(
         contractAddressArray.map((contractAddress) => {
           return new this.syntheticRoleCollectionModel({
             contractAddress: contractAddress,
-            syntheticRole: syntheticRole,
+            syntheticRole: (syntheticRole as any)._id,
           });
         }),
       );
+      return await this.syntheticRoleCollectionModel.insertMany(models);
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
@@ -142,7 +143,7 @@ export class SyntheticRoleService {
     });
     return new this.syntheticRoleGuildRoleModel({
       guildId: guildId,
-      syntheticRole: syntheticRole,
+      syntheticRole: (syntheticRole as any)._id,
       roleId: role.id,
     });
   }
@@ -158,8 +159,10 @@ export class SyntheticRoleService {
     syntheticRole: SyntheticRole,
   ) {
     try {
-      const guildRoles = guildIdArray.map((guildId) =>
-        this._createSyntheticRoleGuildRole(guildId, syntheticRole),
+      const guildRoles = await Promise.all(
+        guildIdArray.map((guildId) =>
+          this._createSyntheticRoleGuildRole(guildId, syntheticRole),
+        ),
       );
       return await this.syntheticRoleGuildRoleModel.insertMany(guildRoles);
     } catch (e) {

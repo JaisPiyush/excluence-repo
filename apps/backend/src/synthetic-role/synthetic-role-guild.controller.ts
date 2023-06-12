@@ -9,7 +9,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { SyntheticRoleService } from './synthetic-role.service';
-import { Profile } from 'src/profile/schema/profile.schema';
 
 @Controller('synthetic-role/guild')
 export class SyntheticRoleGuildController {

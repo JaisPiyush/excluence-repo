@@ -11,11 +11,9 @@ export class SyntheticRoleCollection {
   contractAddress: string;
 
   @Prop({
-    type: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: SyntheticRole.name,
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: SyntheticRole.name,
   })
   syntheticRole: SyntheticRole;
 }
