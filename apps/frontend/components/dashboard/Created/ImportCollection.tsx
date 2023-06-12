@@ -1,4 +1,7 @@
-import { Modal, Box, Typography } from "@mui/material";
+import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { useAppDispatch } from "../../../redux/hooks";
+import { importNFTCollections } from "../../../redux/dashboard";
+import { useState } from "react";
 
 interface ImportCollectionProps {
     open: boolean;
@@ -15,9 +18,20 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    display: 'flex',
+    flexDirection: 'column'
   };
 
 export default function ImportCollection(props: ImportCollectionProps) {
+    const [address, setAddress] = useState<string | null>(null)
+    const dispatch = useAppDispatch()
+    const handleImportClick = () => {
+        if (address !== null) {
+            dispatch(importNFTCollections(address))
+            props.handleClose();
+        }
+        
+    }
     return <Modal
                 open={props.open}
                 onClose={() => {props.handleClose()}}
@@ -26,6 +40,9 @@ export default function ImportCollection(props: ImportCollectionProps) {
                     <Typography variant="h6" component="h2">
                         Import NFT Collection
                     </Typography>
+                    <TextField value={address} onChange={(e) => {setAddress(e.target.value)}} sx={{marginY: '2rem'}} variant="outlined" placeholder="Paste your collection address" />
+                    <Button onClick={() => {handleImportClick()}} variant="contained">Import</Button>
+
                 </Box>
             </Modal>
 }

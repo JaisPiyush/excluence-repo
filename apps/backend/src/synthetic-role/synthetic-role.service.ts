@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SyntheticRole } from './schema/synthetic-role.schema';
 import { Model } from 'mongoose';
@@ -38,7 +38,11 @@ export class SyntheticRoleService {
       creatorPublicKey: publicKey,
       ...createSyntheticRole,
     });
-    return await syntheticRole.save();
+    try {
+      return await syntheticRole.save();
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findAllRolesByCreator(publicKey: string): Promise<SyntheticRole[]> {
@@ -57,14 +61,18 @@ export class SyntheticRoleService {
     syntheticRole: SyntheticRole,
     contractAddressArray: string[],
   ): Promise<SyntheticRoleCollection[]> {
-    return await this.syntheticRoleCollectionModel.insertMany(
-      contractAddressArray.map((contractAddress) => {
-        return new this.syntheticRoleCollectionModel({
-          contractAddress: contractAddress,
-          syntheticRole: syntheticRole,
-        });
-      }),
-    );
+    try {
+      return await this.syntheticRoleCollectionModel.insertMany(
+        contractAddressArray.map((contractAddress) => {
+          return new this.syntheticRoleCollectionModel({
+            contractAddress: contractAddress,
+            syntheticRole: syntheticRole,
+          });
+        }),
+      );
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findAllCollectionRoleByCollectionAddress(
@@ -149,10 +157,14 @@ export class SyntheticRoleService {
     guildIdArray: string[],
     syntheticRole: SyntheticRole,
   ) {
-    const guildRoles = guildIdArray.map((guildId) =>
-      this._createSyntheticRoleGuildRole(guildId, syntheticRole),
-    );
-    return await this.syntheticRoleGuildRoleModel.insertMany(guildRoles);
+    try {
+      const guildRoles = guildIdArray.map((guildId) =>
+        this._createSyntheticRoleGuildRole(guildId, syntheticRole),
+      );
+      return await this.syntheticRoleGuildRoleModel.insertMany(guildRoles);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async _addRolesToGuilds(

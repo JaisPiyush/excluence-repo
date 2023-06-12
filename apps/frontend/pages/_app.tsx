@@ -9,11 +9,12 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { Layout } from "./layout";
+import { activeChain } from "../constant";
 
 // This is the chain your dApp will work on.
 // Change this to the chain your app is built for.
 // You can also import additional chains from `@thirdweb-dev/chains` and pass them directly.
-const activeChain = ChainId.Mainnet;
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

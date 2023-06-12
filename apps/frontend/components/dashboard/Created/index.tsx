@@ -1,11 +1,20 @@
-import { Box, Button, ImageList } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import NFTCard from "../../NFTCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ImportCollection from "./ImportCollection";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { getAllMyNFTCollections } from "../../../redux/dashboard";
 
 export default function Created() {
     const [openModal, setOpenModal] = useState(false)
-
+    const dispatch = useAppDispatch()
+    const [createdCollections, fetchedCreatedCollections] = useAppSelector((state) => [state.dashboard.createdCollections,
+         state.dashboard.fetchedCreatedCollections]);
+    useEffect(() => {
+        if(!fetchedCreatedCollections) {
+            dispatch(getAllMyNFTCollections())
+        }
+    },[])
     return <Box >
             <Box sx={{
                 width: '100vw',
@@ -28,13 +37,11 @@ export default function Created() {
                     display: 'flex',
                     flexWrap: 'wrap',
                 }}>
-                    <NFTCard />
-                    <NFTCard />
-                    <NFTCard />
-                    <NFTCard />
-                    <NFTCard />
-                    <NFTCard />
-                    <NFTCard />
+                    {
+                        createdCollections.map((collection, index) => {
+                            return <NFTCard key={index} address={collection} />
+                        } )
+                    }
             </Box>
         </Box>
 

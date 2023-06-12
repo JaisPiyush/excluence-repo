@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NFTCollection } from './schema/nft-collection.schema';
 import { Model } from 'mongoose';
@@ -18,11 +18,15 @@ export class NftCollectionService {
     creatorPublicKey: string,
   ): Promise<NFTCollection[]> {
     // TODO: Add creator-ship verification for each contract address;
-    return await this.nftCollectionModel.insertMany(
-      contractAddressArray.map((address) => {
-        return new this.nftCollectionModel({ address, creatorPublicKey });
-      }),
-    );
+    try {
+      return await this.nftCollectionModel.insertMany(
+        contractAddressArray.map((address) => {
+          return new this.nftCollectionModel({ address, creatorPublicKey });
+        }),
+      );
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async findAllNFTCollections(publicKey: string): Promise<NFTCollection[]> {

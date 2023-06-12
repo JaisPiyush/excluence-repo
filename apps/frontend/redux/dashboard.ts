@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { globalActions } from './global'
 import { backendApi } from '../axiosInstance'
 import { getAuthorizationHeader } from './utils'
-import { getGuild } from '@excluence-repo/discord-connector'
+import {ThirdwebSDK} from '@thirdweb-dev/sdk';
 
 export interface ProfileGuild {
     _id: string;
@@ -20,7 +20,7 @@ export interface DashboardState {
     roleAddedGuilds: string[],
     fetchedGuildRoles: boolean;
     createdCollections: string[];
-    fetchedCollections: boolean;
+    fetchedCreatedCollections: boolean;
 }
 
 const initialState: DashboardState = {
@@ -29,7 +29,7 @@ const initialState: DashboardState = {
     roleAddedGuilds: [],
     fetchedGuildRoles: false,
     createdCollections: [],
-    fetchedCollections: false
+    fetchedCreatedCollections: false
 }
 
 
@@ -69,7 +69,9 @@ export const getSelectedGuildsBySyntheticRoleId = createAsyncThunk(
         try {
             thunkAPI.dispatch(globalActions.setLoading(true));
             if (!roleId) return [];
-            const res = await backendApi.get<{result: {guildId: string}[]}>(`synthetic-role/guild/role/${roleId}`);
+            const res = await backendApi.get<{result: {guildId: string}[]}>(`synthetic-role/guild/role/${roleId}`, {
+                headers: getAuthorizationHeader()
+            });
             thunkAPI.dispatch(globalActions.setLoading(false));
             return res.data.result.map((guildRole) => guildRole.guildId);
         }catch(e) {
@@ -81,8 +83,29 @@ export const getSelectedGuildsBySyntheticRoleId = createAsyncThunk(
 export const getAllMyNFTCollections = createAsyncThunk(
     'dashboard/getAllMyNFTCollections',
     async (obj, thunkAPI) => {
-        const res = await backendApi.get<{result: {address: string}[]}>('nft-collection');
+        const res = await backendApi.get<{result: {address: string}[]}>('nft-collection', {
+            headers: getAuthorizationHeader()
+        });
         return res.data.result.map((collection) => collection.address);
+    }
+);
+
+export const importNFTCollections = createAsyncThunk(
+    'dashboard/importNFTCollections',
+    async (address: string, thunkAPI) => {
+        try {
+            thunkAPI.dispatch(globalActions.setLoading(true));
+            // const sdk = new ThirdwebSDK("ethereum");
+            // const contract = await sdk.getContract(address);
+            console.log('contract', address)
+            const res = await backendApi.post('nft-collection', {contracts: [address]}, {
+                headers: getAuthorizationHeader()
+            })
+            thunkAPI.dispatch(globalActions.setLoading(false));
+            return address;
+        }catch(e) {
+            thunkAPI.dispatch(globalActions.setError("Failed to import collection"))
+        }
     }
 );
 
@@ -101,7 +124,10 @@ const dashboardSlice = createSlice({
         });
         builder.addCase(getAllMyNFTCollections.fulfilled, (state: DashboardState, action) => {
             state.createdCollections = action.payload as string[];
-            state.fetchedCollections = true;
+            state.fetchedCreatedCollections = true;
+        });
+        builder.addCase(importNFTCollections.fulfilled, (state: DashboardState, action) => {
+            state.createdCollections = state.createdCollections.concat([action.payload as string]);
         })
     }
 })
