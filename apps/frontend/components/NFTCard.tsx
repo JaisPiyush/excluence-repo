@@ -9,7 +9,6 @@ export interface NFTCardProps {
 export default function NFTCard(props: NFTCardProps) {
     const { contract } = useContract(props.address);
     const { data: nft, isLoading, error } = useNFT(contract, props.tokenId || "1");
-    console.log(nft)
     if (isLoading) return <Card variant="outlined" sx={{
         paddingX: '1rem',
         borderRadius: '2rem',

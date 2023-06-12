@@ -1,4 +1,5 @@
 export interface SyntheticRole {
+    _id?: string;
     name: string;
     color: number;
     hoist: boolean;

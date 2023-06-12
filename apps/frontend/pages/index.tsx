@@ -6,6 +6,7 @@ import { Box , Tabs, Tab} from "@mui/material";
 import { useState } from "react";
 import DiscordServers from "../components/dashboard/DiscordServers";
 import Created from "../components/dashboard/Created";
+import DiscordRoles from "../components/dashboard/DiscordRoles";
 
 
 const customNodeOptions = {
@@ -32,6 +33,8 @@ const Home: NextPage = () => {
         return <Created />;
       case 2:
         return <DiscordServers />;
+      case 3:
+        return <DiscordRoles />
     }
   }
 

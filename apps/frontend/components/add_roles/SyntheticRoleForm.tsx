@@ -8,10 +8,10 @@ interface SyntheticRoleFormProps {
 export default function SyntheticRoleForm(props: SyntheticRoleFormProps) {
     const [hoist, setHoist] = useState(true);
     const [mentionable, setMentionable] = useState(true);
-    const [name, setName] = useState<string | null>(null);
+    const [name, setName] = useState<string>('');
 
     const handleNextClick = () => {
-        if (name !== null) {
+        if (name !== null && name !== '') {
             props.onNext({name, hoist, mentionable})
         }
     }
@@ -28,7 +28,7 @@ export default function SyntheticRoleForm(props: SyntheticRoleFormProps) {
         <Typography variant="h4" sx={{
             alignSelf: 'center',
             fontWeight: 'bold'
-        }} >Role</Typography>
+        }} >Create Role</Typography>
         <TextField
           required
           id="outlined-required"
