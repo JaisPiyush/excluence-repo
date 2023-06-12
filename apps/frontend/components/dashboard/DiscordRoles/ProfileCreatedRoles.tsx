@@ -17,8 +17,9 @@ export default function ProfileCreatedRoles() {
     const rolesAsPacket = syntheticRoles.map((role) => {
         return {id: role._id as string, name: role.name}
     })
+    console.log(rolesAsPacket);
     return <MultipleSelectCard
-        options={[{id: 'ok', name: 'oKa'}]}
+        options={rolesAsPacket}
         selected={{}}
         onNext={() => {}}
         onSelect={(id, selected) => {}}
