@@ -4,6 +4,7 @@ import { Web3Auth } from "@web3auth/modal";
 import {getAddress, login, loginActions} from "../../../redux/login";
 import { useEffect } from "react";
 import { getAuthorizationToken } from "../../../redux/utils";
+import {WALLET_ADAPTERS} from '@web3auth/base'
 
 export default function WalletButton() {
     let web3auth: Web3Auth;
@@ -16,7 +17,14 @@ export default function WalletButton() {
           },
           
         })
-        web3auth.initModal().then(() => {});
+        web3auth.initModal({
+            modalConfig: {
+                [WALLET_ADAPTERS.OPENLOGIN]: {
+                    label: 'openlogin',
+                    showOnModal: false
+                }
+            }
+        }).then(() => {});
     
     }
     const [address] = useAppSelector((state) => [state.login.address]);

@@ -17,6 +17,7 @@ export default function Collected() {
                     display: 'flex',
                     flexWrap: 'wrap',
                 }}>
+                    {/*TODO: Add functionality to load all NFTs automatically */}
                     <NFTCard address="0xc9d8f15803c645e98b17710a0b6593f097064bef" isCollected={true} />
             </Box>
         </Box>

@@ -23,6 +23,13 @@ export default function NFTCard(props: NFTCardProps) {
     const [showJoinCommunityBtn, setShowJoinCommunityBtn] = useState(true);
     const [fetchedNonJoinedRoles, setFetchedNonJoinedRoles] = useState(false);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (session && (session as any).accessToken && !fetchedNonJoinedRoles && props.isCollected) {
+            fetchAllNonJoinedRolesInContract().then(() => {})
+        }
+    }, []);
+
     if (isLoading) return <Card variant="outlined" sx={{
         paddingX: '1rem',
         borderRadius: '2rem',
@@ -43,11 +50,7 @@ export default function NFTCard(props: NFTCardProps) {
         }
     }
 
-    useEffect(() => {
-        if (session && (session as any).accessToken && !fetchedNonJoinedRoles && props.isCollected) {
-            fetchAllNonJoinedRolesInContract().then(() => {})
-        }
-    }, [])
+    
 
     const handleJoinCommunityClick = () => {
         dispatch(dashboardActions.setCurrentCollectedContract(props.address));
