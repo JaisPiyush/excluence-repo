@@ -1,4 +1,6 @@
+import axios from "axios";
 import { makeDiscordRequest } from "./discord-axios";
+import { DiscordAPIError } from "./error";
 
 /**
  * 
@@ -7,16 +9,16 @@ import { makeDiscordRequest } from "./discord-axios";
  */
 async function validateDiscordUserAccessToken(accessToken: string): Promise<string | null> {
     try {
-        const res = await makeDiscordRequest<{user: {id: string}}>({
-            url: 'oatuh2/@me',
+        const res = await axios.request<{user: {id: string}}>({
+            url: 'https://discordapp.com/api/oauth2/@me',
             method: 'get',
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-        return res.user.id;
+        return res.data.user.id;
     }catch(e) {
-        return null;
+        throw new DiscordAPIError((e as any).message);
     }
 }
 

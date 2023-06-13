@@ -42,12 +42,12 @@ export class ProfileController {
   }
 
   @Get('')
-  async getMyProfile(@Req() req: any) {
+  async hasProfile(@Req() req: any) {
     const profiles = await this.profileService.findProfilesByPublicKey(
       req.user.publicKey,
     );
     return {
-      result: profiles,
+      result: profiles.length > 0,
     };
   }
 
@@ -66,12 +66,18 @@ export class ProfileController {
     @Req() req: any,
     @Body('access_token') accessToken: string,
   ) {
-    const profile = await this.profileService.createProfile(
-      req.user.publicKey,
-      accessToken,
-    );
-    return {
-      result: profile,
-    };
+    try {
+      const profile = await this.profileService.createProfile(
+        req.user.publicKey,
+        accessToken,
+      );
+      return {
+        result: profile,
+      };
+    } catch (e) {
+      return {
+        result: null,
+      };
+    }
   }
 }

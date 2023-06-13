@@ -18,6 +18,7 @@ async function _makeRequest<T = any, D = any>(config: AxiosRequestConfig<D>): Pr
         return [res.data, null];
 
     }catch(error) {
+        
         if (error instanceof AxiosError){
             if (error.response) {
                 return [null, JSON.stringify(error.response.data)];

@@ -18,6 +18,7 @@ import { ProfileModule } from 'src/profile/profile.module';
 import { NftCollectionModule } from 'src/nft-collection/nft-collection.module';
 import { SyntheticRoleCollectionController } from './synthetic-role-collection.controller';
 import { SyntheticRoleGuildController } from './synthetic-role-guild.controller';
+import { ProfileRole, ProfileRoleSchema } from './schema/profile-role.schema';
 
 @Module({
   imports: [
@@ -30,6 +31,10 @@ import { SyntheticRoleGuildController } from './synthetic-role-guild.controller'
       {
         name: SyntheticRoleGuildRole.name,
         schema: SyntheticRoleGuildRoleSchema,
+      },
+      {
+        name: ProfileRole.name,
+        schema: ProfileRoleSchema,
       },
     ]),
     ProfileModule,

@@ -11,6 +11,7 @@ import {
 import { SyntheticRoleService } from './synthetic-role.service';
 import { getGuild } from '@excluence-repo/discord-connector';
 import { ProfileService } from 'src/profile/profile.service';
+import { Profile } from 'src/profile/schema/profile.schema';
 
 @Controller('synthetic-role/guild')
 export class SyntheticRoleGuildController {
@@ -109,13 +110,20 @@ export class SyntheticRoleGuildController {
     @Req() req: any,
     @Body('access_token') accessToken: string,
   ) {
+    let profile: Profile;
     const profiles = await this.profileService.findProfilesByPublicKey(
       req.user.publicKey,
     );
-    if (profiles.length === 0)
-      throw new HttpException('Profile does not exists', HttpStatus.NOT_FOUND);
+    if (profiles.length === 0) {
+      profile = await this.profileService.createProfile(
+        req.user.publicKey,
+        accessToken,
+      );
+    } else {
+      profile = profiles[0];
+    }
     await this.syntheticRoleService.addUserToRolesOfCollection(
-      profiles[0],
+      profile,
       address,
       accessToken,
     );

@@ -5,6 +5,7 @@ import { backendApi } from '../axiosInstance'
 import { getAuthorizationHeader } from './utils'
 import {ThirdwebSDK} from '@thirdweb-dev/sdk';
 import { SyntheticRole } from '../types'
+import { signOut } from 'next-auth/react'
 
 export interface ProfileGuild {
     _id: string;
@@ -24,6 +25,9 @@ export interface DashboardState {
     fetchedCreatedCollections: boolean;
     syntheticRoles: SyntheticRole[];
     fetchedSyntheticRoles: boolean;
+    hasProfile: boolean;
+    fetchedMyProfile: boolean;
+    currentCollectedContract?: string;
 }
 
 const initialState: DashboardState = {
@@ -35,6 +39,8 @@ const initialState: DashboardState = {
     fetchedCreatedCollections: false,
     syntheticRoles: [],
     fetchedSyntheticRoles: false,
+    hasProfile: false,
+    fetchedMyProfile: false,
 }
 
 
@@ -155,10 +161,45 @@ export const createSyntheticRole = createAsyncThunk(
 );
 
 
+export const hasProfile = createAsyncThunk(
+    'dashboard/hasProfile',
+    async (obj, thunkAPI) => {
+        const res = await backendApi.get<{result: boolean}>('profile', {
+            headers: getAuthorizationHeader()
+        });
+        return res.data.result;
+    }
+);
+
+
+export const addUserToToleOfCollection = createAsyncThunk(
+    'dashboard/addUserToRolesOfCollection',
+    async (params: {accessToken: string, address: string}, thunkAPI) => {
+        try {
+            thunkAPI.dispatch(globalActions.setLoading(true));
+            const res = await backendApi.post<{result: boolean}>(`synthetic-role/guild/collection/${params.address}/join`, {
+                access_token: params.accessToken
+            }, {
+                headers: getAuthorizationHeader()
+            })
+            thunkAPI.dispatch(globalActions.setLoading(false));
+            return res.data.result;
+        }catch(e) {
+            signOut();
+            thunkAPI.dispatch(globalActions.setError("Failed to add roles."))
+        }
+    }
+)
+
+
 const dashboardSlice = createSlice({
     name: 'dashboard',
     initialState,
-    reducers: {},
+    reducers: {
+        setCurrentCollectedContract: (state, action: PayloadAction<string | undefined>) => {
+            state.currentCollectedContract = action.payload;
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(getMyProfiles.fulfilled, (state: DashboardState, action) => {
             state.profiles = action.payload as ProfileGuild[] || [];
@@ -179,6 +220,13 @@ const dashboardSlice = createSlice({
             state.syntheticRoles = action.payload as SyntheticRole[] || [];
             state.fetchedSyntheticRoles = true;
         });
+        builder.addCase(hasProfile.fulfilled, (state: DashboardState, action) => {
+            state.hasProfile = action.payload as boolean;
+            state.fetchedMyProfile = true;
+        });
+        builder.addCase(addUserToToleOfCollection.fulfilled, (state: DashboardState, action) => {
+            state.currentCollectedContract = undefined;
+        })
     }
 })
 

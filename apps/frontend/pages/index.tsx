@@ -7,6 +7,7 @@ import { useState } from "react";
 import DiscordServers from "../components/dashboard/DiscordServers";
 import Created from "../components/dashboard/Created";
 import DiscordRoles from "../components/dashboard/DiscordRoles";
+import Collected from "../components/dashboard/Collected";
 
 
 const customNodeOptions = {
@@ -31,6 +32,8 @@ const Home: NextPage = () => {
     switch(value) {
       case 0: 
         return <Created />;
+      case 1:
+        return <Collected />
       case 2:
         return <DiscordServers />;
       case 3:
