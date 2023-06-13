@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { backendApi } from '../axiosInstance';
 import { clearAuthorizationToken, getAuthorizationHeader, setAuthorizationToken } from './utils';
 import { globalActions } from './global';
+import { signOut } from 'next-auth/react';
 
 export interface LoginState {
     address?: string;
@@ -52,6 +53,7 @@ export const loginSlice = createSlice({
         logOut: (state) => {
             state.address = undefined;
             clearAuthorizationToken();
+            signOut()
         }
     },
     extraReducers: (builder) => {

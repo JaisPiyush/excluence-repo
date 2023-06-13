@@ -16,7 +16,8 @@ export default function WalletButton() {
             chainId: "0x89", // Use 0x13881 for Mumbai Testnet
           },
           
-        })
+        });
+
         web3auth.initModal({
             modalConfig: {
                 [WALLET_ADAPTERS.OPENLOGIN]: {
@@ -24,23 +25,32 @@ export default function WalletButton() {
                     showOnModal: false
                 }
             }
-        }).then(() => {});
+        }).then();
+        
     
     }
     const [address] = useAppSelector((state) => [state.login.address]);
     const dispatch = useAppDispatch();
 
     const handleOnConnectClick = async () => {
-        await web3auth.connect()
+        await web3auth.connect();
         const userInfo = await web3auth.authenticateUser();
         dispatch(login(userInfo.idToken));
+        
+    }
+
+    const loginAfterConnection = async () => {
+        try {
+            const userInfo = await web3auth.authenticateUser();
+            dispatch(login(userInfo.idToken));
+        } catch (e) {}
     }
 
     useEffect(() => {
         if (typeof window !==  'undefined') {
             const token = getAuthorizationToken()
             if (address === undefined) {
-               handleOnConnectClick();
+               loginAfterConnection();
             }
         }
     }, [])
