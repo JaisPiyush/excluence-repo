@@ -1,0 +1,62 @@
+{
+	"contracts": {
+		"ExcluenceMarketplace": "./cadence/contracts/ExcluenceMarketplace.cdc",
+		"ExcluenceNFT": {
+			"source": "./cadence/contracts/ExcluenceNFT.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"FungibleToken": {
+			"source": "./cadence/contracts/interfaces/FungibleToken.interface.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"MetadataViews": {
+			"source": "./cadence/contracts/interfaces/MetadataViews.interface.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"NonFungibleToken": {
+			"source": "./cadence/contracts/interfaces/NonFungibleToken.interface.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		},
+		"ViewResolver": {
+			"source": "./cadence/contracts/interfaces/ViewResolver.interface.cdc",
+			"aliases": {
+				"emulator": "f8d6e0586b0a20c7"
+			}
+		}
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"sandboxnet": "access.sandboxnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"alice": {
+			"address": "01cf0e2f2f715450",
+			"key": "983240f8f5a11a2b6efa7e2ea12a9df902bc5e528cc16e1328e9abbc820ee16a"
+		},
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "27fdd561001aa0e819a1870b7b0036de039f9d4efe7cbe5f1d4f773430e7df6a"
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"ExcluenceNFT",
+				"ViewResolver",
+				"MetadataViews",
+				"NonFungibleToken",
+				"FungibleToken"
+			]
+		}
+	}
+}

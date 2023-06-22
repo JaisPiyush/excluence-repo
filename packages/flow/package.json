@@ -11,6 +11,6 @@
     "typescript": "^4.5.2"
   },
   "devDependencies": {
-    "@onflow/flow-js-testing": "*" 
+    "@onflow/flow-js-testing": "*"
   }
 }
