@@ -1,0 +1,13 @@
+{
+  "name": "@excluence-repo/cadence",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Piyush Jaiswal",
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "typescript": "^4.5.2"
+  }
+}
