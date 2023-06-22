@@ -58,7 +58,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     /// Storage and Public Paths
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
-    pub let MinterStoragePath: StoragePath
+    pub let AdminStoragePath: StoragePath
 
     /// Total supply of ExcluenceNFTs in existence
     pub var totalSupply: UInt64
@@ -428,11 +428,15 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
         pub let projectRef: &Project
 
-        init(projectID: UInt32) {
+        init(_ projectID: UInt32) {
             pre {
                 ExcluenceNFT.projects[projectID] != nil: "This project with provided ID does not exist."
             }
             self.projectRef = (&ExcluenceNFT.projects[projectID] as &Project?)! as &Project
+        }
+
+        pub fun isLocked(): Bool {
+            return self.projectRef.locked
         }
 
         pub fun getComponents(): [UInt32] {
@@ -453,6 +457,18 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
         pub fun getRoyalties(): [MetadataViews.Royalty] {
             return  self.projectRef.getRoyalties()
+        }
+
+        pub fun getFullData(): {String: AnyStruct} {
+            return  {
+                "projectID": self.projectRef.projectID,
+                "display": self.getNFTCollectionDisplay(),
+                "components": self.getComponents(),
+                "numberMintedPerComponent": self.getNumberMintedPerComponent(),
+                "retired": self.getRetired(),
+                "royalties": self.getRoyalties(),
+                "locked": self.isLocked()
+            }
         }
 
     }
@@ -709,9 +725,29 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             // add the new token to the dictionary which removes the old one
             let oldToken <- self.ownedNFTs[id] <- token
 
-            emit Deposit(id: id, to: self.owner?.address)
+            // Only emit a deposit event if the Collection 
+            // is in an account's storage
+            if self.owner?.address != nil {
+                emit Deposit(id: id, to: self.owner?.address)
+            }
 
             destroy oldToken
+        }
+
+        // batchDeposit takes a Collection object as an argument
+        // and deposits each contained NFT into this Collection
+        pub fun batchDeposit(tokens: @NonFungibleToken.Collection) {
+
+            // Get an array of the IDs to be deposited
+            let keys = tokens.getIDs()
+
+            // Iterate through the keys in the collection and deposit each one
+            for key in keys {
+                self.deposit(token: <-tokens.withdraw(withdrawID: key))
+            }
+
+            // Destroy the empty Collection
+            destroy tokens
         }
 
         /// Helper method for getting the collection IDs
@@ -835,14 +871,35 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
                 
             ) {
             pre {
-                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This projectID doesn't exist."
+                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
             }
-            let project <- ExcluenceNFT.projects.remove(key: projectID)!
-            project.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
-            ExcluenceNFT.projects[projectID] <-! project
+            let projectRef = self.borrowProject(projectID: projectID)
+            projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
         }
 
-        
+        // borrowProject returens a reference to a project in the ExcluenceNFT
+        // contract so that the admin can call methods on it
+        pub fun borrowProject(projectID: UInt32): &Project {
+            pre {
+                ExcluenceNFT.projects[projectID] != nil: "Cannot borrow Project: The project doesn't exist."
+            }
+            return (&ExcluenceNFT.projects[projectID] as &Project?)!
+
+        }
+
+
+        pub fun lockProject(projectID: UInt32) {
+            pre {
+                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
+            }
+            let projectRef = self.borrowProject(projectID: projectID)
+            projectRef.lock()
+        }
+
+        pub fun createNewAdmin(): @Admin {
+            return  <- create Admin()
+        }
+
     }
 
     
@@ -855,52 +912,35 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         return <- create Collection()
     }
 
-    /// Resource that an admin or something similar would own to be
-    /// able to mint new NFTs
-    ///
-    pub resource NFTMinter {
-
-        /// Mints a new NFT with a new ID and deposit it in the
-        /// recipients collection using their collection reference
-        ///
-        /// @param recipient: A capability to the collection where the new NFT will be deposited
-        /// @param name: The name for the NFT metadata
-        /// @param description: The description for the NFT metadata
-        /// @param thumbnail: The thumbnail for the NFT metadata
-        /// @param royalties: An array of Royalty structs, see MetadataViews docs 
-        ///     
-        pub fun mintNFT(
-            recipient: &{NonFungibleToken.CollectionPublic},
-            name: String,
-            description: String,
-            thumbnail: String,
-            royalties: [MetadataViews.Royalty]
-        ) {
-            let metadata: {String: AnyStruct} = {}
-            let currentBlock = getCurrentBlock()
-            metadata["mintedBlock"] = currentBlock.height
-            metadata["mintedTime"] = currentBlock.timestamp
-            metadata["minter"] = recipient.owner!.address
-
-            // this piece of metadata will be used to show embedding rarity into a trait
-            metadata["foo"] = "bar"
-
-            // create a new NFT
-            var newNFT <- create NFT(
-                id: ExcluenceNFT.totalSupply,
-                name: name,
-                description: description,
-                thumbnail: thumbnail,
-                royalties: royalties,
-                metadata: metadata,
-            )
-
-            // deposit it in the recipient's account using their reference
-            recipient.deposit(token: <-newNFT)
-
-            ExcluenceNFT.totalSupply = ExcluenceNFT.totalSupply + UInt64(1)
-        }
+    pub fun getAllComponents(): [Component] {
+        return self.components.values
     }
+
+    // returns all the projects in the contract
+    pub fun getAllProjectsData(): [{String: AnyStruct}] {
+        let projects: [{String: AnyStruct}] = []
+        for projectID in self.projects.keys {
+            let queryProjectData = QueryProjectData(projectID)
+            projects.append(queryProjectData.getFullData())
+        }
+        return  projects
+    }
+
+    pub fun getQueryProjectData(projectID: UInt32): QueryProjectData {
+        return QueryProjectData(projectID)
+    }
+
+    pub fun getComponentIDsInProject(projectID: UInt32): [UInt32] {
+        return QueryProjectData(projectID).getComponents()
+    }
+
+    // returns a boolean that indicated is a Project/Component combo is retired
+    // Returns true if it is retired
+    pub fun isEditionRetired(projectID: UInt32, componentID: UInt32): Bool {
+        let queryProjectData = self.getQueryProjectData(projectID: projectID)
+        return queryProjectData.getRetired()[componentID] == true
+    }
+
 
     /// Function that resolves a metadata view for this contract.
     ///
@@ -951,7 +991,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         self.totalSupply = 0
         self.components = {}
         self.projects <- {}
-        self.nextComponentID = 0
+        self.nextComponentID = 1
         self.nextProjectID = 0
         self.externalBaseURL = ""
 
@@ -959,7 +999,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         // Set the named paths
         self.CollectionStoragePath = /storage/ExcluenceNFTCollection
         self.CollectionPublicPath = /public/ExcluenceNFTCollection
-        self.MinterStoragePath = /storage/ExcluenceNFTMinter
+        self.AdminStoragePath = /storage/ExcluenceNFTAdmin
 
         // Create a Collection resource and save it to storage
         let collection <- create Collection()
@@ -973,11 +1013,25 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
 
         //TODO: Add Admin capability and create Project 0
+        let admin <- create Admin()
+        admin.createProject(
+            name: self.account.address.toString(), 
+            description: "The default project on Excluence NFT", 
+            externalURL: MetadataViews.ExternalURL(""), 
+            squareImage: MetadataViews.Media(
+                file: MetadataViews.HTTPFile(url: ""),
+                mediaType: "image/*"
+            ), 
+            bannerImage: MetadataViews.Media(
+                file: MetadataViews.HTTPFile(url: ""),
+                mediaType: "image/*"
+            ),
+            socials: {},
+            royalties: []
+        )
+        self.account.save(<- admin, to: self.AdminStoragePath)
 
-        // Create a Minter resource and save it to storage
-        let minter <- create NFTMinter()
-        self.account.save(<-minter, to: self.MinterStoragePath)
-
+   
         emit ContractInitialized()
     }
 }
