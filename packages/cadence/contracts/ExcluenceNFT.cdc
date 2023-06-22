@@ -177,11 +177,6 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     }
 
 
-    
-
-
-
-
 
     // Project is a resource type that contains the functions to add and remove
     // Components from a project and mint the NFTs
