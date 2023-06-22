@@ -13,7 +13,7 @@ import NonFungibleToken from "./interfaces/NonFungibleToken.interface.cdc"
 import MetadataViews from "./interfaces/MetadataViews.interface.cdc"
 import ViewResolver from "./interfaces/ViewResolver.interface.cdc"
 
-pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
+pub contract ExcluenceNFT: NonFungibleToken {
 
 
     /// The event that is emitted when the contract is created
@@ -59,31 +59,321 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
     pub let AdminStoragePath: StoragePath
+    pub let NFTConciergeStoragePath: StoragePath
+    pub let NFTConciergePublicPath: PublicPath
+    pub let NFTConciergePrivatePath: PrivatePath
 
     /// Total supply of ExcluenceNFTs in existence
-    pub var totalSupply: UInt64
-
-    // Variable size dictionary of Component structs
-    access(self) var components: {UInt32: Component}
+    // pub var totalSupply: UInt64
     
-    // Variable size dictionary of Project resources
-    access(self) var projects: @{UInt32: Project}
 
-    // The ID that is used to create Components.
-    // Every time a Component is created, componentID is assigned
-    // to the new Component's ID and then is incremented by 1.
-    pub var nextComponentID: UInt32
 
-    // The ID that is used to create Projects. Every time a Project is 
-    // created projectID is assigned to the new project's ID and then is
-    // incremented by 1
-    // A default project will be created at index '0' at the time if initialization
-    // all the components that are not assigned to any explicit project
-    pub var nextProjectID: UInt32
+    pub resource interface ExcluenceNFTConciergePublic {
+        /// Total supply of ExcluenceNFTs in existence
+        pub var totalSupply: UInt64
+        // The ID that is used to create Components.
+        // Every time a Component is created, componentID is assigned
+        // to the new Component's ID and then is incremented by 1.
+        pub var nextComponentID: UInt32
+        // The ID that is used to create Projects. Every time a Project is 
+        // created projectID is assigned to the new project's ID and then is
+        // incremented by 1
+        // A default project will be created at index '0' at the time if initialization
+        // all the components that are not assigned to any explicit project
+        pub var nextProjectID: UInt32
 
-    // External Base URL for any NFTs created through this contract
-    // e.g https://example.com/{nft.id} will direct users to nft's own page
-    pub var externalBaseURL: String
+        // External Base URL for any NFTs created through this contract
+        // e.g https://example.com/{nft.id} will direct users to nft's own page
+        pub var externalBaseURL: String
+
+        pub fun hasComponentID(_ componentID: UInt32): Bool
+        pub fun getComponent(_ componentID: UInt32): Component?
+        pub fun hasProject(_ projectID: UInt32): Bool
+        pub fun getAllComponents(): [Component]
+        pub fun getAllProjectsData(): [{String: AnyStruct}]
+        pub fun getQueryProjectData(projectID: UInt32): QueryProjectData
+        pub fun getComponentIDsInProject(projectID: UInt32): [UInt32]
+        pub fun isEditionRetired(projectID: UInt32, componentID: UInt32): Bool
+        pub fun resolveProjectView(_ view: Type, projectID: UInt32): AnyStruct?
+        pub fun borrowProject(_ projectID: UInt32): &Project{ProjectPublic}?
+        pub fun resolveView(_ view: Type): AnyStruct?
+        pub fun getViews(): [Type]
+
+    }
+
+    pub resource interface ExcluenceNFTConciergePrivate {
+        // Variable size dictionary of Component structs
+        access(contract) var components: {UInt32: Component}
+    
+        // Variable size dictionary of Project resources
+        access(contract) var projects: @{UInt32: Project}
+
+        pub fun incrementTotalSupply()
+        pub fun incrementNextComponentID()
+
+        pub fun borrowProjectUpdatable(_ projectID: UInt32): &Project?
+        
+        pub fun setComponentInDict(componentID: UInt32, component: Component)
+        pub fun incrementNextProjectID()
+        pub fun setProjectInDict(projectID: UInt32, project: @Project)
+        pub fun createComponent(
+            name: String?,
+            description: String?,
+            thumbnail: AnyStruct{MetadataViews.File},
+            medias: [AnyStruct{MetadataViews.File}],
+            traits: MetadataViews.Traits?,
+            royalties: [MetadataViews.Royalty]
+        ): UInt32
+        pub fun updateComponentDesc(componentID: UInt32, description: String): UInt32
+        pub fun createProject(
+            name: String,
+            description: String,
+            externalURL: MetadataViews.ExternalURL,
+            squareImage: MetadataViews.Media,
+            bannerImage: MetadataViews.Media,
+            socials: {String: MetadataViews.ExternalURL},
+            royalties: [MetadataViews.Royalty]
+        ): UInt32
+        pub fun updateProjectData(projectID: UInt32, 
+            description: String,
+            externalURL: MetadataViews.ExternalURL,
+            squareImage: MetadataViews.Media,
+            bannerImage: MetadataViews.Media,
+            socials: {String: MetadataViews.ExternalURL})
+        pub fun lockProject(projectID: UInt32)
+        
+        
+    }
+
+
+    pub resource ExcluenceNFTConcierge: ExcluenceNFTConciergePublic, ExcluenceNFTConciergePrivate {
+        /// Total supply of ExcluenceNFTs in existence
+        pub var totalSupply: UInt64
+        // The ID that is used to create Components.
+        // Every time a Component is created, componentID is assigned
+        // to the new Component's ID and then is incremented by 1.
+        pub var nextComponentID: UInt32
+        // The ID that is used to create Projects. Every time a Project is 
+        // created projectID is assigned to the new project's ID and then is
+        // incremented by 1
+        // A default project will be created at index '0' at the time if initialization
+        // all the components that are not assigned to any explicit project
+        pub var nextProjectID: UInt32
+
+        // External Base URL for any NFTs created through this contract
+        // e.g https://example.com/{nft.id} will direct users to nft's own page
+        pub var externalBaseURL: String
+
+        // Variable size dictionary of Component structs
+        access(contract) var components: {UInt32: Component}
+    
+        // Variable size dictionary of Project resources
+        access(contract) var projects: @{UInt32: Project}
+
+        destroy () {
+            destroy self.projects
+        }
+
+        pub fun hasComponentID(_ componentID: UInt32): Bool {
+            return self.components[componentID] != nil
+        }
+
+        pub fun getComponent(_ componentID: UInt32): Component? {
+            return self.components[componentID]
+        }
+
+        pub fun hasProject(_ projectID: UInt32): Bool {
+            return self.projects[projectID] != nil
+        }
+
+        pub fun borrowProject(_ projectID: UInt32): &Project {
+            let projectRef =  (&self.projects[projectID] as &Project?)! as &Project
+            return projectRef
+        }
+
+        pub fun getAllComponents(): [Component] {
+            return self.components.values
+        }
+
+        pub fun getAllProjectsData(): [{String: AnyStruct}] {
+            let projects: [{String: AnyStruct}] = []
+            for projectID in self.projects.keys {
+                let queryProjectData = QueryProjectData(
+                    self.borrowProject(projectID)
+                )
+                projects.append(queryProjectData.getFullData())
+            }
+            return  projects
+        }
+
+        pub fun getQueryProjectData(projectID: UInt32): QueryProjectData {
+            return QueryProjectData(self.borrowProject(projectID)!)
+        }
+        pub fun getComponentIDsInProject(projectID: UInt32): [UInt32] {
+            return self.getQueryProjectData(projectID: projectID).getComponents()
+        }
+        pub fun isEditionRetired(projectID: UInt32, componentID: UInt32): Bool {
+            let queryProjectData = self.getQueryProjectData(projectID: projectID)
+            return queryProjectData.getRetired()[componentID] == true
+        }
+
+        pub fun resolveProjectView(_ view: Type, projectID: UInt32): AnyStruct? {
+            switch view {
+                case Type<MetadataViews.NFTCollectionData>():
+                    return MetadataViews.NFTCollectionData(
+                        storagePath: ExcluenceNFT.CollectionStoragePath,
+                        publicPath: ExcluenceNFT.CollectionPublicPath,
+                        providerPath: /private/ExcluenceNFTCollection,
+                        publicCollection: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic}>(),
+                        publicLinkedType: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+                        providerLinkedType: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
+                        createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
+                            return <-ExcluenceNFT.createEmptyCollection()
+                        })
+                    )
+                case Type<MetadataViews.NFTCollectionDisplay>():
+                    let queryProjectData = self.getQueryProjectData(projectID: projectID)
+                    return queryProjectData.getNFTCollectionDisplay()
+            }
+            return  nil
+        }
+
+        /// Function that returns all the Metadata Views implemented by a Non Fungible Token
+        ///
+        /// @return An array of Types defining the implemented views. This value will be used by
+        ///         developers to know which parameter to pass to the resolveView() method.
+        ///
+        pub fun getViews(): [Type] {
+            return [
+                Type<MetadataViews.NFTCollectionData>(),
+                Type<MetadataViews.NFTCollectionDisplay>()
+            ]
+        }
+
+
+        access(self) fun getNFTConciergeCapabilityPublic(): Capability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}> {
+            return self.owner!.getCapability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>(
+                    ExcluenceNFT.NFTConciergePublicPath)!
+        }
+
+
+        // Creates a new Component struct
+        // and stores it in the Components dictionary and increase the nextComponentID
+        pub fun createComponent(
+            name: String?,
+            description: String?,
+            thumbnail: AnyStruct{MetadataViews.File},
+            medias: [AnyStruct{MetadataViews.File}],
+            traits: MetadataViews.Traits?,
+            royalties: [MetadataViews.Royalty]
+        ): UInt32 {
+            let component = Component(
+                componentID: self.nextComponentID,
+                name: name,
+                thumbnail: thumbnail,
+                description: description,
+                medias: medias,
+                traits: traits,
+                royalties: royalties,
+            )
+            self.incrementNextComponentID()
+            self.setComponentInDict(componentID: component.componentID, component: component)
+            return component.componentID
+        }
+
+        pub fun updateComponentDesc(componentID: UInt32, description: String): UInt32 {
+            let component =  self.getComponent(componentID)
+                ?? panic("componentID does not exist.")
+            return component.updateDescription(
+                conciergeRef: &self as &ExcluenceNFTConcierge,
+                desc: description
+            )
+        }
+
+        pub fun createProject(
+            name: String,
+            description: String,
+            externalURL: MetadataViews.ExternalURL,
+            squareImage: MetadataViews.Media,
+            bannerImage: MetadataViews.Media,
+            socials: {String: MetadataViews.ExternalURL},
+            royalties: [MetadataViews.Royalty]
+        ): UInt32 {
+            var project <- create Project(
+                projectID: self.nextProjectID,
+                name: name,
+                description: description,
+                externalURL: externalURL,
+                squareImage: squareImage,
+                bannerImage: bannerImage,
+                socials: socials,
+                royalties: royalties
+            )
+            let projectID = self.nextProjectID
+            self.incrementNextProjectID()
+            self.setProjectInDict(projectID: projectID, project: <- project)
+            return projectID
+        }
+
+        pub fun updateProjectData(projectID: UInt32, 
+            description: String,
+            externalURL: MetadataViews.ExternalURL,
+            squareImage: MetadataViews.Media,
+            bannerImage: MetadataViews.Media,
+            socials: {String: MetadataViews.ExternalURL}
+                
+            ) {
+            pre {
+                self.hasProject(projectID): "Cannot update project: This project doesn't exist."
+            }
+            let projectRef = self.borrowProjectUpdatable(projectID)!
+            projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
+        }
+
+        pub fun lockProject(projectID: UInt32) {
+            pre {
+                self.hasProject(projectID): "Cannot update project: This project doesn't exist."
+            }
+            let projectRef = self.borrowProjectUpdatable(projectID)!
+            projectRef.lock()
+        }
+
+        pub fun createNewNFTConcierge(): @ExcluenceNFTConcierge {
+            return <- create ExcluenceNFTConcierge()
+        }
+
+        init() {
+            self.totalSupply = 0
+            self.components = {}
+            self.projects <- {}
+            self.nextComponentID = 1
+            self.nextProjectID = 0
+            self.externalBaseURL = ""
+
+            
+
+            // self.createProject(
+            //     name: self.owner!.address.toString(), 
+            //     description: "The default project on Excluence NFT", 
+            //     externalURL: MetadataViews.ExternalURL(""), 
+            //     squareImage: MetadataViews.Media(
+            //         file: MetadataViews.HTTPFile(url: ""),
+            //         mediaType: "image/*"
+            //     ), 
+            //     bannerImage: MetadataViews.Media(
+            //         file: MetadataViews.HTTPFile(url: ""),
+            //         mediaType: "image/*"
+            //     ),
+            //     socials: {},
+            //     royalties: []
+            // )
+
+        }
+
+
+    }
+
+
 
 
 
@@ -124,24 +414,43 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
     }
 
+
     /// Component is struct that holds metadata associated
     /// with a specific future mintable NFT
-    pub struct Component {
+    pub struct interface ComponentPublic {
         // The unique ID for the Component
         pub let componentID: UInt32
         pub let name: String? 
-        access(contract) var description: String?
-        access(contract) let thumbnail: AnyStruct{MetadataViews.File}
-        access(contract) let medias: [AnyStruct{MetadataViews.File}]
-        access(contract) let traits: MetadataViews.Traits
+        pub var description: String?
+        pub let thumbnail: AnyStruct{MetadataViews.File}
+        pub let medias: [AnyStruct{MetadataViews.File}]
+        pub let traits: MetadataViews.Traits
         // The royalties associated with component
         // Project and Component both can have royalties defined
         // and Component's royalties is prefered over Project's royalties when minting NFT
-        access(contract) var royalties: [MetadataViews.Royalty]
+        pub var royalties: [MetadataViews.Royalty]
+
+    }
+
+    /// Component is struct that holds metadata associated
+    /// with a specific future mintable NFT
+    pub struct Component: ComponentPublic {
+        // The unique ID for the Component
+        pub let componentID: UInt32
+        pub let name: String? 
+        pub var description: String?
+        pub let thumbnail: AnyStruct{MetadataViews.File}
+        pub let medias: [AnyStruct{MetadataViews.File}]
+        pub let traits: MetadataViews.Traits
+        // The royalties associated with component
+        // Project and Component both can have royalties defined
+        // and Component's royalties is prefered over Project's royalties when minting NFT
+        pub var royalties: [MetadataViews.Royalty]
 
         
 
         init(
+            componentID: UInt32,
             name: String?,
             thumbnail: AnyStruct{MetadataViews.File},
             description: String?,
@@ -149,7 +458,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             traits: MetadataViews.Traits?,
             royalties: [MetadataViews.Royalty]
         ) {
-            self.componentID = ExcluenceNFT.nextComponentID
+            self.componentID = componentID
             self.traits = traits ?? MetadataViews.Traits([])
             self.name = name
             self.thumbnail = thumbnail
@@ -168,18 +477,37 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
         }
 
-        pub fun updateDescription(desc: String): UInt32 {
+        pub fun updateDescription(
+            conciergeRef: &ExcluenceNFTConcierge,
+            desc: String): UInt32 {
             self.description = desc
-            ExcluenceNFT.components[self.componentID] = self
+            conciergeRef.setComponentInDict(componentID: self.componentID, component: self)
             return self.componentID
         }
 
     }
 
 
-    
+    pub resource interface ProjectPublic {
+        pub let projectID: UInt32
+        pub var locked: Bool
+        pub var numberMintedPerComponent: {UInt32: UInt64}
+        pub let name: String
+        pub var description: String
+        pub var externalURL: MetadataViews.ExternalURL
+        pub var squareImage: MetadataViews.Media
+        pub var bannerImage: MetadataViews.Media
+        pub var socials: {String: MetadataViews.ExternalURL}
+        pub var royalties: [MetadataViews.Royalty]
+
+        pub fun getComponents(): [UInt32]
+        pub fun getRetired(): {UInt32: Bool}
+        pub fun getNumMintedPerComponent(): {UInt32: UInt64}
+        pub fun getNFTCollectionDisplay(): MetadataViews.NFTCollectionDisplay
+        pub fun getRoyalties(): [MetadataViews.Royalty]
 
 
+    }
 
 
 
@@ -193,7 +521,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     // 
     // Admin can also retire a Component that
 
-    pub resource Project {
+    pub resource Project: ProjectPublic {
 
         // Unique ID for the set
         pub let projectID: UInt32
@@ -201,17 +529,17 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         // Array of components that are part of this Project
         // When a component is added to the project, its ID gets appended here
         // The ID does not get removed from this array when a component is retired
-        access(contract) var components: [UInt32]
+        access(self) var components: [UInt32]
 
         // Map of Component IDs that Indicate if a component in this Project can be minted
         // When a Component is added in a Project, it is mapped to false (not retired)
         // When a Play is retired, this is set to true and cannot be changed
-        access(contract) var retired: {UInt32: Bool}
+        access(self) var retired: {UInt32: Bool}
 
         // Map of Component IDs and index at which the component was added to the project
         // When a Component is added in a Project, it is mapped to `self.components.length`
         // The number will be used to create the complete name `projectName: #{componentIndexInProject}
-        access(contract) var componentIndexInProject: {UInt32: Int}
+        access(self) var componentIndexInProject: {UInt32: Int}
 
         // Indicated if the Project is currently locked.
         // When the project is created, it is unlocked
@@ -233,25 +561,25 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         pub let name: String
 
         // Description that should be used to give an overview of this collection.
-        access(contract) var description: String
+        pub var description: String
 
         // External link to a URL to view more information about this collection.
-        access(contract) var externalURL: MetadataViews.ExternalURL
+        pub var externalURL: MetadataViews.ExternalURL
 
         // Square-sized image to represent this collection.
-        access(contract) var squareImage: MetadataViews.Media
+        pub var squareImage: MetadataViews.Media
 
         // Banner-sized image for this collection, recommended to have a size near 1200x630.
-        access(contract) var bannerImage: MetadataViews.Media
+        pub var bannerImage: MetadataViews.Media
 
         // Social links to reach this collection's social homepages.
         // Possible keys may be "instagram", "twitter", "discord", etc.
-        access(contract) var socials: {String: MetadataViews.ExternalURL}
+        pub var socials: {String: MetadataViews.ExternalURL}
 
         // The royalties associated with Project
         // Project and Component both can have royalties defined
         // and Component's royalties is prefered over Project's royalties when minting NFT
-        access(contract) var royalties: [MetadataViews.Royalty]
+        pub var royalties: [MetadataViews.Royalty]
 
 
 
@@ -307,9 +635,12 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         //
         // The access is limited to the contract which finally be utilized by Admin.
         // Only the Admin can add components to project
-        pub fun addComponent(componentID: UInt32) {
+        pub fun addComponent(
+            conciergeRef: &ExcluenceNFTConcierge,
+            componentID: UInt32
+        ) {
             pre {
-                ExcluenceNFT.components[componentID] != nil: "Cannot add the Component to Project: Component doesn't exist."
+                conciergeRef.hasComponentID(componentID): "Cannot add the Component to Project: Component doesn't exist."
                 !self.locked: "Cannot add the Component to the Project after the project has been locked"
                 self.numberMintedPerComponent[componentID] == nil: "The component has already been added to the project"
             }
@@ -326,9 +657,9 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
 
         // addComponents adds multiple Component to the project at once
-        pub fun addComponents(componentIDs: [UInt32]) {
+        pub fun addComponents(conciergeRef: &ExcluenceNFTConcierge, componentIDs: [UInt32]) {
             for componentID in componentIDs {
-                self.addComponent(componentID: componentID)
+                self.addComponent(conciergeRef: conciergeRef,componentID: componentID)
             }
         }
 
@@ -366,7 +697,10 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
 
         // Mints a new NFT and returns the newly minted NFT
-        pub fun mintNFT(componentID: UInt32): @NFT {
+        pub fun mintNFT( 
+            conciergeCapability: Capability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>,
+            componentID: UInt32
+        ): @NFT {
             pre {
                 self.retired[componentID] != nil: "Cannot mint the NFT: This component doesn't exist."
                 !self.retired[componentID]!: "Cannot min the NFT: This component has been retired."
@@ -374,20 +708,25 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
             let numInComponent = self.numberMintedPerComponent[componentID] ?? 0
             let nft <- create NFT(
+                conciergeCapability: conciergeCapability,
                 projectID: self.projectID,
                 componentID: componentID,
-                serialNumber: numInComponent + 1 
+                serialNumber: numInComponent + 1,
+                
             )
             self.numberMintedPerComponent[componentID] = numInComponent + 1
             return  <- nft
         }
 
         // mints and arbitrary quantity of NFTs
-        pub fun batchMintNFT(componentID: UInt32, quantity: UInt64): @Collection {
+        pub fun batchMintNFT(
+            conciergeCapability: Capability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>,
+            componentID: UInt32, quantity: UInt64
+        ): @Collection {
             let collection <- create Collection()
             var i: UInt64 = 0
             while i < quantity {    
-                collection.deposit(token: <- self.mintNFT(componentID: componentID))
+                collection.deposit(token: <- self.mintNFT( conciergeCapability: conciergeCapability,componentID: componentID))
                 i = i + 1
             }
 
@@ -424,15 +763,32 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     }
 
 
-    pub struct QueryProjectData {
+    pub struct interface QueryProjectDataPublic {
 
-        pub let projectRef: &Project
+        pub let projectRef: &Project{ProjectPublic}
 
-        init(_ projectID: UInt32) {
-            pre {
-                ExcluenceNFT.projects[projectID] != nil: "This project with provided ID does not exist."
-            }
-            self.projectRef = (&ExcluenceNFT.projects[projectID] as &Project?)! as &Project
+        pub fun isLocked(): Bool 
+
+        pub fun getComponents(): [UInt32] 
+
+        pub fun getRetired(): {UInt32: Bool}
+
+        pub fun getNumberMintedPerComponent(): {UInt32: UInt64} 
+
+        pub fun getNFTCollectionDisplay(): MetadataViews.NFTCollectionDisplay 
+
+        pub fun getRoyalties(): [MetadataViews.Royalty] 
+
+        pub fun getFullData(): {String: AnyStruct} 
+    }
+
+
+    pub struct QueryProjectData: QueryProjectDataPublic {
+
+        pub let projectRef: &Project{ProjectPublic}
+
+        init(_ projectRef: &ExcluenceNFT.Project{ProjectPublic}) {
+            self.projectRef = projectRef
         }
 
         pub fun isLocked(): Bool {
@@ -516,40 +872,44 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         pub let thumbnail: AnyStruct{MetadataViews.File}
         pub let medias: [AnyStruct{MetadataViews.File}]
         access(self) let traits: MetadataViews.Traits
+        access(self) let conciergeCapability: Capability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>
+        access(self) let component: Component
     
         init(
+            conciergeCapability: Capability<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>,
             projectID: UInt32,
             componentID: UInt32,
             serialNumber: UInt64
         ) {
             pre {
-                ExcluenceNFT.components[componentID] != nil: "Cannot mint NFT: Component does not exist."
+                conciergeCapability.borrow()!.hasComponentID(componentID): "Cannot mint NFT: Component does not exist."
             }
-            self.id = ExcluenceNFT.totalSupply
+            let conciergeRef = conciergeCapability.borrow()!
+            self.id = conciergeRef.totalSupply
             self.projectID = projectID
             self.componentID = componentID
+            self.component = conciergeRef.getComponent(componentID)!
+            self.conciergeCapability = conciergeCapability
             self.serialNumber  = serialNumber
 
-            let component = ExcluenceNFT.components[componentID]!
-            
             let nftUtils = NFTUtilsFuncs(
                 id: self.id,
                 serialNumber: self.serialNumber,
-                component: component
+                component: self.component
             )
 
             let block = getCurrentBlock()
 
-            let projectRef = (&ExcluenceNFT.projects[projectID!] as &Project?)!
-            if projectRef.projectID == 0 && component.name == nil {
+            let projectRef = conciergeRef.borrowProject(projectID)!
+            if projectRef.projectID == 0 && self.component.name == nil {
                 panic("Cannot mint NFT: Component must have a name")
             }
-            self.name = component.name ?? projectRef.name
+            self.name = self.component.name ?? projectRef.name
             let _desc = projectRef.projectID != 0 ? projectRef.description : nftUtils.buildDescription(name: self.name)
-            self.description = component.description ?? _desc
-            self.thumbnail = component.thumbnail
-            self.medias = component.medias
-            self.traits = component.traits
+            self.description = self.component.description ?? _desc
+            self.thumbnail = self.component.thumbnail
+            self.medias = self.component.medias
+            self.traits = self.component.traits
             self.traits.addTrait(
                 MetadataViews.Trait(
                     name: "mintedTime", 
@@ -591,15 +951,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
 
 
-        pub fun getEditionName(component: Component, projectRef: &Project ): String {
-            let projectName = projectRef.name
-            let editionName = projectName.concat(": #").concat(component.componentID.toString())
-            return  editionName
-        }
-
-        pub fun getEditionMax(projectRef: &Project, componentID: UInt32): UInt64? {
-            return projectRef.getNumMintedPerComponent()[componentID]
-        }
+        
 
 
         /// Function that resolves a metadata view for this token.
@@ -608,8 +960,10 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         /// @return A structure representing the requested view.
         ///
         pub fun resolveView(_ view: Type): AnyStruct? {
-            let component = ExcluenceNFT.components[self.componentID]!
-            let projectRef = (&ExcluenceNFT.projects[self.projectID] as &Project?)!
+            let component = self.component
+            let conciergeRef = self.conciergeCapability
+                                            .borrow()!
+            let projectRef = conciergeRef.borrowProject(self.projectID)!
             switch view {
                 case Type<MetadataViews.Display>():
                     return MetadataViews.Display(
@@ -646,7 +1000,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
                             : projectRef.royalties
                     )
                 case Type<MetadataViews.ExternalURL>():
-                    return MetadataViews.ExternalURL(ExcluenceNFT.externalBaseURL.concat(self.id.toString()))
+                    return MetadataViews.ExternalURL(conciergeRef.externalBaseURL.concat(self.id.toString()))
                 case Type<MetadataViews.NFTCollectionData>():
                     return MetadataViews.NFTCollectionData(
                         storagePath: ExcluenceNFT.CollectionStoragePath,
@@ -670,6 +1024,15 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
         // getEditionName NFT's edition name is a combination of the NFT's project Name and component ID
         // `setName: #componentID
+        pub fun getEditionName(component: Component, projectRef: &Project{ProjectPublic} ): String {
+            let projectName = projectRef.name
+            let editionName = projectName.concat(": #").concat(component.componentID.toString())
+            return  editionName
+        }
+
+        pub fun getEditionMax(projectRef: &Project{ProjectPublic}, componentID: UInt32): UInt64? {
+            return projectRef.getNumMintedPerComponent()[componentID]
+        }
 
     }
 
@@ -802,105 +1165,6 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
     }
 
-    /// Admin is special authorization resource that
-    // allows the owner to perform important functions to modify
-    // various aspects of the Components, Projects and NFTs
-    pub resource Admin {
-        
-        // Creates a new Component struct
-        // and stores it in the Components dictionary and increase the nextComponentID
-        pub fun createComponent(
-            name: String?,
-            description: String?,
-            thumbnail: AnyStruct{MetadataViews.File},
-            medias: [AnyStruct{MetadataViews.File}],
-            traits: MetadataViews.Traits?,
-            royalties: [MetadataViews.Royalty]
-        ): UInt32 {
-            let component = Component(
-                name: name,
-                thumbnail: thumbnail,
-                description: description,
-                medias: medias,
-                traits: traits,
-                royalties: royalties,
-            )
-            ExcluenceNFT.nextComponentID = ExcluenceNFT.nextComponentID + UInt32(1)
-            ExcluenceNFT.components[component.componentID] = component
-            return  component.componentID
-        }
-
-
-        pub fun updateComponentDesc(componentID: UInt32, description: String): UInt32 {
-            let component =  ExcluenceNFT.components[componentID] 
-                ?? panic("componentID does not exist.")
-            return component.updateDescription(desc: description)
-        }
-
-        pub fun createProject(
-            name: String,
-            description: String,
-            externalURL: MetadataViews.ExternalURL,
-            squareImage: MetadataViews.Media,
-            bannerImage: MetadataViews.Media,
-            socials: {String: MetadataViews.ExternalURL},
-            royalties: [MetadataViews.Royalty]
-        ): UInt32 {
-            var project <- create Project(
-                projectID: ExcluenceNFT.nextProjectID,
-                name: name,
-                description: description,
-                externalURL: externalURL,
-                squareImage: squareImage,
-                bannerImage: bannerImage,
-                socials: socials,
-                royalties: royalties
-            )
-            let projectID = ExcluenceNFT.nextProjectID
-            ExcluenceNFT.nextProjectID = ExcluenceNFT.nextProjectID + UInt32(1)
-            ExcluenceNFT.projects[project.projectID] <-! project
-            return projectID
-        }
-
-        pub fun updateProjectData(projectID: UInt32, 
-            description: String,
-            externalURL: MetadataViews.ExternalURL,
-            squareImage: MetadataViews.Media,
-            bannerImage: MetadataViews.Media,
-            socials: {String: MetadataViews.ExternalURL}
-                
-            ) {
-            pre {
-                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
-            }
-            let projectRef = self.borrowProject(projectID: projectID)
-            projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
-        }
-
-        // borrowProject returens a reference to a project in the ExcluenceNFT
-        // contract so that the admin can call methods on it
-        pub fun borrowProject(projectID: UInt32): &Project {
-            pre {
-                ExcluenceNFT.projects[projectID] != nil: "Cannot borrow Project: The project doesn't exist."
-            }
-            return (&ExcluenceNFT.projects[projectID] as &Project?)!
-
-        }
-
-
-        pub fun lockProject(projectID: UInt32) {
-            pre {
-                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
-            }
-            let projectRef = self.borrowProject(projectID: projectID)
-            projectRef.lock()
-        }
-
-        pub fun createNewAdmin(): @Admin {
-            return  <- create Admin()
-        }
-
-    }
 
     
 
@@ -912,94 +1176,17 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         return <- create Collection()
     }
 
-    pub fun getAllComponents(): [Component] {
-        return self.components.values
-    }
-
-    // returns all the projects in the contract
-    pub fun getAllProjectsData(): [{String: AnyStruct}] {
-        let projects: [{String: AnyStruct}] = []
-        for projectID in self.projects.keys {
-            let queryProjectData = QueryProjectData(projectID)
-            projects.append(queryProjectData.getFullData())
-        }
-        return  projects
-    }
-
-    pub fun getQueryProjectData(projectID: UInt32): QueryProjectData {
-        return QueryProjectData(projectID)
-    }
-
-    pub fun getComponentIDsInProject(projectID: UInt32): [UInt32] {
-        return QueryProjectData(projectID).getComponents()
-    }
-
-    // returns a boolean that indicated is a Project/Component combo is retired
-    // Returns true if it is retired
-    pub fun isEditionRetired(projectID: UInt32, componentID: UInt32): Bool {
-        let queryProjectData = self.getQueryProjectData(projectID: projectID)
-        return queryProjectData.getRetired()[componentID] == true
-    }
-
-
-    /// Function that resolves a metadata view for this contract.
-    ///
-    /// @param view: The Type of the desired view.
-    /// @return A structure representing the requested view.
-    ///
-    pub fun resolveView(_ view: Type): AnyStruct? {
-        return self.resolveProjectView(view, projectID: 0)
-    }
-
-    pub fun resolveProjectView(_ view: Type, projectID: UInt32): AnyStruct? {
-        switch view {
-            case Type<MetadataViews.NFTCollectionData>():
-                return MetadataViews.NFTCollectionData(
-                    storagePath: ExcluenceNFT.CollectionStoragePath,
-                    publicPath: ExcluenceNFT.CollectionPublicPath,
-                    providerPath: /private/ExcluenceNFTCollection,
-                    publicCollection: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic}>(),
-                    publicLinkedType: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
-                    providerLinkedType: Type<&ExcluenceNFT.Collection{ExcluenceNFT.ExcluenceNFTCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
-                    createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
-                        return <-ExcluenceNFT.createEmptyCollection()
-                    })
-                )
-            case Type<MetadataViews.NFTCollectionDisplay>():
-                let projectRef = (&ExcluenceNFT.projects[projectID] as &Project?)! as &Project
-                return projectRef.getNFTCollectionDisplay()
-        }
-        return  nil
-    }
-
-    /// Function that returns all the Metadata Views implemented by a Non Fungible Token
-    ///
-    /// @return An array of Types defining the implemented views. This value will be used by
-    ///         developers to know which parameter to pass to the resolveView() method.
-    ///
-    pub fun getViews(): [Type] {
-        return [
-            Type<MetadataViews.NFTCollectionData>(),
-            Type<MetadataViews.NFTCollectionDisplay>()
-        ]
-    }
-
     init(
         
     ) {
-        // Initialize the total supply
-        self.totalSupply = 0
-        self.components = {}
-        self.projects <- {}
-        self.nextComponentID = 1
-        self.nextProjectID = 0
-        self.externalBaseURL = ""
-
-
+ 
         // Set the named paths
         self.CollectionStoragePath = /storage/ExcluenceNFTCollection
         self.CollectionPublicPath = /public/ExcluenceNFTCollection
         self.AdminStoragePath = /storage/ExcluenceNFTAdmin
+        self.NFTConciergePublicPath = /public/NFTConciergePublic
+        self.NFTConciergePrivatePath = /private/NFTConciergePrivate
+        self.NFTConciergeStoragePath = /storage/NFTConciergeStorage
 
         // Create a Collection resource and save it to storage
         let collection <- create Collection()
@@ -1011,25 +1198,32 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             target: self.CollectionStoragePath
         )
 
-
-        //TODO: Add Admin capability and create Project 0
-        let admin <- create Admin()
-        admin.createProject(
-            name: self.account.address.toString(), 
-            description: "The default project on Excluence NFT", 
-            externalURL: MetadataViews.ExternalURL(""), 
-            squareImage: MetadataViews.Media(
-                file: MetadataViews.HTTPFile(url: ""),
-                mediaType: "image/*"
-            ), 
-            bannerImage: MetadataViews.Media(
-                file: MetadataViews.HTTPFile(url: ""),
-                mediaType: "image/*"
-            ),
-            socials: {},
-            royalties: []
+        // Create 
+        let concierge <- create ExcluenceNFTConcierge()
+        self.account.save(<-concierge, to: self.NFTConciergeStoragePath)
+        self.account.link<&ExcluenceNFTConcierge{ExcluenceNFTConciergePublic}>(self.NFTConciergePublicPath, 
+            target: self.NFTConciergeStoragePath
         )
-        self.account.save(<- admin, to: self.AdminStoragePath)
+
+
+        // Add Admin capability and create Project 0
+        // let admin <- create Admin()
+        // admin.createProject(
+        //     name: self.account.address.toString(), 
+        //     description: "The default project on Excluence NFT", 
+        //     externalURL: MetadataViews.ExternalURL(""), 
+        //     squareImage: MetadataViews.Media(
+        //         file: MetadataViews.HTTPFile(url: ""),
+        //         mediaType: "image/*"
+        //     ), 
+        //     bannerImage: MetadataViews.Media(
+        //         file: MetadataViews.HTTPFile(url: ""),
+        //         mediaType: "image/*"
+        //     ),
+        //     socials: {},
+        //     royalties: []
+        // )
+        // self.account.save(<- admin, to: self.AdminStoragePath)
 
    
         emit ContractInitialized()
