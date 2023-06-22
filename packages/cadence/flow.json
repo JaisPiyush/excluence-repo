@@ -10,5 +10,9 @@
 			"address": "f8d6e0586b0a20c7",
 			"key": "27fdd561001aa0e819a1870b7b0036de039f9d4efe7cbe5f1d4f773430e7df6a"
 		}
+	},
+	"contracts": {
+		"ExcluenceNFT": "./contracts/ExcluenceNFT.cdc",
+		"ExcluenceMarketplace": "./contracts/ExcluenceMarketplace.cdc"
 	}
 }

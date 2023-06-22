@@ -64,10 +64,10 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     pub var totalSupply: UInt64
 
     // Variable size dictionary of Component structs
-    access(self) var components: {UInt32: Component}
+    access(self) let components: {UInt32: Component}
     
     // Variable size dictionary of Project resources
-    access(self) var projects: @{UInt32: Project}
+    access(self) let projects: @{UInt32: Project}
 
     // The ID that is used to create Components.
     // Every time a Component is created, componentID is assigned
@@ -178,6 +178,20 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
 
 
+    pub resource interface ProjectPublic {
+        pub let projectID: UInt32
+        pub var locked: Bool
+        pub var numberMintedPerComponent: {UInt32: UInt64}
+        pub let name: String
+        pub fun getComponents(): [UInt32]
+        pub fun getRetired(): {UInt32: Bool}
+        pub fun getNumMintedPerComponent(): {UInt32: UInt64}
+        pub fun getNFTCollectionDisplay(): MetadataViews.NFTCollectionDisplay
+        pub fun getRoyalties(): [MetadataViews.Royalty]
+    }
+
+
+
     // Project is a resource type that contains the functions to add and remove
     // Components from a project and mint the NFTs
     //
@@ -188,7 +202,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     // 
     // Admin can also retire a Component that
 
-    pub resource Project {
+    pub resource Project: ProjectPublic {
 
         // Unique ID for the set
         pub let projectID: UInt32
@@ -421,13 +435,13 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
     pub struct QueryProjectData {
 
-        pub let projectRef: &Project
+        pub let projectRef: &Project{ProjectPublic}
 
         init(_ projectID: UInt32) {
             pre {
                 ExcluenceNFT.projects[projectID] != nil: "This project with provided ID does not exist."
             }
-            self.projectRef = (&ExcluenceNFT.projects[projectID] as &Project?)! as &Project
+            self.projectRef = (&ExcluenceNFT.projects[projectID] as &Project{ProjectPublic}?)!
         }
 
         pub fun isLocked(): Bool {
@@ -586,15 +600,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
 
 
-        pub fun getEditionName(component: Component, projectRef: &Project ): String {
-            let projectName = projectRef.name
-            let editionName = projectName.concat(": #").concat(component.componentID.toString())
-            return  editionName
-        }
-
-        pub fun getEditionMax(projectRef: &Project, componentID: UInt32): UInt64? {
-            return projectRef.getNumMintedPerComponent()[componentID]
-        }
+        
 
 
         /// Function that resolves a metadata view for this token.
@@ -604,7 +610,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         ///
         pub fun resolveView(_ view: Type): AnyStruct? {
             let component = ExcluenceNFT.components[self.componentID]!
-            let projectRef = (&ExcluenceNFT.projects[self.projectID] as &Project?)!
+            let projectRef = (&ExcluenceNFT.projects[self.projectID] as &Project{ProjectPublic}?)!
             switch view {
                 case Type<MetadataViews.Display>():
                     return MetadataViews.Display(
@@ -638,7 +644,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
                 case Type<MetadataViews.Royalties>():
                     return MetadataViews.Royalties(
                         component.royalties.length > 0 ? component.royalties 
-                            : projectRef.royalties
+                            : projectRef.getRoyalties()
                     )
                 case Type<MetadataViews.ExternalURL>():
                     return MetadataViews.ExternalURL(ExcluenceNFT.externalBaseURL.concat(self.id.toString()))
@@ -665,6 +671,15 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
         // getEditionName NFT's edition name is a combination of the NFT's project Name and component ID
         // `setName: #componentID
+        pub fun getEditionName(component: Component, projectRef: &Project{ProjectPublic} ): String {
+            let projectName = projectRef.name
+            let editionName = projectName.concat(": #").concat(component.componentID.toString())
+            return  editionName
+        }
+
+        pub fun getEditionMax(projectRef: &Project{ProjectPublic}, componentID: UInt32): UInt64? {
+            return projectRef.getNumMintedPerComponent()[componentID]
+        }
 
     }
 
