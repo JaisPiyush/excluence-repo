@@ -1,21 +1,44 @@
 import type { AppProps } from "next/app";
-import { ThirdwebProvider, ChainId } from "@thirdweb-dev/react";
-import { SessionProvider } from "next-auth/react";
 import "../styles/globals.css";
+import { Provider } from "react-redux";
+import store from "@redux-store/index"
+import { ThemeProvider, createTheme } from "@mui/material";
 
-// This is the chain your dApp will work on.
-// Change this to the chain your app is built for.
-// You can also import additional chains from `@thirdweb-dev/chains` and pass them directly.
-const activeChain = ChainId.Mumbai;
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'Work Sans',
+      'sans-serif'
+    ].join(',')
+  },
+  palette: {
+    primary: {
+      main: '#A259FF'
+    },
+    secondary: {
+      main: '#2B2B2B',
+      light: '#3B3B3B'
+    }
+  },
+  breakpoints: {
+    values: {
+       xs: 0,
+       sm: 600,
+       md: 834,
+       lg: 1280,
+       xl: 1536,
+    }
+  }
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <ThirdwebProvider activeChain={activeChain}>
-      <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
-      </SessionProvider> 
-    </ThirdwebProvider>
-  );
+  return <Provider store={store}>
+            <ThemeProvider theme={theme}>
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </Provider>
+    
 }
 
 export default MyApp;
