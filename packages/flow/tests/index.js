@@ -32,3 +32,16 @@ export async function setupInitialContracts(BASE_PATH, acct) {
         to: acct
     })
 }
+
+export async function setupExcluenceNFT(BASE_PATH, acct) {
+    const interfaceContractAddress = "0xf8d6e0586b0a20c7"
+    let excluenceNFTContractCode = fs.readFileSync(BASE_PATH + "/contracts/ExcluenceNFT.cdc").toString();
+    excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/NonFungibleToken.interface.cdc"`, interfaceContractAddress)
+    excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/MetadataViews.interface.cdc"`, interfaceContractAddress)
+    excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/ViewResolver.interface.cdc"`, interfaceContractAddress)
+    await deployContract({
+        name: "ExcluenceNFT",
+        code: excluenceNFTContractCode,
+        to: acct
+    })
+}

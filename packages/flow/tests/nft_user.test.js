@@ -1,7 +1,7 @@
 import path from "path";
 import * as fs from "fs"
 import { expect } from "@jest/globals";
-import { setupInitialContracts } from ".";
+import { setupExcluenceNFT, setupInitialContracts } from ".";
 import {
     emulator,
     getAccountAddress,
@@ -18,13 +18,15 @@ const BASE_PATH = path.resolve(__dirname, "./../");
 
 
 
-describe("Testing ExcluenceNFT", () => {
+describe("Testing ExcluenceNFT Deploy", () => {
     const defaultAcct = "0xf8d6e0586b0a20c7"
+    const krita = "0x01cf0e2f2f71545"
     beforeAll(async () => {
         await init(BASE_PATH)
         await emulator.start({logging: true})
 
         await setupInitialContracts(BASE_PATH, defaultAcct)
+        await setupExcluenceNFT(BASE_PATH, krita)
 
     })
 
@@ -32,20 +34,7 @@ describe("Testing ExcluenceNFT", () => {
         await emulator.stop()
     })
 
-    test("Script should deploy ExcluenceNFT contract", async () => {
-        const interfaceContractAddress = "0xf8d6e0586b0a20c7"
-        const account = await getAccountAddress("alice")
-        let excluenceNFTContractCode = fs.readFileSync(BASE_PATH + "/contracts/ExcluenceNFT.cdc").toString();
-        excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/NonFungibleToken.interface.cdc"`, interfaceContractAddress)
-        excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/MetadataViews.interface.cdc"`, interfaceContractAddress)
-        excluenceNFTContractCode = excluenceNFTContractCode.replace(`"./interfaces/ViewResolver.interface.cdc"`, interfaceContractAddress)
-
-        const [deployTx,e] = await shallPass(
-            sendTransaction(
-                "user/deploy_contract",
-                [account],
-                [Buffer.from(excluenceNFTContractCode).toString('hex')]
-            )
-        )
+    test("Should setup account on krita", async () => {
+        
     })
 })

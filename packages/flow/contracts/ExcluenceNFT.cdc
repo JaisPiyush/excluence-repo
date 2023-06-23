@@ -437,12 +437,14 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     pub struct QueryProjectData {
 
         pub let projectRef: &Project{ProjectPublic}
+        pub let name: String
 
         init(_ projectID: UInt32) {
             pre {
                 ExcluenceNFT.projects[projectID] != nil: "This project with provided ID does not exist."
             }
             self.projectRef = (&ExcluenceNFT.projects[projectID] as &Project{ProjectPublic}?)!
+            self.name = self.projectRef.name
         }
 
         pub fun isLocked(): Bool {
@@ -841,6 +843,11 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             return  component.componentID
         }
 
+        // Updates external URL
+        pub fun updateExternalBaseURL(externalBaseURL: String) {
+            ExcluenceNFT.externalBaseURL = externalBaseURL
+        }
+
 
         pub fun updateComponentDesc(componentID: UInt32, description: String): UInt32 {
             let component =  ExcluenceNFT.components[componentID] 
@@ -927,6 +934,39 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         return self.components.values
     }
 
+    pub fun dictToMedia(_ dict: {String: String}): MetadataViews.Media {
+        pre {
+            dict["fileType"] != nil: "Failed to create media from dict: type is missing"
+            dict["mediaType"] != nil: "Failed to create media from dict: mediaType is missing"
+        }
+        if dict["fileType"] == "https" {
+            if dict["url"] == nil {
+                panic("Failed to create media from dict: url is missing")
+            }
+            return MetadataViews.Media(
+                file: MetadataViews.HTTPFile(
+                    url: dict["url"]!
+                ),
+                mediaType: dict["mediaType"]!
+            )
+        }
+
+        if dict["cid"] == nil {
+            panic("Failed to create media from dict: cid is missing")
+        }
+
+        return MetadataViews.Media(
+            file: MetadataViews.IPFSFile(
+                cid: dict["cid"]!,
+                path: dict["path"]
+            ),
+            mediaType: dict["mediaType"]!
+        )
+    }
+
+
+
+
     // returns all the projects in the contract
     pub fun getAllProjectsData(): [{String: AnyStruct}] {
         let projects: [{String: AnyStruct}] = []
@@ -944,6 +984,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
     pub fun getComponentIDsInProject(projectID: UInt32): [UInt32] {
         return QueryProjectData(projectID).getComponents()
     }
+    
 
     // returns a boolean that indicated is a Project/Component combo is retired
     // Returns true if it is retired
@@ -995,6 +1036,8 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         ]
     }
 
+
+
     init(
         
     ) {
@@ -1004,6 +1047,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         self.projects <- {}
         self.nextComponentID = 1
         self.nextProjectID = 0
+        //TODO: Add function to update external Base URL
         self.externalBaseURL = ""
 
 
@@ -1012,15 +1056,19 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         self.CollectionPublicPath = /public/ExcluenceNFTCollection
         self.AdminStoragePath = /storage/ExcluenceNFTAdmin
 
-        // Create a Collection resource and save it to storage
-        let collection <- create Collection()
-        self.account.save(<-collection, to: self.CollectionStoragePath)
 
-        // create a public capability for the collection
-        self.account.link<&ExcluenceNFT.Collection{NonFungibleToken.CollectionPublic, ExcluenceNFT.ExcluenceNFTCollectionPublic, MetadataViews.ResolverCollection}>(
-            self.CollectionPublicPath,
-            target: self.CollectionStoragePath
-        )
+        if self.account.borrow<&ExcluenceNFT.Collection>(from: ExcluenceNFT.CollectionStoragePath) == nil {
+
+            // Create a Collection resource and save it to storage
+            let collection <- create Collection()
+            self.account.save(<-collection, to: self.CollectionStoragePath)
+
+            // create a public capability for the collection
+            self.account.link<&ExcluenceNFT.Collection{NonFungibleToken.CollectionPublic, ExcluenceNFT.ExcluenceNFTCollectionPublic, MetadataViews.ResolverCollection}>(
+                self.CollectionPublicPath,
+                target: self.CollectionStoragePath
+            )
+        }
 
 
         //TODO: Add Admin capability and create Project 0
