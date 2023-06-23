@@ -1,32 +1,32 @@
 {
 	"contracts": {
-		"ExcluenceMarketplace": "./cadence/contracts/ExcluenceMarketplace.cdc",
+		"ExcluenceMarketplace": "./contracts/ExcluenceMarketplace.cdc",
 		"ExcluenceNFT": {
-			"source": "./cadence/contracts/ExcluenceNFT.cdc",
+			"source": "./contracts/ExcluenceNFT.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"FungibleToken": {
-			"source": "./cadence/contracts/interfaces/FungibleToken.interface.cdc",
+			"source": "./contracts/interfaces/FungibleToken.interface.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"MetadataViews": {
-			"source": "./cadence/contracts/interfaces/MetadataViews.interface.cdc",
+			"source": "./contracts/interfaces/MetadataViews.interface.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"NonFungibleToken": {
-			"source": "./cadence/contracts/interfaces/NonFungibleToken.interface.cdc",
+			"source": "./contracts/interfaces/NonFungibleToken.interface.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
 		},
 		"ViewResolver": {
-			"source": "./cadence/contracts/interfaces/ViewResolver.interface.cdc",
+			"source": "./contracts/interfaces/ViewResolver.interface.cdc",
 			"aliases": {
 				"emulator": "f8d6e0586b0a20c7"
 			}
