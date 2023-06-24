@@ -4,11 +4,21 @@ import darkTheme from "../../styles/theme/darkTheme";
 
 interface ExButtonProps {
     children: ReactNode,
-    isPrimary: boolean
+    isPrimary: boolean,
+    onClick?: () => void
 }
 
 export default function ExButton(props: ExButtonProps) {
-    return <Button  disableElevation variant={props.isPrimary ? "contained": "outlined"}>
+    return <Button onClick={(_) => {
+        if (props.onClick) {
+            props.onClick()
+        }
+    }}  disableElevation 
+        variant={props.isPrimary ? "contained": "outlined"}
+        sx={{
+            textTransform: 'unset !important'
+        }}
+        >
         {props.children}
     </Button>
 }
