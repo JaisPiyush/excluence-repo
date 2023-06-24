@@ -1,5 +1,5 @@
 import type { StorybookConfig } from "@storybook/nextjs";
-const config: StorybookConfig = {
+const config: StorybookConfig & {features: {emotionAlias: boolean}} = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
@@ -12,6 +12,9 @@ const config: StorybookConfig = {
   },
   docs: {
     autodocs: "tag",
+  },
+  features: {
+    emotionAlias: false,
   },
 };
 export default config;

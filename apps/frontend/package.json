@@ -13,7 +13,9 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.6",
     "@reduxjs/toolkit": "^1.9.5",
@@ -34,6 +36,7 @@
     "@storybook/testing-library": "^0.0.14-next.2",
     "@types/node": "^18.11.11",
     "@types/react": "^18",
+    "emotion-theming": "^11.0.0",
     "eslint": "^8.29.0",
     "eslint-config-next": "^13",
     "eslint-plugin-storybook": "^0.6.12",
