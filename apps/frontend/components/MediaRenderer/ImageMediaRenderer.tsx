@@ -1,13 +1,12 @@
-import { useTheme } from "@emotion/react"
-import { Box, SxProps, useMediaQuery } from "@mui/material"
-import Image from "next/image"
+import { useMediaQuery } from "@mui/material"
+import Image, { StaticImageData } from "next/image"
 import Skeleton from 'react-loading-skeleton'
-import darkTheme from "../../styles/theme/darkTheme"
+import darkTheme from "@/styles/theme/darkTheme"
 import { CSSProperties, useState } from "react"
 
 
 interface ImageMediaRendererProps {
-    src?: string
+    src?: string | StaticImageData
     cid?: string 
     path?: string
     alt: string
@@ -45,23 +44,9 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
         return props.height
     }
 
-    let style: Record<string, string | number> = {
-        width: getWidth(),
-        height: getHeight(),
-        objectFit: props.objectFit || 'cover',
 
-    }
 
-    if (props.style) {
-        for (const [key, value] of Object.entries(props.style)) {
-            style[key] = value
-        }
-    }
-
-    
-    style['visibility'] = isLoading ? 'hidden': 'visible';
-    style['height'] = isLoading ? 0: getHeight()
-    style['width'] = isLoading? 0: getWidth()
+    let style = props.style || {}
 
     const getSrc = () => {
         if (props.src) return props.src
@@ -79,9 +64,16 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
             alt={props.alt}
             width={props.width}
             height={props.height}
-            style={style}
             onLoadingComplete={(_) => {
                 setIsLoading(false)
+            }}
+            style={{
+                width: isLoading? 0: getWidth(),
+                height: isLoading ? 0: getHeight(),
+                objectFit: props.objectFit || 'cover',
+                visibility: isLoading ? 'hidden': 'visible',
+                ...style
+
             }}
         />
         {

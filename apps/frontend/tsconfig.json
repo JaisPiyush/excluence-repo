@@ -15,8 +15,9 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@redux-store/*": ["./redux/*"],
-      "@components/*": ["./components/*"]
+      "@/redux-store/*": ["./redux/*"],
+      "@/components/*": ["./components/*"],
+      "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_document.jsx"],

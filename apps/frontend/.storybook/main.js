@@ -1,5 +1,6 @@
-import type { StorybookConfig } from "@storybook/nextjs";
-const config: StorybookConfig & {features: {emotionAlias: boolean}} = {
+import path from "path";
+
+const config = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     "@storybook/addon-links",
@@ -16,5 +17,12 @@ const config: StorybookConfig & {features: {emotionAlias: boolean}} = {
   features: {
     emotionAlias: false,
   },
+  webpackFinal: async (config, {configType}) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve('./')
+    }
+    return config
+  }
 };
 export default config;

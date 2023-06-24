@@ -1,9 +1,27 @@
-import { MediaRenderer } from "@thirdweb-dev/react"
+import ImageMediaRenderer from "@/components/MediaRenderer/ImageMediaRenderer"
+import { useTheme } from "@mui/material"
+
+import { StaticImageData } from "next/image"
 
 interface SquareImageProps {
-    src: string
+    src?: string | StaticImageData
+    cid?: string
+    path?: string
 }
 
 export default function SquareImage(props: SquareImageProps) {
-    return <></>
+    const theme = useTheme()
+    const color = theme.palette.secondary.main
+    return <ImageMediaRenderer 
+        src={props.src}
+        cid={props.cid}
+        path={props.path}
+        alt="Square Image"
+        width={120}
+        height={120}
+        style={{
+            borderRadius: '20px',
+            border: `2px solid ${color}`
+        }}
+    />
 }
