@@ -22,3 +22,20 @@ export const HTTPImage: Story = {
         }
     }
 }
+
+
+export const IPFSImage: Story = {
+    args: {
+        cid: 'QmV4HC9fNrPJQeYpbW55NLLuSBMyzE11zS1L4HmL6Lbk7X',
+        alt: 'Profile',
+        width: 200,
+        height: 200,
+        tabletWidth: 400,
+        tabletHeight: 400,
+        style: {
+            borderRadius: '0.5rem'
+        }
+    }
+}
+
+

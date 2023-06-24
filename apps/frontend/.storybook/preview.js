@@ -2,6 +2,8 @@
 import { ThemeProvider } from '@mui/material/styles';
 // import { ThemeProvider as Emotion10ThemeProvider } from 'emotion-theming';
 import darkTheme from "../styles/theme/darkTheme"
+import 'react-loading-skeleton/dist/skeleton.css'
+
 
 const preview = {
   parameters: {

@@ -8,6 +8,7 @@ import darkTheme from "../styles/theme/darkTheme";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
+import 'react-loading-skeleton/dist/skeleton.css'
 
 
 const clientSideEmotionCache = createEmotionCache();

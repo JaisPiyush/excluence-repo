@@ -1,13 +1,15 @@
 import { useTheme } from "@emotion/react"
 import { Box, SxProps, useMediaQuery } from "@mui/material"
 import Image from "next/image"
-import {ShimmerThumbnail} from "react-shimmer-effects"
+import Skeleton from 'react-loading-skeleton'
 import darkTheme from "../../styles/theme/darkTheme"
 import { CSSProperties, useState } from "react"
 
 
 interface ImageMediaRendererProps {
-    src: string
+    src?: string
+    cid?: string 
+    path?: string
     alt: string
     width: number 
     height: number 
@@ -18,14 +20,16 @@ interface ImageMediaRendererProps {
     desktopWidth?: number | string
     desktopHeight?: number | string
     objectFit?: "cover" | "fill" | "contain",
-    style?: Omit<CSSProperties, "width" | "height" | "objectFile">
+    style?: Omit<CSSProperties, "width" | "height" | "objectFile">,
+    loadingStyle?: Omit<CSSProperties, "width" | "height">
+    gatewayURL?: string
 }
 
 
-export default function ImageMediaRenderer(props: ImageMediaRendererProps) {
+export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/', ...props}: ImageMediaRendererProps) {
 
     const isDesktop = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('lg'))
-    const isTablet = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('lg'))
+    const isTablet = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('md'))
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -56,24 +60,34 @@ export default function ImageMediaRenderer(props: ImageMediaRendererProps) {
 
     
     style['visibility'] = isLoading ? 'hidden': 'visible';
+    style['height'] = isLoading ? 0: getHeight()
+    style['width'] = isLoading? 0: getWidth()
+
+    const getSrc = () => {
+        if (props.src) return props.src
+        if (props.cid) {
+            const ipfsPath = props.cid + (props.path ? `/${props.path}` : '')
+            return (new URL(ipfsPath, gatewayURL)).toString()
+        }
+        throw new Error("Missing `src` for image")
+    }
 
 
     return <>
         <Image 
-            src={props.src} 
+            src={getSrc()} 
             alt={props.alt}
             width={props.width}
             height={props.height}
             style={style}
+            onLoadingComplete={(_) => {
+                setIsLoading(false)
+            }}
         />
-        {/* {
+        {
             !isLoading ? <></> : 
-            <ShimmerThumbnail 
-                height={250}
-            />
-        } */}
-        <ShimmerThumbnail 
-                height={250}
-            />
+            <Skeleton height={getHeight()} width={getWidth()} style={props.loadingStyle} />
+        }
+        
     </>
 }
