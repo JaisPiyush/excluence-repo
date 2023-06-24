@@ -10,11 +10,12 @@ const darkTheme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: '#A259FF'
+            main: '#A259FF',
+            light: '#303237'
         },
         secondary: {
-            main: '#2B2B2B',
-            light: '#3B3B3B'
+            main: '#191D1E',
+            light: '#232428'
         }
     },
     breakpoints: {

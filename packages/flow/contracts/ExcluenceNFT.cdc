@@ -671,12 +671,13 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             }
             return nil
         }
+        
 
         // getEditionName NFT's edition name is a combination of the NFT's project Name and component ID
         // `setName: #componentID
         pub fun getEditionName(component: Component, projectRef: &Project{ProjectPublic} ): String {
             let projectName = projectRef.name
-            let editionName = projectName.concat(": #").concat(component.componentID.toString())
+            let editionName = projectName.concat(": #").concat(self.serialNumber.toString())
             return  editionName
         }
 
