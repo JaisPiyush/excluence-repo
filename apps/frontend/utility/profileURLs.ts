@@ -1,0 +1,18 @@
+export const profileURLs = [
+    '/img/opt-profiles/1.webp',
+    '/img/opt-profiles/2.webp',
+    '/img/opt-profiles/3.webp',
+    '/img/opt-profiles/4.webp',
+    '/img/opt-profiles/5.webp',
+    '/img/opt-profiles/6.webp',
+    '/img/opt-profiles/7.webp',
+    '/img/opt-profiles/8.webp',
+    '/img/opt-profiles/9.webp',
+    '/img/opt-profiles/10.webp',
+    '/img/opt-profiles/11.webp',
+    '/img/opt-profiles/12.webp',
+    '/img/opt-profiles/13.webp',
+    '/img/opt-profiles/14.webp',
+    '/img/opt-profiles/15.webp',
+    '/img/opt-profiles/16.webp',
+]

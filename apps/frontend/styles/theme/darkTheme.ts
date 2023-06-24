@@ -25,6 +25,13 @@ const darkTheme = createTheme({
          lg: 1280,
          xl: 1536,
       }
+    },
+    components: {
+      MuiUseMediaQuery: {
+        defaultProps: {
+          noSsr: true
+        }
+      }
     }
   })
 
