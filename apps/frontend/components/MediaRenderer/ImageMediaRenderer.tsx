@@ -5,10 +5,14 @@ import darkTheme from "@/styles/theme/darkTheme"
 import { CSSProperties, useState } from "react"
 
 
-interface ImageMediaRendererProps {
+export interface ImageMediaSources {
     src?: string | StaticImageData
     cid?: string 
     path?: string
+}
+
+
+type ImageMediaRendererProps = ImageMediaSources & {
     alt: string
     width: number 
     height: number 
@@ -23,6 +27,7 @@ interface ImageMediaRendererProps {
     loadingStyle?: Omit<CSSProperties, "width" | "height">
     gatewayURL?: string
 }
+
 
 
 export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/', ...props}: ImageMediaRendererProps) {

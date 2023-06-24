@@ -1,13 +1,10 @@
-import ImageMediaRenderer from "@/components/MediaRenderer/ImageMediaRenderer"
+import ImageMediaRenderer, { ImageMediaSources } from "@/components/MediaRenderer/ImageMediaRenderer"
 import { useTheme } from "@mui/material"
 
 import { StaticImageData } from "next/image"
 
-interface SquareImageProps {
-    src?: string | StaticImageData
-    cid?: string
-    path?: string
-}
+
+type SquareImageProps = ImageMediaSources
 
 export default function SquareImage(props: SquareImageProps) {
     const theme = useTheme()
