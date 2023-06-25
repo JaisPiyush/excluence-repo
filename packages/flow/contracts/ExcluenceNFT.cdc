@@ -644,13 +644,11 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
                         description: self.description,
                         thumbnail: self.thumbnail
                     )
-                case Type<Display>():
-                    return Display(
-                        name: self.name,
-                        description: self.description,
-                        thumbnail: self.thumbnail,
-                        medias: self.medias
-                    )
+                // TODO: Add multiple media support
+                // case Type<MetadataViews.Medias>():
+                //     return MetadataViews.Medias(
+
+                //     )
                 case Type<MetadataViews.Editions>():
                     // There is no max number of NFTs that can be minted from this contract
                     // so the max edition field value is set to nil
@@ -897,26 +895,6 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             return projectID
         }
 
-        // pub fun addRoyalties(projectID: UInt32 ,royalties: [MetadataViews.Royalty]) {
-        //     let projectRef = self.borrowProject(projectID: projectID)
-        //     projectRef.addRoyalties(royalties: royalties)
-        // }
-
-        // pub fun updateProjectData(projectID: UInt32, 
-        //     description: String,
-        //     externalURL: MetadataViews.ExternalURL,
-        //     squareImage: MetadataViews.Media,
-        //     bannerImage: MetadataViews.Media,
-        //     socials: {String: MetadataViews.ExternalURL}
-                
-        //     ) {
-        //     pre {
-        //         ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
-        //     }
-        //     let projectRef = self.borrowProject(projectID: projectID)
-        //     projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
-        // }
-
         // borrowProject returens a reference to a project in the ExcluenceNFT
         // contract so that the admin can call methods on it
         pub fun borrowProject(projectID: UInt32): &Project {
@@ -952,7 +930,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         return <- create Collection()
     }
 
-    pub fun getAllComponents(): [Component] {
+    pub fun getAllComponents(): [Component{ComponentPublic}] {
         return self.components.values
     }
 
@@ -1033,10 +1011,6 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
     pub fun getQueryProjectData(projectID: UInt32): QueryProjectData {
         return QueryProjectData(projectID)
-    }
-
-    pub fun getComponentIDsInProject(projectID: UInt32): [UInt32] {
-        return QueryProjectData(projectID).getComponents()
     }
     
 
