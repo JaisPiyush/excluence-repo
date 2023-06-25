@@ -1,7 +1,7 @@
 import FungibleToken from "./interfaces/FungibleToken.interface.cdc"
 import NonFungibleToken from "./interfaces/NonFungibleToken.interface.cdc"
 
-/// ExcluenceNFTMarketplace
+/// NFTStorefrontV2
 ///
 /// A general purpose sale support contract for NFTs that implement the Flow NonFungibleToken standard.
 /// 
@@ -26,7 +26,7 @@ import NonFungibleToken from "./interfaces/NonFungibleToken.interface.cdc"
 /// Marketplaces and other aggregators can watch for Listing events
 /// and list items of interest.
 ///
-pub contract ExcluenceNFTMarketplace {
+pub contract NFTStorefrontV2 {
 
     /// StorefrontInitialized
     /// A Storefront resource has been created.
@@ -53,7 +53,7 @@ pub contract ExcluenceNFTMarketplace {
     /// A listing has been created and added to a Storefront resource.
     /// The Address values here are valid when the event is emitted, but
     /// the state of the accounts they refer to may change outside of the
-    /// ExcluenceNFTMarketplace workflow, so be careful to check when using them.
+    /// NFTStorefrontV2 workflow, so be careful to check when using them.
     ///
     pub event ListingAvailable(
         storefrontAddress: Address,
@@ -99,6 +99,9 @@ pub contract ExcluenceNFTMarketplace {
     /// StorefrontPublicPath
     /// The public location for a Storefront link.
     pub let StorefrontPublicPath: PublicPath
+
+    // Storage for a provider capability
+    pub let NFTCollectionProviderForNFTStorefront: PrivatePath
 
 
     /// SaleCut
@@ -364,7 +367,7 @@ pub contract ExcluenceNFTMarketplace {
 
             // Fetch the duplicate listing for the given NFT
             // Access the StoreFrontManager resource reference to remove the duplicate listings if purchase would happen successfully.
-            let storeFrontPublicRef = self.owner!.getCapability<&ExcluenceNFTMarketplace.Storefront{ExcluenceNFTMarketplace.StorefrontPublic}>(ExcluenceNFTMarketplace.StorefrontPublicPath)
+            let storeFrontPublicRef = self.owner!.getCapability<&NFTStorefrontV2.Storefront{NFTStorefrontV2.StorefrontPublic}>(NFTStorefrontV2.StorefrontPublicPath)
                                         .borrow() ?? panic("Unable to borrow the storeFrontManager resource")
             let duplicateListings = storeFrontPublicRef.getDuplicateListingIDs(nftType: self.details.nftType, nftID: self.details.nftID, listingID: self.uuid)
 
@@ -813,8 +816,9 @@ pub contract ExcluenceNFTMarketplace {
     }
 
     init () {
-        self.StorefrontStoragePath = /storage/ExcluenceNFTMarketplace
-        self.StorefrontPublicPath = /public/ExcluenceNFTMarketplace
+        self.StorefrontStoragePath = /storage/ExcluenceNFTStorefront
+        self.StorefrontPublicPath = /public/ExcluenceNFTStorefront
+        self.NFTCollectionProviderForNFTStorefront = /private/ExcluenceNFTCollectionProviderForNFTStorefront
     }
 }
  
