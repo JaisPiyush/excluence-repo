@@ -34,18 +34,24 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
 
     const isDesktop = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('lg'))
     const isTablet = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('md'))
+    const isMobile = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('xs'))
 
     const [isLoading, setIsLoading] = useState(true)
 
+    
+
     const getWidth = () => {
+
         if (isDesktop && props.desktopWidth) return props.desktopWidth
-        if (isTablet && props.tabletWidth) return props.tabletWidth
+        if (isTablet) return props.width || props.tabletWidth
+        if (isMobile && props.mobileWidth) return props.mobileWidth
         return props.width
     }
 
     const getHeight = () => {
         if (isDesktop && props.desktopHeight) return props.desktopHeight
-        if (isTablet && props.tabletHeight) return props.tabletHeight
+        if (isTablet) return props.height || props.tabletHeight
+        if (isMobile && props.mobileHeight) return props.mobileHeight
         return props.height
     }
 
@@ -61,7 +67,6 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
         }
         throw new Error("Missing `src` for image")
     }
-
 
     return <>
         <Image 

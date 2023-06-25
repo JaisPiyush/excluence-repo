@@ -22,7 +22,7 @@ export const TabletNFTCard: Story = {
         editions: {
             infoList: [
                 {
-                    name: 'Wrapped Cryptopunks',
+                    name: 'Wrapped Cryptopunks #44125',
                     number: 1445,
                     max: 20000
                 }
