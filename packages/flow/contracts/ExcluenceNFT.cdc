@@ -13,6 +13,7 @@
 import NonFungibleToken from "./interfaces/NonFungibleToken.interface.cdc"
 import MetadataViews from "./interfaces/MetadataViews.interface.cdc"
 import ViewResolver from "./interfaces/ViewResolver.interface.cdc"
+import FungibleToken from "./interfaces/FungibleToken.interface.cdc"
 
 pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
 
@@ -125,20 +126,31 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         }
     }
 
+
+    pub struct interface ComponentPublic {
+        pub let componentID: UInt32
+        pub let name: String? 
+        pub var description: String?
+        pub let thumbnail: AnyStruct{MetadataViews.File}
+        pub let medias: [AnyStruct{MetadataViews.File}]
+        pub let traits: MetadataViews.Traits
+        pub let royalties: [MetadataViews.Royalty]
+    }
+
     /// Component is struct that holds metadata associated
     /// with a specific future mintable NFT
-    pub struct Component {
+    pub struct Component: ComponentPublic {
         // The unique ID for the Component
         pub let componentID: UInt32
         pub let name: String? 
-        access(contract) var description: String?
-        access(contract) let thumbnail: AnyStruct{MetadataViews.File}
-        access(contract) let medias: [AnyStruct{MetadataViews.File}]
-        access(contract) let traits: MetadataViews.Traits
+        pub var description: String?
+        pub let thumbnail: AnyStruct{MetadataViews.File}
+        pub let medias: [AnyStruct{MetadataViews.File}]
+        pub let traits: MetadataViews.Traits
         // The royalties associated with component
         // Project and Component both can have royalties defined
         // and Component's royalties is prefered over Project's royalties when minting NFT
-        access(contract) var royalties: [MetadataViews.Royalty]
+        pub let royalties: [MetadataViews.Royalty]
 
         
 
@@ -168,6 +180,8 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             )
 
         }
+
+        //TODO: Add more update functions
 
         pub fun updateDescription(desc: String): UInt32 {
             self.description = desc
@@ -310,6 +324,11 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             emit ProjectDataUpdated(projectID: self.projectID)
         }
 
+
+
+        pub fun addRoyalties(royalties: [MetadataViews.Royalty]) {
+            self.royalties.appendAll(royalties)
+        }
 
         // addComponent adds a Component to the Project
         //
@@ -538,6 +557,10 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
                 ExcluenceNFT.components[componentID] != nil: "Cannot mint NFT: Component does not exist."
             }
             self.id = ExcluenceNFT.totalSupply
+
+            // Increase the totalSupply in the contract
+            ExcluenceNFT.totalSupply = ExcluenceNFT.totalSupply + 1
+
             self.projectID = projectID
             self.componentID = componentID
             self.serialNumber  = serialNumber
@@ -677,7 +700,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         // `setName: #componentID
         pub fun getEditionName(component: Component, projectRef: &Project{ProjectPublic} ): String {
             let projectName = projectRef.name
-            let editionName = projectName.concat(": #").concat(self.serialNumber.toString())
+            let editionName = projectName.concat(": #").concat(component.componentID.toString())
             return  editionName
         }
 
@@ -824,7 +847,7 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         // Creates a new Component struct
         // and stores it in the Components dictionary and increase the nextComponentID
         pub fun createComponent(
-            name: String?,
+            name: String,
             description: String?,
             thumbnail: AnyStruct{MetadataViews.File},
             medias: [AnyStruct{MetadataViews.File}],
@@ -847,13 +870,6 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         // Updates external URL
         pub fun updateExternalBaseURL(externalBaseURL: String) {
             ExcluenceNFT.externalBaseURL = externalBaseURL
-        }
-
-
-        pub fun updateComponentDesc(componentID: UInt32, description: String): UInt32 {
-            let component =  ExcluenceNFT.components[componentID] 
-                ?? panic("componentID does not exist.")
-            return component.updateDescription(desc: description)
         }
 
         pub fun createProject(
@@ -881,20 +897,25 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             return projectID
         }
 
-        pub fun updateProjectData(projectID: UInt32, 
-            description: String,
-            externalURL: MetadataViews.ExternalURL,
-            squareImage: MetadataViews.Media,
-            bannerImage: MetadataViews.Media,
-            socials: {String: MetadataViews.ExternalURL}
+        // pub fun addRoyalties(projectID: UInt32 ,royalties: [MetadataViews.Royalty]) {
+        //     let projectRef = self.borrowProject(projectID: projectID)
+        //     projectRef.addRoyalties(royalties: royalties)
+        // }
+
+        // pub fun updateProjectData(projectID: UInt32, 
+        //     description: String,
+        //     externalURL: MetadataViews.ExternalURL,
+        //     squareImage: MetadataViews.Media,
+        //     bannerImage: MetadataViews.Media,
+        //     socials: {String: MetadataViews.ExternalURL}
                 
-            ) {
-            pre {
-                ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
-            }
-            let projectRef = self.borrowProject(projectID: projectID)
-            projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
-        }
+        //     ) {
+        //     pre {
+        //         ExcluenceNFT.projects[projectID] != nil: "Cannot update project: This project doesn't exist."
+        //     }
+        //     let projectRef = self.borrowProject(projectID: projectID)
+        //     projectRef.updateData(description: description, externalURL: externalURL, squareImage: squareImage, bannerImage: bannerImage, socials: socials)
+        // }
 
         // borrowProject returens a reference to a project in the ExcluenceNFT
         // contract so that the admin can call methods on it
@@ -935,6 +956,10 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
         return self.components.values
     }
 
+    pub fun getComponent(componentID: UInt32): Component{ComponentPublic}? {
+        return self.components[componentID] as Component{ComponentPublic}?
+    }
+
     pub fun dictToMedia(_ dict: {String: String}): MetadataViews.Media {
         pre {
             dict["fileType"] != nil: "Failed to create media from dict: type is missing"
@@ -963,6 +988,34 @@ pub contract ExcluenceNFT: NonFungibleToken, ViewResolver {
             ),
             mediaType: dict["mediaType"]!
         )
+    }
+
+
+    pub fun createRoyaltyStructs(
+        royaltyCuts: {Address: UFix64},
+        royaltyDescriptions: {Address: String}
+    ): [MetadataViews.Royalty] {
+
+        let royalties: [MetadataViews.Royalty] = []
+        for recpAddress in royaltyCuts.keys {
+            
+            if royaltyDescriptions[recpAddress] == nil {
+                continue
+            }
+            
+            let reciever = getAccount(recpAddress)
+                .getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+
+            royalties.append(
+                MetadataViews.Royalty(
+                    reciever: reciever,
+                    cut: royaltyCuts[recpAddress]!,
+                    description: royaltyDescriptions[recpAddress]!
+                )
+            )
+        
+        }
+        return  royalties
     }
 
 

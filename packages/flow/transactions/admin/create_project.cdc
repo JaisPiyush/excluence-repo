@@ -4,10 +4,13 @@ import FungibleToken from "../../contracts/interfaces/FungibleToken.interface.cd
 
 transaction(
     name: String,
-    args: {String: AnyStruct},
-    royaltyRecvs: [Address],
+    description: String,
+    squareImage: {String: String},
+    externalURL: String?,
+    bannerImage: {String: String}?,
+    socials: {String: String},
     royaltyCuts: {Address: UFix64},
-    roayltDescriptions: {Address: String}
+    royaltyDescriptions: {Address: String}
 ) {
 
     let adminRef: &ExcluenceNFT.Admin
@@ -20,17 +23,9 @@ transaction(
         self.currNextProjectID = ExcluenceNFT.nextProjectID
     }
 
-    pre {
-        args["squareImage"] != nil: "Cannot create Project: Project Square image is required"
-    }
-
     execute {
-        let description = args["description"] == nil? "": args["description"] as! String
-        let externalURL = MetadataViews.ExternalURL(args["externaURL"] == nil ? ""
-            : args["externalURL"] as! String)
-        
-        var squareImageMap = args["squareImage"] as! {String: String}
-        let squareImage = ExcluenceNFT.dictToMedia(squareImageMap)
+        let externalURL = MetadataViews.ExternalURL(externalURL ?? "")
+
 
         let emptyMediaMap = {
             "fileType": "https",
@@ -39,25 +34,29 @@ transaction(
         }
 
         let bannerImage = ExcluenceNFT.dictToMedia(
-            args["bannerImage"] == nil ? emptyMediaMap: args["bannerImage"] as! {String: String}
+            bannerImage == nil ? emptyMediaMap: bannerImage!
         )
 
-        let socials: {String: MetadataViews.ExternalURL} = {}
-        let socialsMap:{String: String} = args["socials"] == nil ? {}: args["social"] as! {String:String}
+        let _socials: {String: MetadataViews.ExternalURL} = {}
 
-        for social in socialsMap.keys {
-            socials[social] = MetadataViews.ExternalURL(socialsMap[social]!)
+        for social in socials.keys {
+            _socials[social] = MetadataViews.ExternalURL(socials[social]!)
         }
 
+        let royalties = ExcluenceNFT.createRoyaltyStructs(
+            royaltyCuts: royaltyCuts, 
+            royaltyDescriptions: royaltyDescriptions
+        )
 
         self.adminRef.createProject(name: name, 
             description: description, 
             externalURL: externalURL, 
-            squareImage: squareImage, 
+            squareImage: ExcluenceNFT.dictToMedia(squareImage), 
             bannerImage: bannerImage, 
-            socials: socials, 
-            royalties: []
+            socials: _socials, 
+            royalties: royalties
         )
+
     }
 
     post {

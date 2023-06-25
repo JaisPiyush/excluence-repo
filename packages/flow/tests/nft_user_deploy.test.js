@@ -1,17 +1,12 @@
 import path from "path";
 import * as fs from "fs"
-import { expect } from "@jest/globals";
 import { setupInitialContracts } from ".";
 import {
     emulator,
     getAccountAddress,
     init,
     sendTransaction,
-    shallPass,
-    shallRevert,
-    shallThrow,
-    deployContract
-} from "@onflow/flow-js-testing";
+    shallPass} from "@onflow/flow-js-testing";
 
 // Set basepath of the project
 const BASE_PATH = path.resolve(__dirname, "./../");

@@ -3,6 +3,7 @@ import MetadataViews from "../../contracts/interfaces/MetadataViews.interface.cd
 import ExcluenceNFT from "../../contracts/ExcluenceNFT.cdc"
 
 
+
 transaction {
     prepare(acct: AuthAccount) {
 
