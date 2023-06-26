@@ -1,14 +1,14 @@
 
-transaction(contractCode: String) {
+transaction(name: String, contractCode: String) {
 
 
     prepare(acct: AuthAccount) {
 
         // Check to see if contract is already deployed
-        if acct.contracts.get(name: "ExcluenceNFT") == nil {
+        if acct.contracts.get(name: name) == nil {
 
             acct.contracts.add(
-                name: "ExcluenceNFT", 
+                name: name, 
                 code: contractCode.decodeHex()
             )
         }

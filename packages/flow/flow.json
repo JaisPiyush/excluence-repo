@@ -47,8 +47,15 @@
 			"address": "f8d6e0586b0a20c7",
 			"key": "27fdd561001aa0e819a1870b7b0036de039f9d4efe7cbe5f1d4f773430e7df6a"
 		},
+		"excluence-tester": {
+			"address": "07b48aa7d91a783d",
+			"key": {
+				"type": "file",
+				"location": "excluence-tester.pkey"
+			}
+		},
 		"krita": {
-			"address": "0x01cf0e2f2f71545",
+			"address": "001cf0e2f2f71545",
 			"key": "52a4408aed3f9008a4afb015bd4f0b79565a74ecf9cddd4fbf3782659da602ec"
 		}
 	},
@@ -56,6 +63,14 @@
 		"emulator": {
 			"emulator-account": [
 				"ExcluenceNFT",
+				"ViewResolver",
+				"MetadataViews",
+				"NonFungibleToken",
+				"FungibleToken"
+			]
+		},
+		"testnet": {
+			"excluence-tester": [
 				"ViewResolver",
 				"MetadataViews",
 				"NonFungibleToken",
