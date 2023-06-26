@@ -32,7 +32,8 @@ const darkTheme = createTheme({
         defaultProps: {
           noSsr: true
         }
-      }
+      },
+      
     }
   })
 

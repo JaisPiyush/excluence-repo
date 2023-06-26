@@ -1,0 +1,1 @@
+export type User =  {addr?: string, loggedIn: boolean | null} & Record<string, unknown>

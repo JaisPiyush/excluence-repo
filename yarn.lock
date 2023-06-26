@@ -3598,6 +3598,25 @@
     "@onflow/util-uid" "^1.1.0"
     cross-fetch "^3.1.6"
 
+"@onflow/fcl@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@onflow/fcl/-/fcl-1.4.1.tgz#f54c899d814f77efe1158142571ad56d73aa1685"
+  integrity sha512-wW2gZ6s5vofPwVIhx6x/Meo9LYWvEc9V1IVFd8HbNcXcSgln7aPwBhdZdhmIF9TqRNmbJxFxGkwd96wEGPlWJg==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+    "@onflow/config" "^1.1.0"
+    "@onflow/interaction" "0.0.11"
+    "@onflow/rlp" "^1.1.0"
+    "@onflow/sdk" "^1.2.0"
+    "@onflow/types" "^1.1.0"
+    "@onflow/util-actor" "^1.2.0"
+    "@onflow/util-address" "^1.1.0"
+    "@onflow/util-invariant" "^1.1.0"
+    "@onflow/util-logger" "^1.2.0"
+    "@onflow/util-template" "^1.1.0"
+    "@onflow/util-uid" "^1.1.0"
+    cross-fetch "^3.1.6"
+
 "@onflow/flow-cadut@0.2.0-alpha.9":
   version "0.2.0-alpha.9"
   resolved "https://registry.npmjs.org/@onflow/flow-cadut/-/flow-cadut-0.2.0-alpha.9.tgz"
@@ -8514,6 +8533,13 @@ cacheable-request@^7.0.2:
     normalize-url "^6.0.1"
     responselike "^2.0.0"
 
+cadence-webpack-plugin@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/cadence-webpack-plugin/-/cadence-webpack-plugin-1.0.1.tgz#dfbc6899079bc6933a8a67f8fe9763be231d6b28"
+  integrity sha512-cixCBCRCE5nES4c1zEebaHwk/RJ8bvHt1hbyc8KwCuTcvxImUFFDCqo68CMTcOAzGHjmO30V8ORXkHLDEs7kcg==
+  dependencies:
+    node-polyfill-webpack-plugin "^1.1.4"
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/call-bind/-/call-bind-1.0.2.tgz"
@@ -9721,7 +9747,7 @@ dom-walk@^0.1.0:
   resolved "https://registry.npmjs.org/dom-walk/-/dom-walk-0.1.2.tgz"
   integrity sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==
 
-domain-browser@^4.22.0:
+domain-browser@^4.19.0, domain-browser@^4.22.0:
   version "4.22.0"
   resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-4.22.0.tgz#6ddd34220ec281f9a65d3386d267ddd35c491f9f"
   integrity sha512-IGBwjF7tNk3cwypFNH/7bfzBcgSCbaMOD3GsaY1AU/JRrnHnYgEM0+9kQt52iZxjNsjBtJYtao146V+f8jFZNw==
@@ -15064,6 +15090,36 @@ node-plop@^0.26.3:
     lodash.get "^4.4.2"
     mkdirp "^0.5.1"
     resolve "^1.12.0"
+
+node-polyfill-webpack-plugin@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/node-polyfill-webpack-plugin/-/node-polyfill-webpack-plugin-1.1.4.tgz#56bfa4d16e17addb9d6b1ef3d04e790c401f5f1d"
+  integrity sha512-Z0XTKj1wRWO8o/Vjobsw5iOJCN+Sua3EZEUc2Ziy9CyVvmHKu6o+t4gUH9GOE0czyPR94LI6ZCV/PpcM8b5yow==
+  dependencies:
+    assert "^2.0.0"
+    browserify-zlib "^0.2.0"
+    buffer "^6.0.3"
+    console-browserify "^1.2.0"
+    constants-browserify "^1.0.0"
+    crypto-browserify "^3.12.0"
+    domain-browser "^4.19.0"
+    events "^3.3.0"
+    filter-obj "^2.0.2"
+    https-browserify "^1.0.0"
+    os-browserify "^0.3.0"
+    path-browserify "^1.0.1"
+    process "^0.11.10"
+    punycode "^2.1.1"
+    querystring-es3 "^0.2.1"
+    readable-stream "^3.6.0"
+    stream-browserify "^3.0.0"
+    stream-http "^3.2.0"
+    string_decoder "^1.3.0"
+    timers-browserify "^2.0.12"
+    tty-browserify "^0.0.1"
+    url "^0.11.0"
+    util "^0.12.4"
+    vm-browserify "^1.1.2"
 
 node-polyfill-webpack-plugin@^2.0.1:
   version "2.0.1"
