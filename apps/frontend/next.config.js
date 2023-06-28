@@ -6,7 +6,8 @@ const nextConfig = {
   basePath: "",
   transpilePackages: [
     "@excluence-repo/discord-connector",
-    "@excluence-repo/flow"
+    "@excluence-repo/flow",
+    "@excluence-repo/db"
   ],
   webpack:  (
     config,

@@ -6,6 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("MONGO_URL")
+  provider = "mongodb"
+  //TODO: Need Env configuration when going in production
+  url      = "mongodb://localhost:27017/excluence"
 }
+
+model NFTCollection {
+  id String @id @default(auto()) @map("_id") @db.ObjectId 
+  externalURLSegment String @unique
+} 

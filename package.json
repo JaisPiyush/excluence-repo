@@ -7,7 +7,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "dev:backend": "dotenv -- turbo run dev --filter=backend",
     "dev:frontend": "dotenv -- turbo run dev --filter=frontend",
-    "sb:frontend": "yarn workspace frontend run storybook"
+    "sb:frontend": "yarn workspace frontend run storybook",
+    "db:push": "dotenv -- yarn workspace @excluence-repo/db run db:push"
   },
   "devDependencies": {
     "@thirdweb-dev/cli": "^0.6.15",

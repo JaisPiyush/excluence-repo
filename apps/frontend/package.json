@@ -30,7 +30,8 @@
     "react-iconly": "^2.2.10",
     "react-icons": "^4.10.1",
     "react-loading-skeleton": "^3.3.1",
-    "react-redux": "^8.1.1"
+    "react-redux": "^8.1.1",
+    "@excluence-repo/db": "*"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^7.0.23",
