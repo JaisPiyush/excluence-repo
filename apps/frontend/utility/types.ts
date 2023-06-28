@@ -7,7 +7,9 @@ export interface ICreateCollectionContext {
     squareImage: string | null
     bannerImage: string | null
     socials: Record<string, string>
-    royalties: Array<[string, string, string?]>
+    royalties: Array<[string, string, string?]>,
+    sectionIndex: number,
+    sectionIndexHasError: Record<number, boolean>
 }
 
 

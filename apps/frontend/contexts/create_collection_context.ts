@@ -1,5 +1,6 @@
+import { CreateCollectionAction } from "@/hooks/useCreateCollectionReducer";
 import { ICreateCollectionContext } from "@/utility/types";
-import { createContext } from "react";
+import { Dispatch, createContext } from "react";
 
 
 export const CreateCollectionContext = createContext<ICreateCollectionContext>({
@@ -9,5 +10,7 @@ export const CreateCollectionContext = createContext<ICreateCollectionContext>({
     squareImage: null,
     bannerImage: null,
     socials: {},
-    royalties: []
+    royalties: [],
+    sectionIndex: 0,
+    sectionIndexHasError: {}
 })

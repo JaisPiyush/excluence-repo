@@ -5,7 +5,6 @@ interface CreateCollectionAppDrawerProps {
     currentIndex: number
     onIndexChange: (index: number) => void,
     hasError: Record<number, boolean>,
-    setIndexHasError: (index: number, hasError: boolean) => void
 }
 
 export default function CreateCollectionAppDrawer(props: CreateCollectionAppDrawerProps) {

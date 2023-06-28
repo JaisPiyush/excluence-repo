@@ -18,6 +18,7 @@ export enum CreateCollectionActionKind {
     SetSectionIndexHasError,
     SetSectionIndex,
     SetCollectionDetails,
+    SetCollectionGraphics
 }
 
 export interface CreateCollectionAction {
@@ -35,11 +36,17 @@ function createCollectionReducer(state: ICreateCollectionContext, action: Create
             state.sectionIndexHasError[index] = hasError
             return {...state}
         case CreateCollectionActionKind.SetCollectionDetails:
-            const payload = action.payload as Pick<ICreateCollectionContext, "name" | "description" | "externalURL">
-            state.name = payload.name
-            state.description = payload.description
-            state.externalURL = payload.externalURL
+            const detailsPayload = action.payload as Pick<ICreateCollectionContext, "name" | "description" | "externalURL">
+            state.name = detailsPayload.name
+            state.description = detailsPayload.description
+            state.externalURL = detailsPayload.externalURL
             return {...state}
+        case CreateCollectionActionKind.SetCollectionGraphics:
+            let graphicsPayload = action.payload as Pick<ICreateCollectionContext, "squareImage" | "bannerImage">
+            state.bannerImage = graphicsPayload.bannerImage
+            state.squareImage = graphicsPayload.squareImage
+            return {...state}
+
         default:
             return state
         
