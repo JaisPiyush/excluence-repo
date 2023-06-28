@@ -3579,26 +3579,7 @@
   resolved "https://registry.npmjs.org/@onflow/fcl-config/-/fcl-config-0.0.1.tgz"
   integrity sha512-umvYsAwejX2yGJ5OFxM1dEaKmFEXf+34f4rJfVkfEYztgJqLkUbBkEB8HQsI8M78QUpWkWuNArqwbFvFerBbHA==
 
-"@onflow/fcl@^1.3.0-alpha.3", "@onflow/fcl@^1.3.2":
-  version "1.4.1"
-  resolved "https://registry.npmjs.org/@onflow/fcl/-/fcl-1.4.1.tgz"
-  integrity sha512-wW2gZ6s5vofPwVIhx6x/Meo9LYWvEc9V1IVFd8HbNcXcSgln7aPwBhdZdhmIF9TqRNmbJxFxGkwd96wEGPlWJg==
-  dependencies:
-    "@babel/runtime" "^7.18.6"
-    "@onflow/config" "^1.1.0"
-    "@onflow/interaction" "0.0.11"
-    "@onflow/rlp" "^1.1.0"
-    "@onflow/sdk" "^1.2.0"
-    "@onflow/types" "^1.1.0"
-    "@onflow/util-actor" "^1.2.0"
-    "@onflow/util-address" "^1.1.0"
-    "@onflow/util-invariant" "^1.1.0"
-    "@onflow/util-logger" "^1.2.0"
-    "@onflow/util-template" "^1.1.0"
-    "@onflow/util-uid" "^1.1.0"
-    cross-fetch "^3.1.6"
-
-"@onflow/fcl@^1.4.1":
+"@onflow/fcl@^1.3.0-alpha.3", "@onflow/fcl@^1.3.2", "@onflow/fcl@^1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@onflow/fcl/-/fcl-1.4.1.tgz#f54c899d814f77efe1158142571ad56d73aa1685"
   integrity sha512-wW2gZ6s5vofPwVIhx6x/Meo9LYWvEc9V1IVFd8HbNcXcSgln7aPwBhdZdhmIF9TqRNmbJxFxGkwd96wEGPlWJg==
@@ -16503,6 +16484,11 @@ react-iconly@^2.2.10:
   version "2.2.10"
   resolved "https://registry.yarnpkg.com/react-iconly/-/react-iconly-2.2.10.tgz#da7719a2f99d52dff53e318aa6b9b2a02f274d12"
   integrity sha512-AZYJRzXMj7yw+KIFUkom3cWhvfbrdlbOLbBDuFnPJrbrgynmNCcJhX8dIQ/JGKq5XDo1P9j8Gico0xZnV/bXWA==
+
+react-icons@^4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
+  integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
 
 react-inspector@^6.0.0:
   version "6.0.2"

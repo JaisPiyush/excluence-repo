@@ -1,6 +1,6 @@
 import { Card, Box, Typography, useTheme, Button } from "@mui/material";
 import ImageMediaRenderer, { ImageMediaSources } from "../MediaRenderer/ImageMediaRenderer";
-import { NFTHttpFile, NFTIpfsFile, NFTMetadataViewsDisplay, NFTMetadataViewsEditions } from "./types";
+import { NFTHttpFile, NFTIpfsFile, NFTMetadataViewsDisplay, NFTMetadataViewsEditions } from "@/utility/types";
 import {Plus} from 'react-iconly'
 
 

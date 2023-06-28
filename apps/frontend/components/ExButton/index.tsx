@@ -1,14 +1,18 @@
-import { Button } from "@mui/material";
+import { Button, SxProps } from "@mui/material";
 import { ReactNode } from "react";
-import darkTheme from "../../styles/theme/darkTheme";
 
 interface ExButtonProps {
     children: ReactNode,
     isPrimary: boolean,
     onClick?: () => void
+    sx?: SxProps
 }
 
 export default function ExButton(props: ExButtonProps) {
+    const sx = props.sx || ({} as SxProps)
+    
+    // sx.textTransform = sx.textTransform || 'unset !important'
+    
     return <Button onClick={(_) => {
         if (props.onClick) {
             props.onClick()
@@ -16,7 +20,8 @@ export default function ExButton(props: ExButtonProps) {
     }}  disableElevation 
         variant={props.isPrimary ? "contained": "outlined"}
         sx={{
-            textTransform: 'unset !important'
+            textTransform: 'unset !important',
+            ...sx
         }}
         >
         {props.children}
