@@ -36,7 +36,7 @@ export default function RoyaltyShareInput(props: RoyaltyShareInputProps) {
         <TextField
             variant="outlined" 
             required
-            error={props.cut.length > 0 && parseFloat(props.cut) > 0}
+            error={props.cut.length > 0 && parseFloat(props.cut) > 100}
             InputProps={{
                 endAdornment: <InputAdornment position="end">%</InputAdornment>
             }}

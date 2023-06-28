@@ -1,24 +1,50 @@
 import RoyaltyShareInput from "@/components/CreateCollection/RoyaltyShareInput";
 import SectionHeader from "@/components/CreateCollection/SectionHeader";
 import ExButton from "@/components/ExButton";
-import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
-import { useState } from "react";
-import {AiOutlinePlus} from "react-icons/ai"
+import { CreateCollectionContext } from "@/contexts/create_collection_context";
+import { CreateCollectionAction, CreateCollectionActionKind } from "@/hooks/useCreateCollectionReducer";
+import { Alert, Box, Snackbar, Typography } from "@mui/material";
+import { Dispatch, useContext, useState } from "react";
 
 interface CollectionEarningsProps {
-
+    index: number;
+    dispatch: Dispatch<CreateCollectionAction>
 }
 
 export default function CollectionEarnings(props: CollectionEarningsProps) {
-    const handleOnNextClick = () => {}
+    const handleOnNextClick = () => {
+        if (royalties.length > 0) {
+            props.dispatch({
+                type: CreateCollectionActionKind.SetCollectionRoyalties,
+                payload: {
+                    royalties
+                }
+            })
+
+            props.dispatch({
+                type: CreateCollectionActionKind.SetSectionIndex,
+                payload: props.index + 1
+            })
+        }
+    }
 
     const [hasCutPercOverflown, setHasCutPercOverflown] = useState(false)
-
-    const [royalties, setRoyalties] = useState<Array<[string, string, string?]>>([])
+    const createCollectionContext = useContext(CreateCollectionContext)
+    const [royalties, setRoyalties] = useState<Array<[string, string, string?]>>(createCollectionContext.royalties || [])
     
     const addRoyaltyShareInput = () => {
         royalties.push(["", "0",])
         setRoyalties([...royalties])
+    }
+
+    const isValidCutData = (cut: string) => {
+        try {
+            parseFloat(cut)
+            
+        }catch(e){
+            return false
+        }
+        return true
     }
 
     const setInputAddress = (index: number, address: string) => {
@@ -29,6 +55,7 @@ export default function CollectionEarnings(props: CollectionEarningsProps) {
     const setInputCut = (index: number, cut: string) => {
         royalties[index][1] = cut
         setHasCutPercOverflown(
+            isValidCutData(cut) &&
             royalties.reduce<number>(
                 (prevValue, value) => prevValue + parseFloat(value[1]),
                 0

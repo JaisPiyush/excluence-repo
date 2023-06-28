@@ -18,7 +18,9 @@ export enum CreateCollectionActionKind {
     SetSectionIndexHasError,
     SetSectionIndex,
     SetCollectionDetails,
-    SetCollectionGraphics
+    SetCollectionGraphics,
+    SetCollectionRoyalties,
+    SetCollectionSocials,
 }
 
 export interface CreateCollectionAction {
@@ -46,6 +48,12 @@ function createCollectionReducer(state: ICreateCollectionContext, action: Create
             state.bannerImage = graphicsPayload.bannerImage
             state.squareImage = graphicsPayload.squareImage
             return {...state}
+
+        case CreateCollectionActionKind.SetCollectionRoyalties:
+            let royaltiesPayload = action.payload as Pick<ICreateCollectionContext, "royalties">
+            state.royalties = royaltiesPayload.royalties
+            return {...state}
+            
 
         default:
             return state
