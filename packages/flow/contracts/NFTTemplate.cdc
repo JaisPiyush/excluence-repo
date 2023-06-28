@@ -1,4 +1,3 @@
-
 import NonFungibleToken from "./interfaces/NonFungibleToken.interface.cdc"
 import MetadataViews from "./interfaces/MetadataViews.interface.cdc"
 import ViewResolver from "./interfaces/ViewResolver.interface.cdc"

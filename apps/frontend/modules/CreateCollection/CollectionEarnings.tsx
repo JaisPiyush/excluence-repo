@@ -21,11 +21,12 @@ export default function CollectionEarnings(props: CollectionEarningsProps) {
                 }
             })
 
-            props.dispatch({
-                type: CreateCollectionActionKind.SetSectionIndex,
-                payload: props.index + 1
-            })
+            
         }
+        props.dispatch({
+            type: CreateCollectionActionKind.SetSectionIndex,
+            payload: props.index + 1
+        })
     }
 
     const [hasCutPercOverflown, setHasCutPercOverflown] = useState(false)

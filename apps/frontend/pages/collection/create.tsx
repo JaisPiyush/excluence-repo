@@ -1,12 +1,17 @@
 import CreateCollectionAppDrawer from "@/components/CreateCollection/CreateCollectionAppDrawer";
+import Loader from "@/components/Loader";
 import { CreateCollectionContext } from "@/contexts/create_collection_context";
 import { CreateCollectionActionKind, useCreateCollectionReducer } from "@/hooks/useCreateCollectionReducer";
 import CollectionDetails from "@/modules/CreateCollection/CollectionDetails";
 import CollectionEarnings from "@/modules/CreateCollection/CollectionEarnings";
 import CollectionGraphics from "@/modules/CreateCollection/CollectionGraphics";
 import CollectionSocials from "@/modules/CreateCollection/CollectionSocials";
-import { Box } from "@mui/material";
-
+import { Alert, AlertColor, Box, Snackbar } from "@mui/material";
+import { useState } from "react";
+import {deployContract} from "@/flow/tx_deploy_contract"
+import { pinFileToIPFS } from "@/utility/pinata";
+import { useRouter } from "next/router";
+import { getMessageSigned } from "@/utility";
 
 
 
@@ -22,6 +27,58 @@ export default function CreateCollection() {
         })
     }
 
+    const [showLoader, setShowLoader] = useState(false)
+    const [loaderText, setLoaderText] = useState("Deploying contract")
+    const [snackBarText, setSnackBarText] = useState<string | null>(null)
+    const [snackBarSev, setSnackBarSev] = useState<AlertColor>("error")
+
+    const router = useRouter()
+
+    const handleOnCreateCollectionClick = async () => { 
+        if (createCollectionState.name && createCollectionState.name.length > 0 &&
+            createCollectionState.description && createCollectionState.externalURL &&
+            createCollectionState.squareImage && createCollectionState.bannerImage
+            ) {
+                setShowLoader(true)
+                setLoaderText("Uploading square image")
+                const squareImageCid = await pinFileToIPFS(createCollectionState.squareImage, {
+                    name: `${createCollectionState.name}-Square Image`,
+                    type: 'image/*'
+                })
+                setLoaderText("Uploading banner image")
+                const bannerImageCid = await pinFileToIPFS(createCollectionState.bannerImage, {
+                    name: `${createCollectionState.name}-Banner Image`,
+                    type: 'image/*'
+                })
+                setLoaderText("Deploying contract")
+                const createCollectionData = {...createCollectionState}
+                createCollectionData.squareImage = squareImageCid
+                createCollectionData.bannerImage = bannerImageCid
+
+                await deployContract(createCollectionData, {
+                    onSubmission:  (txID: string) => {
+                        setLoaderText(`Txn submitted`)
+                        setSnackBarSev("info")
+                        setSnackBarText(`Txn ${txID} submitted.`)
+                    },
+                    onSuccess:  () => {
+                        setShowLoader(false)
+                        setSnackBarText("Collection Deployed")
+                        setSnackBarSev("success")
+                        // router.replace("/collection")
+                        //TODO: Add the contract on server
+                    },
+                    onError:  (err: Error) => {
+                        setShowLoader(false)
+                        setSnackBarText("Failed to create collection")
+                        setSnackBarSev("error")
+                    }
+                })
+            }
+    }
+
+    
+
     const displayCurrentSection = () => {
         switch(createCollectionState.sectionIndex) {
             case 0:
@@ -35,9 +92,16 @@ export default function CreateCollection() {
                         dispatch={dispatch}
                 />
             case 2:
-                return <CollectionEarnings />
+                return <CollectionEarnings 
+                            index={2}
+                            dispatch={dispatch}
+                    />
             case 3:
-                return <CollectionSocials />
+                return <CollectionSocials 
+                            index={3}
+                            dispatch={dispatch}
+                            onCreate={() =>{handleOnCreateCollectionClick()}}
+                    />
         }
     }
 
@@ -55,7 +119,24 @@ export default function CreateCollection() {
                     marginTop: 5,
                 }}>
                     {displayCurrentSection()}
+                    <Loader 
+                        open={showLoader} 
+                        onClose={() => {setShowLoader(false)}}
+                        loadingTex={loaderText}
+                    />
+                    <Snackbar 
+                        open={snackBarText !== null} 
+                        autoHideDuration={6000}
+                        onClose={() => {setSnackBarText(null)}}
+                    >
+                        <Alert 
+                            onClose={() => {setSnackBarText(null)}}
+                            severity={snackBarSev}>
+                                {snackBarText}
+                        </Alert>
+                    </Snackbar>
                 </Box>
+                
         </CreateCollectionContext.Provider>
         
     </Box>

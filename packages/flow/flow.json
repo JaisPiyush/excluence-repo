@@ -10,25 +10,29 @@
 		"FungibleToken": {
 			"source": "./contracts/interfaces/FungibleToken.interface.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "8d1e8a40fff91d21"
 			}
 		},
 		"MetadataViews": {
 			"source": "./contracts/interfaces/MetadataViews.interface.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "8d1e8a40fff91d21"
 			}
 		},
 		"NonFungibleToken": {
 			"source": "./contracts/interfaces/NonFungibleToken.interface.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "8d1e8a40fff91d21"
 			}
 		},
 		"ViewResolver": {
 			"source": "./contracts/interfaces/ViewResolver.interface.cdc",
 			"aliases": {
-				"emulator": "f8d6e0586b0a20c7"
+				"emulator": "f8d6e0586b0a20c7",
+				"testnet": "8d1e8a40fff91d21"
 			}
 		}
 	},

@@ -8,17 +8,30 @@ import {
     BsInstagram,
     BsTwitter
 } from "react-icons/bs"
-import { useContext, useState } from "react";
+import { Dispatch, useContext, useState } from "react";
 import { CreateCollectionContext } from "@/contexts/create_collection_context";
+import { CreateCollectionAction, CreateCollectionActionKind } from "@/hooks/useCreateCollectionReducer";
 
-interface CollectionSocials {}
+interface CollectionSocials {
+    index: number;
+    dispatch: Dispatch<CreateCollectionAction>
+    onCreate: () => void
+}
 
 export default function CollectionSocials(props: CollectionSocials) {
 
     const createCollectionContext = useContext(CreateCollectionContext)
     const [socials, setSocials] = useState(createCollectionContext.socials)
 
-    const handleOnNextClick = () => {}
+    const handleOnNextClick = () => {
+        props.dispatch({
+            type: CreateCollectionActionKind.SetCollectionSocials,
+            payload: {
+                socials: socials
+            }
+        })
+        props.onCreate()
+    }
 
     return <Box>
                 <SectionHeader

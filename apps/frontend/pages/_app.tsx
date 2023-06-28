@@ -11,6 +11,7 @@ import { CssBaseline } from "@mui/material";
 import 'react-loading-skeleton/dist/skeleton.css'
 import * as fcl from "@onflow/fcl"
 import NavBar from "@/modules/NavBar";
+// import flowJSON from "@excluence-repo/flow/flow.json"
 
 
 const clientSideEmotionCache = createEmotionCache();
@@ -18,7 +19,10 @@ const clientSideEmotionCache = createEmotionCache();
 fcl
   .config()
   .put("accessNode.api", "https://rest-testnet.onflow.org")
-  .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn");
+  .put("flow.network", "testnet")
+  .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn")
+  .put("env", "testnet")
+  // .load({flowJSON})
 
 
 function MyApp(props: AppProps & {emotionCache: EmotionCache}) {

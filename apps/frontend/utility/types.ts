@@ -44,3 +44,9 @@ export interface NFTMetadataViewsEdition {
 export interface NFTMetadataViewsEditions {
     infoList: NFTMetadataViewsEdition[]
 }
+
+export interface CollectionOnServer {
+    externalURLSegment: string
+    address: string
+    contractName: string
+}

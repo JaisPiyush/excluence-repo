@@ -77,14 +77,14 @@ transaction(
                 )
             }
 
-            let externalURLStruct = MetadataViews.ExternalURL(externalURL)
+            // let externalURLStruct = MetadataViews.ExternalURL(externalURL)
 
             acct.contracts.add(
                 name: name, 
                 code: contractCode.decodeHex(),
                 collectionName,
                 description,
-                externalURLStruct,
+                externalURL,
                 squareImageMedia,
                 bannerImageMedia,
                 socialsRecord,

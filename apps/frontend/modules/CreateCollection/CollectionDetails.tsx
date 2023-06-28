@@ -59,7 +59,7 @@ export default function CollectionDetails(props: CollectionDetailsProps) {
     }
     
     const handleOnNextClick = async () => {
-        if (name.length > 4 && description.length > 5 && description.length < 1000) {
+        if (name.length > 4 && description && description.length < 1000) {
             // TODO:Add the method to check collection name is unique
             // And the external url part will also be unique
             // Plus also check that the account shouldn't already hold any contract with same name
@@ -83,11 +83,6 @@ export default function CollectionDetails(props: CollectionDetailsProps) {
                     description,
                     externalURL: `${window.location.origin}/collection/${segment}`
                 }
-            })
-
-            props.dispatch({
-                type: CreateCollectionActionKind.SetSectionIndexHasError,
-                payload: [props.index, true]
             })
 
             props.dispatch({
@@ -136,7 +131,7 @@ export default function CollectionDetails(props: CollectionDetailsProps) {
 
                         <Box sx={{marginTop: '2rem'}}>
                             <Typography variant="h6">Description</Typography>
-                            <Typography color="primary.light" variant="body2">Markdown syntax is supported. 0 of 1000 characters used.</Typography>
+                            <Typography color="primary.light" variant="body2">Markdown syntax is supported. {description.length} of 1000 characters used.</Typography>
                             <TextField 
                                 multiline
                                 rows={4} 

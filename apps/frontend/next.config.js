@@ -14,10 +14,10 @@ const nextConfig = {
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
   ) => {
     // Important: return the modified config
-    config.plugins = [
-      new CadencePlugin(),
-      ...config.plugins
-    ]
+    config.module.rules.push({
+      test: /\.cdc/,
+      type: "asset/source",
+    })
     return config
   },
 };

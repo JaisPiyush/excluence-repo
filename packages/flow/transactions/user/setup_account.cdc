@@ -1,6 +1,6 @@
 import NonFungibleToken from "../../contracts/interfaces/NonFungibleToken.interface.cdc"
 import MetadataViews from "../../contracts/interfaces/MetadataViews.interface.cdc"
-import ExcluenceNFT from "../../contracts/ExcluenceNFT.cdc"
+import NFTTemplate from "../../contracts/NFTTemplate.cdc"
 
 
 
@@ -8,17 +8,17 @@ transaction {
     prepare(acct: AuthAccount) {
 
         // Check to see if collection already exists
-        if acct.borrow<&ExcluenceNFT.Collection>(from: ExcluenceNFT.CollectionStoragePath) == nil {
+        if acct.borrow<&NFTTemplate.Collection>(from: NFTTemplate.CollectionStoragePath) == nil {
 
-            // Create a new ExcluenceNFT collection
-            let collection <- ExcluenceNFT.createEmptyCollection()
+            // Create a new NFTTemplate collection
+            let collection <- NFTTemplate.createEmptyCollection()
 
             // Put the new Collection in storage
-            acct.save(<- collection, to: ExcluenceNFT.CollectionStoragePath)
+            acct.save(<- collection, to: NFTTemplate.CollectionStoragePath)
 
             // create a public capability for the collection
-            acct.link<&{NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, ExcluenceNFT.ExcluenceNFTCollectionPublic, 
-                MetadataViews.ResolverCollection}>(ExcluenceNFT.CollectionPublicPath, target: ExcluenceNFT.CollectionStoragePath)
+            acct.link<&{NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, NFTTemplate.NFTTemplateCollectionPublic, 
+                MetadataViews.ResolverCollection}>(NFTTemplate.CollectionPublicPath, target: NFTTemplate.CollectionStoragePath)
         }
     }
 }

@@ -12,4 +12,28 @@ export default class NFTCollectionService {
         
         return nfCollection === null
     }
+
+    async createNFTCollection(segment: string, address: string, contractName: string) {
+        const nftCollection = await this.prisma.nFTCollection.create({
+            data: {
+                externalURLSegment: segment,
+                address,
+                contractName
+            }
+        })
+        return nftCollection
+    }
+
+    async getAllCollections(address: string) {
+        return await this.prisma.nFTCollection.findMany({
+            where: {
+                address
+            },
+            select: {
+                address: true,
+                contractName: true,
+                externalURLSegment: true
+            }
+        })
+    }
 }
