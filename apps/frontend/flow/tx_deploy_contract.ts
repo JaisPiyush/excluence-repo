@@ -5,6 +5,7 @@ import {} from "@onflow/fcl"
 import { ICreateCollectionContext } from "@/utility/types"
 import { replaceAddress } from "./utils"
 import { encodeHex } from "@/utility"
+import { createNFTCollection } from "@/api/createCollection"
 
 export async function deployContract(
     createCollectionData: ICreateCollectionContext,
@@ -15,8 +16,12 @@ export async function deployContract(
         return word[0].toUpperCase() + word.substring(1)
     }
     
-    ).join("") + "NFT"
-    
+    ).join("")
+
+    if (!contractName.includes('NFT')) {
+        contractName += "NFT"
+    }
+
 
     let contract = replaceAddress(NFTTemplateContract).replaceAll("NFTTemplate", contractName)
     contract  = encodeHex(contract)
@@ -43,6 +48,16 @@ export async function deployContract(
     const socials: Array<{key: string, value: string}> = []
     for (const [key, value] of Object.entries(createCollectionData.socials)) {
         socials.push({key, value})
+    }
+
+    opts.onSuccess = async (txStatus: any) => {
+        
+        const pathname = (new URL(createCollectionData.externalURL as string)).pathname
+        const segment = pathname.replace('/collection/', '')
+        await createNFTCollection({contractName, externalURLSegment: segment})
+        if (opts.onSuccess) {
+            opts.onSuccess(txStatus)
+        }
     }
 
     return tx({

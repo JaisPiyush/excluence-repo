@@ -1,3 +1,5 @@
+import { CompositeSignature } from "@onflow/fcl/types/current-user"
+
 export type User =  {addr?: string, loggedIn: boolean | null} & Record<string, unknown>
 
 export interface ICreateCollectionContext {
@@ -46,7 +48,15 @@ export interface NFTMetadataViewsEditions {
 }
 
 export interface CollectionOnServer {
-    externalURLSegment: string
-    address: string
-    contractName: string
+    externalURLSegment: string;
+    address: string;
+    contractName: string;
+}
+
+export interface SignatureVerificationRequestData<T> {
+    packet: {
+        data: T,
+        nonce: number
+    },
+    signatures: CompositeSignature[]
 }

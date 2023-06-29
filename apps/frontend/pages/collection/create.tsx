@@ -11,7 +11,7 @@ import { useState } from "react";
 import {deployContract} from "@/flow/tx_deploy_contract"
 import { pinFileToIPFS } from "@/utility/pinata";
 import { useRouter } from "next/router";
-import { getMessageSigned } from "@/utility";
+import * as fcl from "@onflow/fcl"
 
 
 
@@ -39,6 +39,9 @@ export default function CreateCollection() {
             createCollectionState.description && createCollectionState.externalURL &&
             createCollectionState.squareImage && createCollectionState.bannerImage
             ) {
+                if ((await fcl.currentUser.snapshot()).addr === undefined) {
+                    await fcl.reauthenticate()
+                }
                 setShowLoader(true)
                 setLoaderText("Uploading square image")
                 const squareImageCid = await pinFileToIPFS(createCollectionState.squareImage, {
@@ -61,12 +64,12 @@ export default function CreateCollection() {
                         setSnackBarSev("info")
                         setSnackBarText(`Txn ${txID} submitted.`)
                     },
-                    onSuccess:  () => {
+                    onSuccess:  async () => {                     
+                        setLoaderText("Registering the collection")
                         setShowLoader(false)
                         setSnackBarText("Collection Deployed")
                         setSnackBarSev("success")
-                        // router.replace("/collection")
-                        //TODO: Add the contract on server
+                        router.replace("/collection")
                     },
                     onError:  (err: Error) => {
                         setShowLoader(false)
@@ -121,7 +124,7 @@ export default function CreateCollection() {
                     {displayCurrentSection()}
                     <Loader 
                         open={showLoader} 
-                        onClose={() => {setShowLoader(false)}}
+                        onClose={() => {}}
                         loadingTex={loaderText}
                     />
                     <Snackbar 
