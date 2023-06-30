@@ -1,26 +1,31 @@
 import ImageMediaRenderer, { ImageMediaSources } from "../MediaRenderer/ImageMediaRenderer";
 import useGetViewportDimension from "@/hooks/useGetViewportDimension";
 import { useTheme } from "@mui/material";
+import { CSSProperties } from "react";
 
-type BannerImageProps = ImageMediaSources
+type BannerImageProps = ImageMediaSources & {
+    style?: CSSProperties
+}
 
-export default function BannerImage(props: BannerImageProps) {
+export default function BannerImage({style = {}, ...props}: BannerImageProps) {
     const theme = useTheme()
     const {width} = useGetViewportDimension({
         width: theme.breakpoints.values.md
     })
 
-    const maxWidth = theme.breakpoints.values.lg
+    const bannerWidth = typeof window !== 'undefined' ? width - 64: theme.breakpoints.values.lg
     return <ImageMediaRenderer 
         {...props}
         alt="Banner image"
-        width={width > maxWidth ? maxWidth: width}
+        width={bannerWidth}
         height={280}
         style={{
-            alignSelf: 'stretch'
+            alignSelf: 'stretch',
+            borderRadius: '0.5rem',
+            ...style,
         }}
-        mobileHeight={'15.625rem'}
-        tabletHeight={'17.5rem'}
-        desktopHeight={'20rem'}
+        mobileHeight={'17.625rem'}
+        tabletHeight={'19.5rem'}
+        desktopHeight={'22rem'}
     />
 }

@@ -56,7 +56,7 @@ export default function NavBar() {
      }}
     >
 
-        <AppBar position="static">
+        <AppBar position="static" sx={{bgcolor: 'black'}}>
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>Excluence</Typography>
                 {displayLoginState()}

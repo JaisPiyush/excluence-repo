@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material"
-import Image, { StaticImageData } from "next/image"
+import Image, { ImageLoaderProps, StaticImageData } from "next/image"
 import Skeleton from 'react-loading-skeleton'
 import darkTheme from "@/styles/theme/darkTheme"
 import { CSSProperties, useState } from "react"
@@ -29,7 +29,7 @@ type ImageMediaRendererProps = ImageMediaSources & {
 }
 
 
-
+//TODO: Add fallback image to show on error when loading url
 export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/', ...props}: ImageMediaRendererProps) {
 
     const isDesktop = useMediaQuery((theme: typeof darkTheme) => theme.breakpoints.up('lg'))
@@ -70,7 +70,7 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
 
     return <>
         <Image 
-            src={getSrc()} 
+            src={getSrc()}
             alt={props.alt}
             width={props.width}
             height={props.height}

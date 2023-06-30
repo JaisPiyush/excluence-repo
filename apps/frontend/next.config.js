@@ -9,6 +9,11 @@ const nextConfig = {
     "@excluence-repo/flow",
     "@excluence-repo/db"
   ],
+  images: {
+    domains: [
+      'w3s.link'
+    ]
+  },
   webpack:  (
     config,
     { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
