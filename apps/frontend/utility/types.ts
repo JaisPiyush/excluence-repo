@@ -48,7 +48,7 @@ export interface NFTMetadataViewsEditions {
 }
 
 export interface CollectionOnServer {
-    externalURLSegment: string;
+    externalURL: string;
     address: string;
     contractName: string;
 }
@@ -59,4 +59,23 @@ export interface SignatureVerificationRequestData<T> {
         nonce: number
     },
     signatures: CompositeSignature[]
+}
+
+export interface FlowPath {
+    domain: string;
+    identifier: string;
+}
+export interface NFTCollectionData {
+    collectionBannerImage: string;
+    collectionDescription: string;
+    collectionExternalURL: string;
+    collectionName: string;
+    collectionProviderLinedType: string;
+    collectionPublic: string;
+    collectionSquareImage: string;
+    collectionProviderPath: FlowPath;
+    collectionPublicPath: FlowPath;
+    collectionStoragePath: FlowPath;
+
+
 }

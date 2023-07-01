@@ -23,7 +23,8 @@ export default function CreateOrImportCollectionCard() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginX: '0.5rem'
     }}>
         <ExButton isPrimary={true} onClick={handleOnCreateCollectionClick}>Create collection</ExButton>
         <ExButton isPrimary={false} sx={{marginTop: '1rem'}} onClick={handleOnImportCollectionClick}>Import collection</ExButton>

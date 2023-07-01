@@ -47,11 +47,10 @@ export async function tx(mods: TxMods, opts: TxOpts = {}) {
         await onSuccess(txStatus)
         return txStatus
     } catch (error) {
-        console.error(error)
-        // console.error(
-        // `TX[${txId}]: ${fvsTx(await fcl.config().get("env"), txId)}`,
-        // error
-        // )
+        console.error(
+        `TX[${txId}]: ${fvsTx(await fcl.config().get("env"), txId)}`,
+        error
+        )
         onError(error as Error)
     } finally {
         await onComplete()

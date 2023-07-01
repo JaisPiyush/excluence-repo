@@ -15,7 +15,7 @@ export const globalAddressMap = {
     '"./interfaces/MetadataViews.interface.cdc"': "0x07b48aa7d91a783d",
     '"../../contracts/interfaces/FungibleToken.interface.cdc"': "0x07b48aa7d91a783d",
     '"./interfaces/FungibleToken.interface.cdc"': "0x07b48aa7d91a783d",
-    '"../../contracts/interfaces/ViewResolver .interface.cdc"': "0x07b48aa7d91a783d",
+    '"../../contracts/interfaces/ViewResolver.interface.cdc"': "0x07b48aa7d91a783d",
     '"./interfaces/ViewResolver.interface.cdc"': "0x07b48aa7d91a783d",
 
 }

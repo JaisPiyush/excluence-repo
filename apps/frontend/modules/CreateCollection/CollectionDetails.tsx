@@ -46,7 +46,8 @@ export default function CollectionDetails(props: CollectionDetailsProps) {
     }
 
     const isExternalURLSegmentValid = async (segment: string) => {
-        const res = await fetch(`/api/collection/isExternalURLAvailable?segment=${segment}`)
+        const url = `${window.location.origin}/collection/${segment}`
+        const res = await fetch(`/api/collection/isExternalURLAvailable?url=${encodeURI(url)}`)
         const data = await res.json()
         return data.data as boolean
     }

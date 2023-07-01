@@ -8,12 +8,12 @@ generator client {
 datasource db {
   provider = "mongodb"
   //TODO: Need Env configuration when going in production
-  url      = "mongodb://localhost:27017/excluence"
+  url      = "mongodb+srv://iampiyushjaiswal103:krispi103904@cluster0.ygz0zf1.mongodb.net/excluence?retryWrites=true&w=majority"
 }
 
 model NFTCollection {
   id String @id @default(auto()) @map("_id") @db.ObjectId 
-  externalURLSegment String @unique
+  externalURL String
   address String
   contractName String
 } 

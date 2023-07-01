@@ -38,7 +38,7 @@ export default function Loader(props: LoaderProps) {
                 alignItems: 'center'
             }}>
                 <CircularProgress size={"4rem"} />
-                <Typography sx={{marginTop: '2rem'}} variant="body1" color="primary.light">{props.loadingTex}</Typography>
+                <Typography sx={{marginTop: '2rem'}} variant="body1" color="primary.light">{props.loadingTex || 'Loading...'}</Typography>
             </Box>
         </Modal>
 }

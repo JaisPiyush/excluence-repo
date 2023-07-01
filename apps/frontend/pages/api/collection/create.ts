@@ -20,16 +20,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
 
             await authenticateSignatureBasedRequestData(body);
-            if (body.signatures[0].address !== body.packet.data.address) {
+            if (body.signatures[0].addr !== body.packet.data.address) {
                 throw new Error("Address does not match")
             }
             const nftCollectionService = new NFTCollectionService()
             const nftCollection = await nftCollectionService.createNFTCollection(
-                body.packet.data.externalURLSegment,
+                body.packet.data.externalURL,
                 body.packet.data.address,
                 body.packet.data.contractName
             )
-
+            nftCollectionService.prisma.$disconnect()
             res.status(201).json({
                 data: nftCollection
             })

@@ -52,9 +52,7 @@ export async function deployContract(
 
     opts.onSuccess = async (txStatus: any) => {
         
-        const pathname = (new URL(createCollectionData.externalURL as string)).pathname
-        const segment = pathname.replace('/collection/', '')
-        await createNFTCollection({contractName, externalURLSegment: segment})
+        await createNFTCollection({contractName, externalURL: createCollectionData.externalURL as string})
         if (opts.onSuccess) {
             opts.onSuccess(txStatus)
         }
