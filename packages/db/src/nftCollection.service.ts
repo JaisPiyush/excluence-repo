@@ -1,39 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import { INFTCollection, NFTCollectionModel } from "./schema/nftCollection.schema"
 
 export default class NFTCollectionService {
-    constructor(public readonly prisma: PrismaClient = new PrismaClient()) {}
 
     async isExternalURLAvailable(externalURL: string): Promise<boolean> {
-        const nfCollection = await this.prisma.nFTCollection.findFirst({
-            where: {
-                externalURL
-            }
-        })
-        
+        const nfCollection = await NFTCollectionModel.findOne({externalURL}).exec()
         return nfCollection === null
     }
 
-    async createNFTCollection(externalURL: string, address: string, contractName: string) {
-        const nftCollection = await this.prisma.nFTCollection.create({
-            data: {
-                externalURL,
-                address,
-                contractName
-            }
-        })
-        return nftCollection
+    async createNFTCollection(data: {externalURL: string, address: string, contractName: string}) {
+        const nftCollection = new NFTCollectionModel(data)
+        return await nftCollection.save()
     }
 
     async getAllCollection(address: string) {
-        return await this.prisma.nFTCollection.findMany({
-            where: {
-                address
-            },
-            select: {
-                address: true,
-                contractName: true,
-                externalURL: true
-            }
-        })
+        return await NFTCollectionModel.find({address}).exec()
     }
 }

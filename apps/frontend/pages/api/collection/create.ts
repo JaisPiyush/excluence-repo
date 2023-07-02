@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import {NFTCollectionService} from "@excluence-repo/db"
 import { CollectionOnServer, SignatureVerificationRequestData } from "@/utility/types";
-import { verifyMessageSignature } from "@/utility";
-import { CompositeSignature } from "@onflow/fcl/types/current-user";
 import { authenticateSignatureBasedRequestData } from "@/utility/server";
 
 
@@ -24,12 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 throw new Error("Address does not match")
             }
             const nftCollectionService = new NFTCollectionService()
-            const nftCollection = await nftCollectionService.createNFTCollection(
-                body.packet.data.externalURL,
-                body.packet.data.address,
-                body.packet.data.contractName
-            )
-            nftCollectionService.prisma.$disconnect()
+            const nftCollection = await nftCollectionService.createNFTCollection(body.packet.data)
             res.status(201).json({
                 data: nftCollection
             })

@@ -1,6 +1,10 @@
 import { CompositeSignature } from "@onflow/fcl/types/current-user"
+import type { NextRequest } from "next/server"
+import mongoose from "mongoose"
 
 export type User =  {addr?: string, loggedIn: boolean | null} & Record<string, unknown>
+
+
 
 export interface ICreateCollectionContext {
     name: string | null

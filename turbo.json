@@ -3,29 +3,22 @@
   "globalDependencies": [".env"],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {},
     "dev": {
-      "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
     },
     "backend#build": {
-      "dependsOn": ["@excluence-repo/discord-connector#build"],
+      "dependsOn": [],
       "outputs": ["dist/**"]
     },
     "backend#dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@excluence-repo/discord-connector#build"]
-    },
-    "db:generate": {
-      "cache": false
-    },
-    "db:push": {
-      "cache": false
+      "dependsOn": []
     }
   }
 }
