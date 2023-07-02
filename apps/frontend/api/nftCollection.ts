@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 import * as fcl from "@onflow/fcl"
 import { getMessageSigned } from "@/utility";
 
-export async function getAllCollection(address: string): Promise<CollectionOnServer[]> {
+export async function getAllCollectionByAddress(address: string): Promise<CollectionOnServer[]> {
     try {
         const res = await server.get<{data: CollectionOnServer[]}>(`/nft-collection/${address}`);
         return res.data.data

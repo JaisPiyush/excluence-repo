@@ -50,13 +50,16 @@ export async function deployContract(
         socials.push({key, value})
     }
 
+    const onSuccessCallback = opts.onSuccess
+
     opts.onSuccess = async (txStatus: any) => {
         
         const [res, err] = await createNFTCollection({contractName, externalURL: createCollectionData.externalURL as string})
+
         if (err !== null && opts.onError) {
             opts.onError(new Error(err))
-        } else if(res !== null && opts.onSuccess) {
-            opts.onSuccess(txStatus)
+        } else if(res !== null && onSuccessCallback) {
+            onSuccessCallback(txStatus)
         }
     }
 

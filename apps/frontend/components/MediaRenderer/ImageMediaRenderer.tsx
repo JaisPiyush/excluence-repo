@@ -63,7 +63,8 @@ export default function ImageMediaRenderer({gatewayURL = 'https://w3s.link/ipfs/
         if (props.src) return props.src
         if (props.cid) {
             const ipfsPath = props.cid.replace('ipfs://', '') + (props.path ? `/${props.path}` : '')
-            return (new URL(ipfsPath, gatewayURL)).toString()
+            const url = (new URL(ipfsPath, gatewayURL)).toString()
+            return url
         }
         throw new Error("Missing `src` for image")
     }

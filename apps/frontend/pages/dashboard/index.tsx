@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Switch, SwitchCase } from "@/components/Switch";
 import DashboardCollections from "@/modules/Dashboard/DashboardCollections";
+import { useGetAllCollectionByAddress } from "@/hooks/useGetAllCollectionByAddress";
 
 export default function Dashboard() {
 
@@ -11,6 +12,8 @@ export default function Dashboard() {
 
     const [tab, setTab] = useState<string>(tabs[0].toLowerCase())
 
+    
+    
     const router  = useRouter()
 
     useEffect(() => {

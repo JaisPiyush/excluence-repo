@@ -64,7 +64,8 @@ export default function CreateCollection() {
                         setSnackBarSev("info")
                         setSnackBarText(`Txn ${txID} submitted.`)
                     },
-                    onSuccess:  async () => {                     
+                    onSuccess:  async () => {  
+                        console.log("Completed")                   
                         setLoaderText("Registering the collection")
                         setShowLoader(false)
                         setSnackBarText("Collection Deployed")

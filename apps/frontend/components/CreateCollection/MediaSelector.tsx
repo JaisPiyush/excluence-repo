@@ -5,7 +5,7 @@ import {Image2} from "react-iconly"
 
 interface MediaSelectorProps {
     uploadedImage?: string
-    setUploadedImage: (img?: string) => void
+    setUploadedImage: (img: string) => void
     heading: string
     subheader: ReactNode
 }
@@ -21,14 +21,14 @@ export default function MediaSelector(props: MediaSelectorProps) {
     const handleOnImageInput = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files !== null) {
             const file = e.target.files[0]
-            const fileReader = new FileReader()
-            fileReader.onloadend = function() {
-                props.setUploadedImage(fileReader.result?.toString())
+            const fileReader = new FileReader();
+
+            fileReader.onloadend = (e) => {
+                props.setUploadedImage(e.target?.result as string)
             }
 
-            if (file) {
-                fileReader.readAsDataURL(file);
-            }
+            fileReader.readAsDataURL(file);
+  
         }
         
         

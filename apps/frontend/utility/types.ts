@@ -80,6 +80,4 @@ export interface NFTCollectionData {
     collectionProviderPath: FlowPath;
     collectionPublicPath: FlowPath;
     collectionStoragePath: FlowPath;
-
-
 }

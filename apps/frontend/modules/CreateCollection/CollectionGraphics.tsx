@@ -16,7 +16,7 @@ export default function CollectionGraphics(props: CollectionGraphicsProps) {
 
     const [uploadedSquareImage, setUploadedSquareImage] = useState<string| undefined>(createCollectionContext.squareImage || undefined)
     const [uploadedBannerImage, setUploadedBannerImage] = useState<string | undefined>(createCollectionContext.bannerImage || undefined)
-
+    
     const handleOnNextClick = () => {
         if (uploadedBannerImage && uploadedBannerImage.length > 0 && 
             uploadedSquareImage && uploadedSquareImage?.length) {

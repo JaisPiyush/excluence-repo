@@ -1,6 +1,8 @@
 import * as fcl from "@onflow/fcl"
 import { CompositeSignature } from "@onflow/fcl/types/current-user";
 
+export const flowIcon = 'https://cryptologos.cc/logos/flow-flow-logo.png'
+
 export function encodeHex(str: string) {
     let result = ""
     for (let i =0; i < str.length ; i++) {
