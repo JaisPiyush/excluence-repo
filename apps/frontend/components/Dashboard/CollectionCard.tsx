@@ -4,6 +4,7 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { ImageMediaRenderer } from "../MediaRenderer";
 import { flowIcon } from "@/utility";
 import { useRouter } from "next/router";
+import { DynamicRoutes, getDynamicRoute } from "@/utility/routes";
 
 interface CollectionCardProps {
    collection: CollectionOnServer
@@ -17,14 +18,17 @@ export default function CollectionCard(props: CollectionCardProps) {
     )
 
     const handleCardClick = () => {
-        router.push(`/collection/${props.collection.address}/${props.collection.contractName}`)
+        router.push(getDynamicRoute(DynamicRoutes.ViewCollection, {
+                address: props.collection.address, 
+                name: props.collection.contractName
+        }))
     }
     if (collection !== null) {
 
     
         return <Box sx={{
             width: 300,
-            height: 250,
+            height: 300,
             border: '3px solid',
             borderColor: 'secondary.light',
             borderRadius: '1.5rem',
@@ -45,7 +49,6 @@ export default function CollectionCard(props: CollectionCardProps) {
             <Box sx={{
                 width: '100%',
                 height: '100%',
-                absolute: 'absolute',
                 zIndex: '1'
             }}>
                 <ImageMediaRenderer
@@ -71,10 +74,12 @@ export default function CollectionCard(props: CollectionCardProps) {
                 position: 'absolute',
                 zIndex: 10,
                 borderRadius: '1rem',
-                bottom: '-150px',
+                bottom: -190,
                 display: 'flex',
                 alignItems: 'center',
                 paddingX: '1rem',
+                border: '2px solid',
+                borderColor: 'primary.main'
             }}>
                 <Avatar src={flowIcon} />
                 <Typography sx={{marginLeft: '0.5rem', textOverflow: 'ellipsis'}}

@@ -1,22 +1,23 @@
 import { Box } from "@mui/material";
 import ExButton from "../ExButton";
 import { useRouter } from "next/router";
+import { Routes } from "@/utility/routes";
 
 export default function CreateOrImportCollectionCard() {
 
     const router = useRouter()
 
     const handleOnCreateCollectionClick = () => {
-        router.push('/collection/create')
+        router.push(Routes.CreateCollection)
     }
 
     const handleOnImportCollectionClick = () => {
-        router.push('/collection/import')
+        router.push(Routes.ImportCollection)
     }
 
     return <Box sx={{
         width: 300,
-        height: 250,
+        height: 300,
         border: '3px solid',
         borderColor: 'secondary.light',
         borderRadius: '1.5rem',

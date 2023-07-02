@@ -1,3 +1,4 @@
+import { Routes } from "@/utility/routes";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SwipeableDrawer, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import {ChevronDown} from "react-iconly"
@@ -16,7 +17,7 @@ export default function LoginDrawer(props: LoginDrawerProps) {
     const router = useRouter()
 
     const handleOnCreateCollectionClick = () => {
-       handleOnItemClick('/collection/create')
+       handleOnItemClick(Routes.CreateCollection)
     }
 
     const handleOnItemClick = (route: string) => {
@@ -37,7 +38,7 @@ export default function LoginDrawer(props: LoginDrawerProps) {
         >
             <List>
                 <ListItem key={0} disablePadding>
-                    <ListItemButton onClick={() => {handleOnItemClick('/dashboard')}}>
+                    <ListItemButton onClick={() => {handleOnItemClick(Routes.Dashboard)}}>
                         <ListItemText primary={'Dashboard'} />
                     </ListItemButton>
                 </ListItem>

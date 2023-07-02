@@ -12,6 +12,7 @@ import {deployContract} from "@/flow/tx_deploy_contract"
 import { pinFileToIPFS } from "@/utility/pinata";
 import { useRouter } from "next/router";
 import * as fcl from "@onflow/fcl"
+import { Routes } from "@/utility/routes";
 
 
 
@@ -70,7 +71,7 @@ export default function CreateCollection() {
                         setShowLoader(false)
                         setSnackBarText("Collection Deployed")
                         setSnackBarSev("success")
-                        router.replace("/collection")
+                        router.replace(Routes.DashboardCollections)
                     },
                     onError:  (err: Error) => {
                         setShowLoader(false)

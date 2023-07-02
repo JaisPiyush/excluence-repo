@@ -1,5 +1,5 @@
 import { createNFTCollection } from "@/api/nftCollection";
-import { getAllCollection } from "@/api/nftCollection";
+import { getAllCollectionByAddress } from "@/api/nftCollection";
 import ContractCard from "@/components/ContractCard";
 import Loader from "@/components/Loader";
 import { fetchAllContractsInAccount } from "@/flow/get_all_contract_in_account.script";
@@ -19,7 +19,7 @@ export default function ImportCollection() {
     const fetchAllContractsInAccountAndFilterImportedCollections = async () => {
         const {names} = await fetchAllContractsInAccount() as {names: string[]}
         const addr = (await fcl.currentUser.snapshot()).addr
-        const collectionsInDB = (await getAllCollection(addr)).map((coll) => coll.contractName)
+        const collectionsInDB = (await getAllCollectionByAddress(addr)).map((coll) => coll.contractName)
 
         const contracts = names.filter((name) => !collectionsInDB.includes(name))
         setContracts([...contracts])
