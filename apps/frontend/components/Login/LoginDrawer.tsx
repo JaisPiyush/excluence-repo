@@ -16,7 +16,11 @@ export default function LoginDrawer(props: LoginDrawerProps) {
     const router = useRouter()
 
     const handleOnCreateCollectionClick = () => {
-        router.push('/collection/create')
+       handleOnItemClick('/collection/create')
+    }
+
+    const handleOnItemClick = (route: string) => {
+        router.push(route)
         props.onClose()
     }
 
@@ -33,8 +37,8 @@ export default function LoginDrawer(props: LoginDrawerProps) {
         >
             <List>
                 <ListItem key={0} disablePadding>
-                    <ListItemButton>
-                        <ListItemText primary={'Profile'} />
+                    <ListItemButton onClick={() => {handleOnItemClick('/dashboard')}}>
+                        <ListItemText primary={'Dashboard'} />
                     </ListItemButton>
                 </ListItem>
                 <ListItem key={1} disablePadding>

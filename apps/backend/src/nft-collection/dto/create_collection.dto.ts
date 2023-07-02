@@ -15,5 +15,4 @@ export class CreateNFTCollectionDataDto {
     contractName: string;
 }
 
-export const CreateNFTCollectionDto =
-    SignatureVerificationRequestData<CreateNFTCollectionDataDto>;
+export class CreateNFTCollectionDto extends SignatureVerificationRequestData<CreateNFTCollectionDataDto> {}

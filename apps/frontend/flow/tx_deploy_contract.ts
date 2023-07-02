@@ -5,7 +5,7 @@ import {} from "@onflow/fcl"
 import { ICreateCollectionContext } from "@/utility/types"
 import { replaceAddress } from "./utils"
 import { encodeHex } from "@/utility"
-import { createNFTCollection } from "@/api/createCollection"
+import { createNFTCollection } from "@/api/nftCollection"
 
 export async function deployContract(
     createCollectionData: ICreateCollectionContext,
@@ -52,8 +52,10 @@ export async function deployContract(
 
     opts.onSuccess = async (txStatus: any) => {
         
-        await createNFTCollection({contractName, externalURL: createCollectionData.externalURL as string})
-        if (opts.onSuccess) {
+        const [res, err] = await createNFTCollection({contractName, externalURL: createCollectionData.externalURL as string})
+        if (err !== null && opts.onError) {
+            opts.onError(new Error(err))
+        } else if(res !== null && opts.onSuccess) {
             opts.onSuccess(txStatus)
         }
     }

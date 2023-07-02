@@ -1,4 +1,4 @@
-import { createNFTCollection } from "@/api/createCollection";
+import { createNFTCollection } from "@/api/nftCollection";
 import { getAllCollection } from "@/api/nftCollection";
 import ContractCard from "@/components/ContractCard";
 import Loader from "@/components/Loader";
@@ -34,10 +34,13 @@ export default function ImportCollection() {
             setLoaderText('Importing collection')
             const nftCollectionData = await getCollectionData(name)
             setLoaderText('Registering collection')
-            const res = await createNFTCollection({
+            const [_, err] = await createNFTCollection({
                 contractName: name,
                 externalURL: nftCollectionData.collectionExternalURL
             })
+            if (err !== null) {
+                throw new Error(err)
+            }
             await fetchAllContractsInAccountAndFilterImportedCollections();
             setLoaderText(null)
         }catch (error) {
@@ -56,7 +59,6 @@ export default function ImportCollection() {
         paddingTop: '4rem'
     }}>
         <Typography variant="h4" fontWeight={'medium'}>Import your collection</Typography>
-        {/* <Typography variant="body1" color="primary.light">Import all the NFT collections</Typography> */}
         <Box sx={{
             width: '70%',
             display: 'flex',
@@ -70,6 +72,6 @@ export default function ImportCollection() {
         <Loader open={loaderText !== null} loadingTex={loaderText as string} onClose={() => {
             setLoaderText(null)
         }} />
-        <SnackAlert error={error} onClose={() => {}} />
+        <SnackAlert error={error} onClose={() => {setError(null)}} />
     </Box>
 }

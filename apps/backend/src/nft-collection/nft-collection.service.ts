@@ -22,7 +22,9 @@ export class NftCollectionService {
         return await this.nftCollectionModel.find({ address });
     }
 
-    async createNFTCollection(data: CreateNFTCollectionDataDto) {
+    async createNFTCollection(
+        data: CreateNFTCollectionDataDto,
+    ): Promise<NFTCollection> {
         const nftCollection = new this.nftCollectionModel(data);
         return await nftCollection.save();
     }

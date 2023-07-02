@@ -1,3 +1,4 @@
+import { isExternalURLAvailable } from "@/api/nftCollection";
 import SectionHeader from "@/components/CreateCollection/SectionHeader";
 import { CreateCollectionContext} from "@/contexts/create_collection_context";
 import { CreateCollectionAction, CreateCollectionActionKind } from "@/hooks/useCreateCollectionReducer";
@@ -47,9 +48,7 @@ export default function CollectionDetails(props: CollectionDetailsProps) {
 
     const isExternalURLSegmentValid = async (segment: string) => {
         const url = `${window.location.origin}/collection/${segment}`
-        const res = await fetch(`/api/collection/isExternalURLAvailable?url=${encodeURI(url)}`)
-        const data = await res.json()
-        return data.data as boolean
+        return await isExternalURLAvailable(url)
     }
 
     const handleOnURLInput = (segment: string) => {

@@ -18,10 +18,10 @@ const clientSideEmotionCache = createEmotionCache();
 
 fcl
   .config()
-  .put("accessNode.api", "https://rest-testnet.onflow.org")
-  .put("flow.network", "testnet")
+  .put("accessNode.api", process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'])
+  .put("flow.network", process.env['NEXT_PUBLIC_FLOW_NETWORK'])
   .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn")
-  .put("env", "testnet")
+  .put("env", process.env['NEXT_PUBLIC_FLOW_NETWORK'])
   // .load({flowJSON})
 
 
