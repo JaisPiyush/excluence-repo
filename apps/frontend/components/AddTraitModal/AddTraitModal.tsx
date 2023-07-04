@@ -16,17 +16,28 @@ function TraitInput(props: {
     setValue: (newValue: string) => void;
     onDelete: () => void;
 }) {
-    return <Grid container columns={12} columnSpacing={2}>
+    return <Grid container columns={12} columnSpacing={2} 
+    
+            sx={{marginTop: '1rem'}}
+            >
                 <Grid item xs={5}>
                     <TextField
                         placeholder={'e.g Size'}
                         variant="outlined"
+                        value={props.name}
+                        onChange={(e) => {
+                            props.setName(e.target.value)
+                        }}
                     />
                 </Grid>
                 <Grid item xs={5}>
                     <TextField
                         placeholder={'e.g M'}
                         variant="outlined"
+                        value={props.value}
+                        onChange={(e) => {
+                            props.setValue(e.target.value)
+                        }}
                     />
                 </Grid>
 
@@ -40,8 +51,8 @@ function TraitInput(props: {
 
 export default function AddTraitModal(props: AddTraitModalProps) {
 
-    const [traitNames, setTraitNames] = useState<string[]>([]);
-    const [traitValues, setTraitValues] = useState<string[]>([]);
+    const [traitNames, setTraitNames] = useState<string[]>(['']);
+    const [traitValues, setTraitValues] = useState<string[]>(['']);
 
     const handleSetValue = (index: number) => {
         return (newValue: string) => {

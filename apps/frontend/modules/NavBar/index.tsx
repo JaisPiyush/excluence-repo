@@ -9,6 +9,7 @@ import { AppBar, Box, Button, Menu, MenuItem, Toolbar, Typography } from "@mui/m
 import {User as UserIcon} from "react-iconly"
 import LoginDrawer from "@/components/Login/LoginDrawer";
 
+//TODO: Set NavBar to fixed at the position on scroll
 export default function NavBar() {
 
     const user = useAccount()

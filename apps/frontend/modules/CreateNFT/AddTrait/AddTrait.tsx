@@ -1,20 +1,32 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material";
-import TraitBar from "../TraitBar";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, SxProps, Typography } from "@mui/material";
+import TraitBar from "../../../components/TraitBar";
 import {ChevronDown} from "react-iconly"
 import { Trait } from "@/utility/types";
+import ExButton from "../../../components/ExButton";
 import { useState } from "react";
-import ExButton from "../ExButton";
+import AddTraitModal from "@/components/AddTraitModal/AddTraitModal";
 
-interface AddTraitProps {}
+interface AddTraitProps {
+    traits: Trait[];
+    onInsertTraits: (newTraits: Trait[]) => void;
+    onRemove: (index: number) => void;
+    sx?: SxProps
+}
 
 export default function AddTrait(props: AddTraitProps) {
 
 
-    const [traits, setTraits] = useState<Trait[]>([]);
+    const [openAddPropertyModal, setOpenAddPropertyModal] = useState(false);
+
+
+    const handleOnContinueClick = (traits: Trait[]) => {
+        setOpenAddPropertyModal(false)
+        props.onInsertTraits(traits)
+    }
 
     const handleOnDeleteClick = (index: number) => {
         return () => {
-            setTraits(traits.filter((_, i) => i !== index ))
+            props.onRemove(index)
         }
     }
 
@@ -25,7 +37,8 @@ export default function AddTrait(props: AddTraitProps) {
                         lg: 512,
                         xl: 615
                     },
-                    borderRadius: '2rem'
+                    borderRadius: '2rem',
+                    ...(props.sx || {})
             }}>
                 <Accordion>
                     <AccordionSummary
@@ -34,12 +47,12 @@ export default function AddTrait(props: AddTraitProps) {
                         id="panel1a-header"
                     >
                         <Typography variant="body1" fontWeight={600} >Properties</Typography>
-                        <Typography color="primary.light"  sx={{marginLeft: '0.5rem'}}>({traits.length})</Typography>
+                        <Typography color="primary.light"  sx={{marginLeft: '0.5rem'}}>({props.traits.length})</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                             <Grid container spacing={2} columns={10}>
                                 {
-                                    traits.map((trait, index) => {
+                                    props.traits.map((trait, index) => {
                                         return <Grid item xs={5} key={index}>
                                             <TraitBar {...trait} onDelete={handleOnDeleteClick(index)} />
                                         </Grid>
@@ -51,8 +64,16 @@ export default function AddTrait(props: AddTraitProps) {
                                     width: '100%',
                                     marginTop: '1rem'
                                 }}
+                            onClick={() => {setOpenAddPropertyModal(true)}}
                             >Add Trait</ExButton>
                     </AccordionDetails>
                 </Accordion>
+
+                <AddTraitModal 
+                    open={openAddPropertyModal}
+                    onClose={() => {setOpenAddPropertyModal(false)}}
+                    onContinue={handleOnContinueClick}
+                />
+
             </Box>
 }

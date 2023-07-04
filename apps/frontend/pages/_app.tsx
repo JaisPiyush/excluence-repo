@@ -7,7 +7,7 @@ import createEmotionCache from "../utility/createEmotionCache";
 import darkTheme from "../styles/theme/darkTheme";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import { CssBaseline } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import 'react-loading-skeleton/dist/skeleton.css'
 import * as fcl from "@onflow/fcl"
 import NavBar from "@/modules/NavBar";
@@ -33,7 +33,9 @@ function MyApp(props: AppProps & {emotionCache: EmotionCache}) {
               <ThemeProvider theme={darkTheme}>
                   <CssBaseline />
                   <NavBar />
-                  <Component {...pageProps} />
+                  <Box>
+                    <Component {...pageProps} />
+                  </Box>
               </ThemeProvider>
             </CacheProvider>
           </Provider>
