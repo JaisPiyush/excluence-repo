@@ -81,3 +81,21 @@ export interface NFTCollectionData {
     collectionPublicPath: FlowPath;
     collectionStoragePath: FlowPath;
 }
+
+export interface Rarity {
+    score?: number | null;
+    max?: number | null;
+    description?: string | null;
+}
+
+export interface Trait {
+    name: string;
+    value: string | number | boolean;
+    displayType?: string | null;
+    rarity?: Rarity | null;
+}
+
+
+export interface NFTTraits {
+    traits: Array<Trait>;
+}

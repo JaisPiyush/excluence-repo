@@ -361,6 +361,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             description: String,
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
+            metadata: {String: AnyStruct},
         ): @Collection 
 
         pub fun getCollectionDetails(): CollectionDetails
@@ -379,14 +380,16 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             description: String,
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
+            metadata: {String: AnyStruct},
             serialNumber: UInt64,
             mintKeyID: UInt32?
         ): @NFTTemplate.NFT {
-            let metadata: {String: AnyStruct} = {}
             let currentBlock = getCurrentBlock()
             metadata["mintedBlock"] = currentBlock.height
             metadata["mintedTime"] = currentBlock.timestamp
             metadata["minter"] = recipient.owner!.address
+
+            let _royalties = royalties.length > 0 ? royalties: NFTTemplate.collectionDetails.royalties;
 
             // create a new NFT
             var newNFT <- create NFT(
@@ -394,7 +397,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                 name: name,
                 description: description,
                 thumbnail: thumbnail,
-                royalties: royalties,
+                royalties: _royalties,
                 metadata: metadata,
                 serialNumber: serialNumber,
                 mintKeyID: mintKeyID
@@ -413,6 +416,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             description: String,
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
+            metadata: {String: AnyStruct},
         ): @Collection {
             let collection <- create Collection()
             var i: UInt64 = 0
@@ -425,7 +429,8 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                     name: name, 
                     description: description, 
                     thumbnail: thumbnail, 
-                    royalties: royalties, 
+                    royalties: royalties,
+                    metadata: metadata,
                     serialNumber: NFTTemplate.nftMintNumberCount[mintKeyID]!, 
                     mintKeyID: mintKeyID
                 ))
@@ -448,6 +453,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             description: String,
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
+            metadata: {String: AnyStruct},
         ) {
             let newNFT  <-self._mintNFT(
                 recipient: recipient, 
@@ -455,6 +461,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                 description: description, 
                 thumbnail: thumbnail, 
                 royalties: royalties, 
+                metadata: metadata,
                 serialNumber: 1, 
                 mintKeyID: nil
             )

@@ -58,6 +58,11 @@ export default function LoginDrawer(props: LoginDrawerProps) {
                                     <ListItemText primary={'Collection'} />
                                 </ListItemButton>
                             </ListItem>
+                            <ListItem key={0} disablePadding>
+                                <ListItemButton onClick={() => {handleOnItemClick(Routes.CreateNFT)}}>
+                                    <ListItemText primary={'NFT'} />
+                                </ListItemButton>
+                            </ListItem>
                             </List>
                         </AccordionDetails>
                     </Accordion>
