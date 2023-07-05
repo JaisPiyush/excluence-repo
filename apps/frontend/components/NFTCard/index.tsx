@@ -1,28 +1,25 @@
 import { Card, Box, Typography, useTheme, Button } from "@mui/material";
-import ImageMediaRenderer, { ImageMediaSources } from "../MediaRenderer/ImageMediaRenderer";
-import { NFTHttpFile, NFTIpfsFile, NFTMetadataViewsDisplay, NFTMetadataViewsEditions } from "@/utility/types";
+import ImageMediaRenderer from "../MediaRenderer/ImageMediaRenderer";
+import {  NFTMarketplacePriceData, NFTOnlyData } from "@/utility/types";
 import {Plus} from 'react-iconly'
 
 
-type NFTCardProps = ImageMediaSources & {
-    id: number
-    display: NFTMetadataViewsDisplay,
-    editions: NFTMetadataViewsEditions
-    price?:  string
-    highestBid?: string
-    currency?: string,
-    showBuyNow?: boolean
+
+export type NFTCardProps = NFTOnlyData & NFTMarketplacePriceData & {
+    address: string;
+    contractName: string
 }
 
 export default function NFTCard(props: NFTCardProps) {
     const theme = useTheme()
 
     const displayName = () => {
+    
+        let name =  props.name
         if (props.editions && props.editions.infoList.length > 0) {
-            return props.editions.infoList[0].name
+            return `${name} #${props.editions.infoList[0].number}`
         }
-
-        return props.display.name
+        return name
     }
 
     const displayFlowQuantity = (quantity?: string) => {
@@ -34,9 +31,9 @@ export default function NFTCard(props: NFTCardProps) {
             variant="outlined" 
             sx={{
                 width: {
-                    xs: 150,
-                    md: 235,
-                    lg: 265,
+                    xs: 170,
+                    md: 250,
+                    lg: 280,
 
                 },
                 height: 'auto',
@@ -53,7 +50,7 @@ export default function NFTCard(props: NFTCardProps) {
             }
         }}>
             <ImageMediaRenderer
-                alt={props.display.name}
+                alt={props.name}
                 width={233.66}
                 height={235.66}
                 desktopWidth={265}
@@ -63,13 +60,12 @@ export default function NFTCard(props: NFTCardProps) {
                 style={{
                     borderRadius: '0.5rem'
                 }}
-                src={(props.display.thumbnail as NFTHttpFile).url}
-                cid={(props.display.thumbnail as NFTIpfsFile).cid}
-                path={(props.display.thumbnail as NFTIpfsFile).path}
+                src={props.thumbnail.includes('http') ? props.thumbnail : undefined}
+                cid={props.thumbnail}
             />
         </Box>
 
-
+        <Typography variant="caption" >{props.contractName}</Typography>
         <Typography sx={{
             fontSize: {
                 xs: 13,
@@ -86,7 +82,7 @@ export default function NFTCard(props: NFTCardProps) {
         }}>{displayName()}</Typography>
 
         <Box sx={{
-            width: '90%',
+            width: '100%',
             marginTop: {
                 xs: '0.5rem',
                 md: '0.625rem',

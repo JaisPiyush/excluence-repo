@@ -29,7 +29,7 @@ export default function SelectCollection(props: SelectCollectionProps) {
                 marginTop: '1rem'
             }}>
                 <Select
-                    value={props.value}
+                    value={props.value || ''}
                     onChange={handleChange}
                     placeholder="No collection"
                 >   

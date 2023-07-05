@@ -5,21 +5,29 @@ import { useRouter } from "next/router";
 import { Switch, SwitchCase } from "@/components/Switch";
 import DashboardCollections from "@/modules/Dashboard/DashboardCollections";
 import { useGetAllCollectionByAddress } from "@/hooks/useGetAllCollectionByAddress";
+import { useGetAllCollectionIds } from "@/hooks/useGetAllCollectionIds";
+import { getAllOwnedNFTIs } from "@/flow/nft";
+import { NFTViewWithContractData } from "@/utility/types";
+import NFTCardHolder from "@/components/NFTCardHolder";
 
 export default function Dashboard() {
 
-    const tabs = ['Owned', 'Collections', 'Created']
+    const tabs = ['Owned', 'Collections']
 
     const [tab, setTab] = useState<string>(tabs[0].toLowerCase())
-
-    
-    
+ 
     const router  = useRouter()
+
+    const [nfts, setNFTs] = useState<NFTViewWithContractData[]>([])
 
     useEffect(() => {
         if (router.query && router.query['tab']) {
             setTab(router.query['tab'] as string)
         }
+
+        getAllOwnedNFTIs().then((nfts) => {
+            setNFTs([...nfts])
+        })
     }, [router])
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -45,11 +53,7 @@ export default function Dashboard() {
                 }}>
                     <Switch value={tab}>
                         <SwitchCase case="owned">
-                            <Box sx={{bgcolor: 'red', width: 500, height: 500}}></Box>
-                        </SwitchCase>
-
-                        <SwitchCase case="created">
-                            <Box sx={{bgcolor: 'green', width: 500, height: 500}}></Box>
+                            <NFTCardHolder nfts={nfts} />
                         </SwitchCase>
                          
                         <SwitchCase case="collections">

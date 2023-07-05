@@ -1,6 +1,4 @@
 import { CompositeSignature } from "@onflow/fcl/types/current-user"
-import type { NextRequest } from "next/server"
-import mongoose from "mongoose"
 
 export type User =  {addr?: string, loggedIn: boolean | null} & Record<string, unknown>
 
@@ -19,32 +17,36 @@ export interface ICreateCollectionContext {
 }
 
 
-export interface NFTHttpFile {
-    url: string
-}
+// export interface NFTHttpFile {
+//     url: string
+// }
 
-export interface NFTIpfsFile {
-    cid: string;
-    path?: string
-}
+// export interface NFTIpfsFile {
+//     cid: string;
+//     path?: string
+// }
 
-export type NFTFile = NFTHttpFile | NFTIpfsFile
+// export type NFTFile = NFTHttpFile | NFTIpfsFile
 
-export interface NFTMetadataViewsDisplay {
-    name: string
-    description: string
-    thumbnail: NFTFile 
-    medias?: NFTFile[]
-}
+// export interface NFTMetadataViewsDisplay {
+//     name: string
+//     description: string
+//     thumbnail: NFTFile 
+//     medias?: NFTFile[]
+// }
 
-export interface NFTMetadataViewsExternalURL {
-    url: string
-}
+// export interface NFTMetadataViewsExternalURL {
+//     url: string
+// }
 
 export interface NFTMetadataViewsEdition {
     name: string
     number: number
     max: number
+}
+
+export interface NFTMetadataViewsSerial {
+    number: number
 }
 
 export interface NFTMetadataViewsEditions {
@@ -98,4 +100,43 @@ export interface Trait {
 
 export interface NFTTraits {
     traits: Array<Trait>;
+}
+
+export interface MintNFTArgs {
+    name: string;
+    description: string;
+    thumbnail: string;
+    metadata: Record<string, string>;
+    collectionName: string;
+}
+
+export interface BatchNFTArgs extends MintNFTArgs {
+    quantity: string
+}
+
+export interface NFTOnlyData {
+    id: number;
+    uuid?: number;
+    name: string;
+    description: string;
+    thumbnail: string;
+    royalties: unknown[];
+    externalURL: string;
+    traits: NFTTraits;
+    editions: NFTMetadataViewsEditions | null;
+    serial: NFTMetadataViewsSerial | null;
+}
+
+type NFTView = NFTOnlyData & Omit<NFTCollectionData, "collectionExternalURL">
+
+export interface NFTViewWithContractData extends NFTView {
+    address: string;
+    contractName: string;
+}
+
+export interface NFTMarketplacePriceData {
+    price?: string;
+    highestBid?: string;
+    currency?: string;
+    showBuyNow?: boolean;
 }

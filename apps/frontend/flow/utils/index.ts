@@ -17,5 +17,18 @@ export const globalAddressMap = {
     '"./interfaces/FungibleToken.interface.cdc"': "0x07b48aa7d91a783d",
     '"../../contracts/interfaces/ViewResolver.interface.cdc"': "0x07b48aa7d91a783d",
     '"./interfaces/ViewResolver.interface.cdc"': "0x07b48aa7d91a783d",
-
 }
+
+export function getAddressMapWithNFTTemplateTweaked(
+        address: string,
+    ): Record<string, string> {
+        const addressMap: Record<string, string> = {}
+        const nftTemplateRoutes = [
+            '"../../contracts/NFTTemplate.cdc"',
+            '"./NFTTemplate.cdc"'
+        ]
+        nftTemplateRoutes.forEach((route) => {
+            addressMap[route] = address
+        })
+        return addressMap;
+    }

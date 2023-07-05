@@ -1,16 +1,31 @@
-import { User } from "@/utility/types"
+import { CollectionOnServer, NFTViewWithContractData, User } from "@/utility/types"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 
 interface AccountState {
-    user: User
+    user: User,
+    collections: CollectionOnServer[];
+    nfts: NFTViewWithContractData[];
+    nftIDS: number[];
+    fetchedCollection: boolean;
+    fetchedNFTIds: number[];
+    fetchedNFTDataFromIds: number[];
 }
 
 const initialState: AccountState = {
     user: {
         loggedIn: null
-    }
+    },
+    collections: [],
+    nftIDS: [],
+    nfts: [],
+    fetchedCollection: false,
+    fetchedNFTDataFromIds:[],
+    fetchedNFTIds: [],
 }
+
+
+
 
 const accountSlice = createSlice({
     name: 'account',
@@ -20,6 +35,12 @@ const accountSlice = createSlice({
             state.user = action.payload || {
                 loggedIn: null
             }
+        },
+        setCollections(state, action: PayloadAction<CollectionOnServer[]>) {
+            state.collections = action.payload;
+        },
+        setNFTs(state, action: PayloadAction<NFTViewWithContractData[]>) {
+            state.nfts = action.payload;
         }
     }
 })

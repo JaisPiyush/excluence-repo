@@ -37,7 +37,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
     // The values will be updated from batchMint operator in the NFTMinter resource
     // For single mint the value will be `nil`
     // The key will be called mintKeyID
-    access(contract) let nftMintNumberCount: {UInt32: UInt64}
+    access(contract) let nftMintNumberCount: {UInt64: UInt64}
 
 
     pub struct interface CollectionDetailsPublic {
@@ -125,7 +125,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
         access(self) let royalties: [MetadataViews.Royalty]
         access(self) let metadata: {String: AnyStruct}
         pub let serialNumber: UInt64
-        pub let mintKeyID: UInt32?
+        pub let mintKeyID: UInt64
     
         init(
             id: UInt64,
@@ -135,7 +135,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             royalties: [MetadataViews.Royalty],
             metadata: {String: AnyStruct},
             serialNumber: UInt64,
-            mintKeyID: UInt32?
+            mintKeyID: UInt64
         ) {
             self.id = id
             self.name = name
@@ -173,19 +173,22 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
         pub fun resolveView(_ view: Type): AnyStruct? {
             switch view {
                 case Type<MetadataViews.Display>():
+
+                    let protocol = self.thumbnail.slice(from: 0, upTo: 4)
+                    let thumbnail = protocol == "http" ? MetadataViews.HTTPFile(
+                        url: self.thumbnail
+                    ): MetadataViews.IPFSFile(cid: self.thumbnail, path: nil)
                     return MetadataViews.Display(
                         name: self.name,
                         description: self.description,
-                        thumbnail: MetadataViews.HTTPFile(
-                            url: self.thumbnail
-                        )
+                        thumbnail: thumbnail
                     )
                 case Type<MetadataViews.Editions>():
                     // There is no max number of NFTs that can be minted from this contract
                     // so the max edition field value is set to nil
                     let editionInfo = MetadataViews.Edition(
                         name: NFTTemplate.collectionDetails.name, 
-                        number: self.serialNumber, 
+                        number: self.mintKeyID, 
                         max: nil
                     )
                     let editionList: [MetadataViews.Edition] = [editionInfo]
@@ -332,8 +335,8 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
         /// 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
             let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
-            let NFTTemplate = nft as! &NFTTemplate.NFT
-            return NFTTemplate as &AnyResource{MetadataViews.Resolver}
+            let _nFTTemplate = nft as! &NFTTemplate.NFT
+            return _nFTTemplate as &AnyResource{MetadataViews.Resolver}
         }
 
         destroy() {
@@ -362,7 +365,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
             metadata: {String: AnyStruct},
-        ): @Collection 
+        )
 
         pub fun getCollectionDetails(): CollectionDetails
 
@@ -374,7 +377,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
     pub resource NFTMinter: AdminInterface {
 
           
-        access(self) fun _mintNFT(
+        access(contract) fun _mintNFT(
             recipient: &{NonFungibleToken.CollectionPublic},
             name: String,
             description: String,
@@ -382,7 +385,7 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             royalties: [MetadataViews.Royalty],
             metadata: {String: AnyStruct},
             serialNumber: UInt64,
-            mintKeyID: UInt32?
+            mintKeyID: UInt64
         ): @NFTTemplate.NFT {
             let currentBlock = getCurrentBlock()
             metadata["mintedBlock"] = currentBlock.height
@@ -417,14 +420,14 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             thumbnail: String,
             royalties: [MetadataViews.Royalty],
             metadata: {String: AnyStruct},
-        ): @Collection {
-            let collection <- create Collection()
+        ) {
             var i: UInt64 = 0
 
-            let mintKeyID = UInt32(NFTTemplate.nftMintNumberCount.length)
-
+            let mintKeyID = UInt64(NFTTemplate.nftMintNumberCount.length)
+            NFTTemplate.nftMintNumberCount[mintKeyID] = 0
             while i < quantity {
-                collection.deposit(token: <- self._mintNFT(
+                NFTTemplate.nftMintNumberCount[mintKeyID] = NFTTemplate.nftMintNumberCount[mintKeyID]! + 1
+                recipient.deposit(token: <- self._mintNFT(
                     recipient: recipient, 
                     name: name, 
                     description: description, 
@@ -434,9 +437,10 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                     serialNumber: NFTTemplate.nftMintNumberCount[mintKeyID]!, 
                     mintKeyID: mintKeyID
                 ))
+
+                
             }
 
-            return  <-collection
         }
 
         /// Mints a new NFT with a new ID and deposit it in the
@@ -455,6 +459,8 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             royalties: [MetadataViews.Royalty],
             metadata: {String: AnyStruct},
         ) {
+            let mintKeyID = UInt64(NFTTemplate.nftMintNumberCount.length)
+            NFTTemplate.nftMintNumberCount[mintKeyID] = 1
             let newNFT  <-self._mintNFT(
                 recipient: recipient, 
                 name: name, 
@@ -463,10 +469,10 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                 royalties: royalties, 
                 metadata: metadata,
                 serialNumber: 1, 
-                mintKeyID: nil
+                mintKeyID: mintKeyID
             )
-
             recipient.deposit(token: <- newNFT)
+            
         }
 
 
@@ -547,6 +553,11 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
             ),
             mediaType: dict["mediaType"]!
         )
+    }
+
+    // Returns true if the contract follows ExcluenceNFTTemplate
+    pub fun isExcluenceNFTTemplate(): Bool {
+        return true
     }
 
 

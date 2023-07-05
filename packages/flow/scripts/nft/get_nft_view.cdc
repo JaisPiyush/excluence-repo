@@ -1,4 +1,3 @@
-import ExcluenceNFT from "../../contracts/ExcluenceNFT.cdc"
 import MetadataViews from "../../contracts/interfaces/MetadataViews.interface.cdc"
 
 pub struct NFTView {
@@ -22,6 +21,8 @@ pub struct NFTView {
     pub let collectionBannerImage: String
     pub let collectionSocials: {String: String}
     pub let traits: MetadataViews.Traits
+    pub let editions: MetadataViews.Editions?
+    pub let serial: MetadataViews.Serial?
 
     init(
         id: UInt64,
@@ -43,7 +44,10 @@ pub struct NFTView {
         collectionSquareImage: String,
         collectionBannerImage: String,
         collectionSocials: {String: String},
-        traits: MetadataViews.Traits
+        traits: MetadataViews.Traits,
+        editions: MetadataViews.Editions?,
+        serial: MetadataViews.Serial?
+
     ) {
         self.id = id
         self.uuid = uuid
@@ -65,20 +69,25 @@ pub struct NFTView {
         self.collectionBannerImage = collectionBannerImage
         self.collectionSocials = collectionSocials
         self.traits = traits
+        self.editions = editions
+        self.serial = serial
     }
 }
 
-pub fun main(address: Address, id: UInt64): NFTView {
+pub fun main(address: Address, collectionPublicPathIdentifier: String ,id: UInt64): NFTView {
     let account = getAccount(address)
 
     let collection = account
-        .getCapability(ExcluenceNFT.CollectionPublicPath)
+        .getCapability(PublicPath(identifier: collectionPublicPathIdentifier)!)
         .borrow<&{MetadataViews.ResolverCollection}>()
         ?? panic("Could not borrow a reference to the collection")
 
     let viewResolver = collection.borrowViewResolver(id: id)!
 
     let nftView = MetadataViews.getNFTView(id: id, viewResolver : viewResolver)
+
+    let editions = MetadataViews.getEditions(viewResolver)
+    let serial = MetadataViews.getSerial(viewResolver)
 
     let collectionSocials: {String: String} = {}
     for key in nftView.collectionDisplay!.socials.keys {
@@ -107,5 +116,7 @@ pub fun main(address: Address, id: UInt64): NFTView {
         collectionBannerImage: nftView.collectionDisplay!.bannerImage.file.uri(),
         collectionSocials: collectionSocials,
         traits: nftView.traits!,
+        editions: editions,
+        serial: serial
     )
 }

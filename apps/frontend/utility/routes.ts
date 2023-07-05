@@ -4,7 +4,8 @@ export enum Routes {
     Dashboard = '/dashboard',
     ImportCollection = '/collection/import',
     DashboardCollections = '/dashboard?tab=collections',
-    DashboardCreated = '/dashboard/created'
+    DashboardCreated = '/dashboard?tab=created',
+    DashboardOwned = '/dashboard?tab=owned'
 }
 
 export enum DynamicRoutes {

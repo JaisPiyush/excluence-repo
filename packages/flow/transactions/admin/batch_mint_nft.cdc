@@ -5,6 +5,7 @@ import NonFungibleToken from "../../contracts/interfaces/NonFungibleToken.interf
 //TODO: Add roaylty
 transaction(
             recipient: Address,
+            quantity: UInt64,
             name: String, 
             description: String, 
             thumbnail: String, 
@@ -40,8 +41,9 @@ transaction(
             execute {
 
                 // Mint the NFT
-                self.minter.mintNFT(
+                self.minter.batchMintNFT(
                     recipient: self.recipientCollectionRef, 
+                    quantity: quantity,
                     name: name, 
                     description: description, 
                     thumbnail: thumbnail, 
@@ -52,6 +54,6 @@ transaction(
 
             post {
                 self.recipientCollectionRef.getIDs().contains(self.oldTotalSupply): "The next NFT ID should have been minted and delivered"
-                NFTTemplate.totalSupply == self.oldTotalSupply + 1:  "The total supply should have been increased by 1"
+                NFTTemplate.totalSupply == self.oldTotalSupply + quantity:  "The total supply should have been increased by 1"
             }
 }

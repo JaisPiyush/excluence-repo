@@ -1,10 +1,10 @@
 import NonFungibleToken from "../../contracts/interfaces/NonFungibleToken.interface.cdc"
 
-pub fun main(address: Address, collectionPublicPath: PublicPath): Int {
+pub fun main(address: Address, collectionPublicPathIdentifier: String): Int {
     let account = getAccount(address)
 
     let collectionRef = account
-        .getCapability(collectionPublicPath)
+        .getCapability(PublicPath(identifier: collectionPublicPathIdentifier)!)
         .borrow<&{NonFungibleToken.CollectionPublic}>()
         ?? panic("Could not borrow capability from public collection")
     

@@ -1,7 +1,7 @@
 import {TxOpts, tx} from "./utils/tx"
 import DEPLOY_CONTRACT_TXN from "@excluence-repo/flow/transactions/user/deploy_contract.cdc"
 import NFTTemplateContract from "@excluence-repo/flow/contracts/NFTTemplate.cdc"
-import {} from "@onflow/fcl"
+
 import { ICreateCollectionContext } from "@/utility/types"
 import { replaceAddress } from "./utils"
 import { encodeHex } from "@/utility"
