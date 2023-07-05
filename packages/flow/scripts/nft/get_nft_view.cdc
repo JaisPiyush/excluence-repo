@@ -1,7 +1,9 @@
 import MetadataViews from "../../contracts/interfaces/MetadataViews.interface.cdc"
+import NonFungibleToken from "../../contracts/interfaces/NonFungibleToken.interface.cdc"
 
 pub struct NFTView {
     pub let id: UInt64
+    pub let owner: Address
     pub let uuid: UInt64
     pub let name: String
     pub let description: String
@@ -27,6 +29,7 @@ pub struct NFTView {
     init(
         id: UInt64,
         uuid: UInt64,
+        owner: Address,
         name: String,
         description: String,
         thumbnail: String,
@@ -71,6 +74,7 @@ pub struct NFTView {
         self.traits = traits
         self.editions = editions
         self.serial = serial
+        self.owner = owner
     }
 }
 
@@ -79,7 +83,7 @@ pub fun main(address: Address, collectionPublicPathIdentifier: String ,id: UInt6
 
     let collection = account
         .getCapability(PublicPath(identifier: collectionPublicPathIdentifier)!)
-        .borrow<&{MetadataViews.ResolverCollection}>()
+        .borrow<&{MetadataViews.ResolverCollection, NonFungibleToken.CollectionPublic}>()
         ?? panic("Could not borrow a reference to the collection")
 
     let viewResolver = collection.borrowViewResolver(id: id)!
@@ -98,6 +102,7 @@ pub fun main(address: Address, collectionPublicPathIdentifier: String ,id: UInt6
     return NFTView(
         id: nftView.id,
         uuid: nftView.uuid,
+        owner: collection.owner != nil ? collection.owner!.address: Address(0x0),
         name: nftView.display!.name,
         description: nftView.display!.description,
         thumbnail: nftView.display!.thumbnail.uri(),

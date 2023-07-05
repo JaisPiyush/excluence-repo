@@ -188,8 +188,8 @@ pub contract NFTTemplate: NonFungibleToken, ViewResolver {
                     // so the max edition field value is set to nil
                     let editionInfo = MetadataViews.Edition(
                         name: NFTTemplate.collectionDetails.name, 
-                        number: self.mintKeyID, 
-                        max: nil
+                        number: self.serialNumber, 
+                        max: NFTTemplate.nftMintNumberCount[self.mintKeyID]
                     )
                     let editionList: [MetadataViews.Edition] = [editionInfo]
                     return MetadataViews.Editions(

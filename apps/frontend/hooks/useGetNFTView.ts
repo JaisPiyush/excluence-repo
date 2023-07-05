@@ -2,25 +2,26 @@ import { fetchNFTView } from "@/flow/get_nft_view";
 import { CollectionOnServer, NFTCollectionData, NFTViewWithContractData } from "@/utility/types";
 import { useEffect, useState } from "react";
 import * as fcl from "@onflow/fcl"
+import { getCollectionData } from "@/flow/get_collection_data.script";
+import { fetchAllNFTs } from "@/flow/nft";
 
-export const useGetNFTView = (collection: CollectionOnServer, collectionData: NFTCollectionData, ids: number[], address?: string) => {
+export const useGetNFTView = (collection: CollectionOnServer, ids: string[], address?: string, collectionData?: NFTCollectionData,) => {
     const [nfts, setNFTs] = useState<NFTViewWithContractData[]>([]);
-    const fetchAllNFTs = async () => {
-        address = address || (await fcl.currentUser.snapshot()).addr
-        const _nfts =  await Promise.all(ids.map((id) => fetchNFTView(address as string, collectionData.collectionPublicPath, id)))
-        setNFTs(_nfts.map((nft) => {
-            let nftCollectionView: NFTViewWithContractData = {
-                address: collection.address,
-                contractName: collection.contractName,
-                ...nft
-            }
-            return nftCollectionView
-        }))
-    }
+    const [hasFetchedNFT, setHasFetchedNFT] = useState(false);
 
     useEffect(() => {
-        fetchAllNFTs()
-    }, [])
+        if (collection.address && collection.contractName && ids.length > 0 && !hasFetchedNFT) {
+            fetchAllNFTs(
+                collection,
+                ids,
+                address,
+                collectionData
+            ).then((nfts) => {
+                setHasFetchedNFT(true)
+                setNFTs([...nfts])
+            })
+        }
+    },[collection.address, collection.contractName, ids, hasFetchedNFT, address, collection, collectionData])
 
     return nfts;
 }

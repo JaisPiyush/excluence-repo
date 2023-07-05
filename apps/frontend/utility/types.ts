@@ -17,28 +17,6 @@ export interface ICreateCollectionContext {
 }
 
 
-// export interface NFTHttpFile {
-//     url: string
-// }
-
-// export interface NFTIpfsFile {
-//     cid: string;
-//     path?: string
-// }
-
-// export type NFTFile = NFTHttpFile | NFTIpfsFile
-
-// export interface NFTMetadataViewsDisplay {
-//     name: string
-//     description: string
-//     thumbnail: NFTFile 
-//     medias?: NFTFile[]
-// }
-
-// export interface NFTMetadataViewsExternalURL {
-//     url: string
-// }
-
 export interface NFTMetadataViewsEdition {
     name: string
     number: number
@@ -117,6 +95,7 @@ export interface BatchNFTArgs extends MintNFTArgs {
 export interface NFTOnlyData {
     id: number;
     uuid?: number;
+    owner: string;
     name: string;
     description: string;
     thumbnail: string;

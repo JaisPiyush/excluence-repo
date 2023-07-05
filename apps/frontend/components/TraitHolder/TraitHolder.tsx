@@ -1,10 +1,11 @@
 import { NFTTraits } from "@/utility/types";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, SxProps, Typography } from "@mui/material";
 import TraitBar from "../TraitBar";
 import {ChevronDown} from "react-iconly"
 
 interface TraitHolderProps {
-    traits: NFTTraits, 
+    traits: NFTTraits,
+    sx?: SxProps
 }
 
 export default function TraitHolder(props: TraitHolderProps) {
@@ -15,7 +16,8 @@ export default function TraitHolder(props: TraitHolderProps) {
             lg: 512,
             xl: 615
         },
-        borderRadius: '2rem'
+        borderRadius: '2rem',
+        ...(props.sx || {})
     }}>
                 <Accordion>
                     <AccordionSummary
@@ -29,7 +31,9 @@ export default function TraitHolder(props: TraitHolderProps) {
                     <AccordionDetails>
                             <Grid container spacing={2} columns={10}>
                                 {
-                                    props.traits.traits.map((trait, index) => {
+                                    props.traits.traits.filter((trait) => {
+                                        return !['mintedTime', 'minter','mintedBlock'].includes(trait.name)
+                                    }).map((trait, index) => {
                                         return <Grid item xs={5} key={index}>
                                             <TraitBar {...trait} />
                                         </Grid>

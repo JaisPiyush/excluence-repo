@@ -2,16 +2,19 @@ import { Card, Box, Typography, useTheme, Button } from "@mui/material";
 import ImageMediaRenderer from "../MediaRenderer/ImageMediaRenderer";
 import {  NFTMarketplacePriceData, NFTOnlyData } from "@/utility/types";
 import {Plus} from 'react-iconly'
+import { useRouter } from "next/router";
+import { DynamicRoutes, getDynamicRoute } from "@/utility/routes";
 
 
 
 export type NFTCardProps = NFTOnlyData & NFTMarketplacePriceData & {
     address: string;
-    contractName: string
+    contractName: string;
 }
 
 export default function NFTCard(props: NFTCardProps) {
     const theme = useTheme()
+    const router = useRouter()
 
     const displayName = () => {
     
@@ -25,6 +28,14 @@ export default function NFTCard(props: NFTCardProps) {
     const displayFlowQuantity = (quantity?: string) => {
         if (quantity) return `${quantity} FLOW`
         return '-'
+    }
+
+    const handleCardClick = () => {
+        router.push(getDynamicRoute(DynamicRoutes.ViewNFT, {
+            address: props.address,
+            name: props.contractName,
+            id: props.id.toString()
+        }));
     }
 
     return <Card
@@ -41,6 +52,8 @@ export default function NFTCard(props: NFTCardProps) {
                 padding: '0.5rem',
                 borderRadius: '1rem'
             }}
+
+            onClick={() => {handleCardClick()}}
     >   
         <Box sx={{
             marginBottom: {

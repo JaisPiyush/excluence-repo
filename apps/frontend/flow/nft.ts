@@ -2,7 +2,7 @@ import { getAllCollectionByAddress } from "@/api/nftCollection";
 import * as fcl from "@onflow/fcl"
 import { getCollectionData } from "./get_collection_data.script";
 import { fetchAllCollectionIds } from "./get_collection_ids.script";
-import { CollectionOnServer, FlowPath, NFTViewWithContractData } from "@/utility/types";
+import { CollectionOnServer, FlowPath, NFTCollectionData, NFTViewWithContractData } from "@/utility/types";
 import { fetchNFTView } from "./get_nft_view";
 
 export async function getAllOwnedNFTIds(address?: string) {
@@ -29,4 +29,25 @@ export async function getAllOwnedNFTIs(address?: string) {
             ...nft
         } as NFTViewWithContractData
     }))
+}
+
+
+export async function fetchAllNFTs(collection: CollectionOnServer, ids: string[], address?: string, collectionData?: NFTCollectionData) {
+    address = address || (await fcl.currentUser.snapshot()).addr
+    if (!collectionData) {
+        collectionData = await getCollectionData(collection.contractName, collection.address)
+    }    
+    const _nfts =  await Promise.all(ids.map((id) => fetchNFTView(
+        address as string,
+        ( collectionData as NFTCollectionData).collectionPublicPath, 
+        id
+    )));
+    return _nfts.map((nft) => {
+        let nftCollectionView: NFTViewWithContractData = {
+            address: collection.address,
+            contractName: collection.contractName,
+            ...nft
+        }
+        return nftCollectionView
+    })
 }
