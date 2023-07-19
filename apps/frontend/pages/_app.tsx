@@ -10,20 +10,19 @@ import { CacheProvider } from "@emotion/react";
 import { Box, CssBaseline } from "@mui/material";
 import 'react-loading-skeleton/dist/skeleton.css'
 import * as fcl from "@onflow/fcl"
-import NavBar from "@/modules/NavBar";
+
 // import flowJSON from "@excluence-repo/flow/flow.json"
 
 
 const clientSideEmotionCache = createEmotionCache();
 
 fcl
-  .config()
-  .put("accessNode.api", process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'])
-  .put("flow.network", process.env['NEXT_PUBLIC_FLOW_NETWORK'])
-  .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn")
-  .put("env", process.env['NEXT_PUBLIC_FLOW_NETWORK'])
-  // .load({flowJSON})
-
+  .config({
+    "accessNode.api": process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'],
+    "flow.network" : process.env['NEXT_PUBLIC_FLOW_NETWORK'],
+    "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
+    "env": process.env['NEXT_PUBLIC_FLOW_NETWORK']
+  })
 
 function MyApp(props: AppProps & {emotionCache: EmotionCache}) {
 
@@ -32,7 +31,7 @@ function MyApp(props: AppProps & {emotionCache: EmotionCache}) {
             <CacheProvider value={emotionCache}>
               <ThemeProvider theme={darkTheme}>
                   <CssBaseline />
-                  <NavBar />
+
                   <Box>
                     <Component {...pageProps} />
                   </Box>

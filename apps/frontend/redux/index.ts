@@ -1,10 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import accountReducer from "./account"
 
 const store = configureStore({
     reducer: {
-        account: accountReducer
+       
     }
 });
 

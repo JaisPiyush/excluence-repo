@@ -17,12 +17,9 @@
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "@excluence-repo/db": "*",
-    "@excluence-repo/flow": "*",
     "@mui/material": "^5.13.6",
     "@onflow/fcl": "^1.4.1",
     "@reduxjs/toolkit": "^1.9.5",
-    "@thirdweb-dev/react": "^3.14.2",
     "axios": "^1.4.0",
     "cadence-webpack-plugin": "^1.0.1",
     "next": "^13",
@@ -31,8 +28,6 @@
     "react-dom": "^18.2",
     "react-iconly": "^2.2.10",
     "react-icons": "^4.10.1",
-    "react-loading-skeleton": "^3.3.1",
-    "react-markdown": "^8.0.7",
     "react-redux": "^8.1.1"
   },
   "devDependencies": {
