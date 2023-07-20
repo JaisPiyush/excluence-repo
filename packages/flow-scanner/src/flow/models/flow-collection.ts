@@ -1,4 +1,4 @@
 export interface FlowCollection {
-    id: string;
-    transactionId: string[]
+  id: string;
+  transactionId: string[];
 }
