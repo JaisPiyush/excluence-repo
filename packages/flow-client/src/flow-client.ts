@@ -1,17 +1,12 @@
 import * as fcl from '@onflow/fcl';
 import { FlowBlock } from './models/flow-block';
-import { FlowCollection } from './models/flow-collection';
-import {
-  FlowTransactionObject,
-  FlowTransactionStatus
-} from './models/flow-transaction';
+import { FlowCollection, FlowTransactionStatus } from './models/flow-event';
 
 export interface FlowClientInterface {
   getLatestBlock(): Promise<FlowBlock>;
   getBlockAtHeight(height: number): Promise<FlowBlock>;
   getCollection(collectionId: string): Promise<FlowCollection>;
-  getTransactionObject(transactionId: string): Promise<FlowTransactionObject>;
-  getTransactionStatus(transactionId: string): Promise<FlowTransactionStatus>;
+  getTransactionStatus(txnId: string): Promise<FlowTransactionStatus>;
 }
 
 export class FlowClient implements FlowClientInterface {
@@ -42,17 +37,6 @@ export class FlowClient implements FlowClientInterface {
       })
       .then(fcl.decode)) as FlowCollection;
     return collection;
-  };
-
-  getTransactionObject = async (
-    transactionId: string
-  ): Promise<FlowTransactionObject> => {
-    const txn = (await fcl
-      .send(await fcl.build([fcl.getTransaction(transactionId)]), {
-        node: this.accessNode
-      })
-      .then(fcl.decode)) as FlowTransactionObject;
-    return txn;
   };
 
   getTransactionStatus = async (

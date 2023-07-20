@@ -1,6 +1,6 @@
 import { FlowRateLimiterProvider } from '../providers/flow-rate-limiter-provider';
-import { FlowBlock } from './models/flow-block';
-import { FlowClientInterface } from './flow-client';
+import { FlowBlock, FlowCollection, FlowTransactionStatus } from 'flow-client';
+import { FlowClientInterface } from 'flow-client';
 
 export class FlowService implements FlowClientInterface {
   constructor(
@@ -13,9 +13,7 @@ export class FlowService implements FlowClientInterface {
       await this.rateLimiterProvider().waitForTickets(1);
     }
 
-    const latestBlock = await this.flowClient.getLatestBlock();
-
-    return latestBlock;
+    return await this.flowClient.getLatestBlock();
   };
 
   async getBlockAtHeight(height: number): Promise<FlowBlock> {
@@ -23,5 +21,18 @@ export class FlowService implements FlowClientInterface {
       await this.rateLimiterProvider().waitForTickets(1);
     }
     return await this.flowClient.getBlockAtHeight(height);
+  }
+
+  async getCollection(collectionId: string): Promise<FlowCollection> {
+    if (this.rateLimiterProvider) {
+      await this.rateLimiterProvider().waitForTickets(1);
+    }
+    return await this.getCollection(collectionId);
+  }
+  async getTransactionStatus(txnId: string): Promise<FlowTransactionStatus> {
+    if (this.rateLimiterProvider) {
+      await this.rateLimiterProvider().waitForTickets(1);
+    }
+    return await this.getTransactionStatus(txnId);
   }
 }
