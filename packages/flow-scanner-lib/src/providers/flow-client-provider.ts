@@ -1,4 +1,4 @@
-import { FlowClient } from '../flow/flow-client';
+import { FlowClient } from 'flow-client';
 import { ConfigProvider } from './config-provider';
 
 export type FlowClientProvider = () => Promise<FlowClient>;
