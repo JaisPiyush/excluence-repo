@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export class NullEventBroadcaster implements EventBroadcasterInterface {
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {};
+  broadcastEvents = async (
+    blockHeight: number,
+    events: FlowFetchedEvent[]
+  ) => {};
 }

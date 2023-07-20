@@ -1,5 +1,4 @@
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
 import _ from 'lodash';
 import { LogProvider } from '../providers/log-provider';
 import { delay } from '../helpers/delay';
@@ -8,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import sha256 from 'crypto-js/sha256';
 import Base64 from 'crypto-js/enc-base64';
 import hmacSHA512 from 'crypto-js/hmac-sha512';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 type Options = {
   endpoint: string;
@@ -20,7 +20,7 @@ type Payload = {
     data: {
       transactionId: string;
       blockHeight: number;
-      events: FlowEvent[];
+      events: FlowFetchedEvent[];
     };
   };
   hmac?: {
@@ -38,7 +38,7 @@ export class HttpEventBroadcaster implements EventBroadcasterInterface {
   buildPayload = (
     blockHeight: number,
     transactionId: string,
-    transactionEvents: FlowEvent[]
+    transactionEvents: FlowFetchedEvent[]
   ): Payload => {
     const payload: Payload = {
       payload: {
@@ -67,7 +67,7 @@ export class HttpEventBroadcaster implements EventBroadcasterInterface {
     return payload;
   };
 
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {
+  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
     const logger = this.logProvider();
 
     // we will send all events to an HTTP endpoint
@@ -87,6 +87,7 @@ export class HttpEventBroadcaster implements EventBroadcasterInterface {
 
       let errors = 0;
 
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const payload = this.buildPayload(
           blockHeight,

@@ -1,7 +1,7 @@
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
 import { EventBroadcasterProvider } from '../providers/event-broadcaster-provider';
 import { LogProvider } from '../providers/log-provider';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export class MulticastEventBroadcaster implements EventBroadcasterInterface {
   constructor(
@@ -9,7 +9,7 @@ export class MulticastEventBroadcaster implements EventBroadcasterInterface {
     private readonly logProvider: LogProvider
   ) {}
 
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {
+  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
     try {
       const promises: Promise<any>[] = [];
 

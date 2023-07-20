@@ -3,7 +3,7 @@ export interface CollectionGuaranteesObject {
   signerIds?: unknown[];
 }
 
-export type FlowBlock = {
+export type FlowBlock = Record<string, unknown> & {
   id: string;
   height: number;
   timestamp: string;

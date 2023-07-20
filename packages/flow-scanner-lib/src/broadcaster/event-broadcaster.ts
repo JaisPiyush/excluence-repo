@@ -1,12 +1,15 @@
-import { FlowEvent } from '../flow/models/flow-event';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export type EventBroadcast = {
   blockHeight: number;
-  events: FlowEvent[];
+  events: FlowFetchedEvent[];
 };
 
 export interface EventBroadcasterInterface {
-  broadcastEvents: (blockHeight: number, events: FlowEvent[]) => Promise<void>;
+  broadcastEvents: (
+    blockHeight: number,
+    events: FlowFetchedEvent[]
+  ) => Promise<void>;
 
   destroy?: () => Promise<void>;
 }

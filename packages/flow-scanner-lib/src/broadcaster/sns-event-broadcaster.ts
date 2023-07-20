@@ -1,9 +1,9 @@
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
 import { SNS } from 'aws-sdk';
 import _ from 'lodash';
 import { LogProvider } from '../providers/log-provider';
 import { delay } from '../helpers/delay';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export class SnsEventBroadcaster implements EventBroadcasterInterface {
   constructor(
@@ -13,18 +13,19 @@ export class SnsEventBroadcaster implements EventBroadcasterInterface {
     private readonly sns: SNS
   ) {}
 
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {
+  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
     const logger = this.logProvider();
 
     // we will send all events over an SNS topic using deduplication
 
-    let eventCount = 0;
+    // let eventCount = 0;
     let messageCount = 0;
 
     for (const transactionEvents of Object.values(
       _.groupBy(events, (ev) => ev.transactionId)
     )) {
       let errors = 0;
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         try {
           await this.sns
@@ -40,7 +41,7 @@ export class SnsEventBroadcaster implements EventBroadcasterInterface {
             })
             .promise();
 
-          eventCount += transactionEvents.length;
+          // eventCount += transactionEvents.length;
           ++messageCount;
 
           break;

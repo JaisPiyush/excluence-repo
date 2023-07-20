@@ -1,8 +1,8 @@
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
 import _ from 'lodash';
 import { LogProvider } from '../providers/log-provider';
 import { UniqueCheckerProvider } from '../providers/unique-checker-provider';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export class UniqueEventBroadcaster implements EventBroadcasterInterface {
   constructor(
@@ -11,7 +11,7 @@ export class UniqueEventBroadcaster implements EventBroadcasterInterface {
     private readonly logProvider: LogProvider
   ) {}
 
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {
+  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
     const groups = _.groupBy(events, (ev) => ev.transactionId);
     const uniqueChecker = await this.uniqueCheckerProvider();
 

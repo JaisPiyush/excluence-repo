@@ -1,9 +1,9 @@
 import { EventBroadcasterInterface } from './event-broadcaster';
-import { FlowEvent } from '../flow/models/flow-event';
 import { SQS } from 'aws-sdk';
 import _ from 'lodash';
 import { LogProvider } from '../providers/log-provider';
 import { delay } from '../helpers/delay';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export class SqsEventBroadcaster implements EventBroadcasterInterface {
   constructor(
@@ -13,7 +13,7 @@ export class SqsEventBroadcaster implements EventBroadcasterInterface {
     private readonly sqs: SQS
   ) {}
 
-  broadcastEvents = async (blockHeight: number, events: FlowEvent[]) => {
+  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
     const logger = this.logProvider();
 
     // we will send all events over an SQS FIFO Queue using deduplication
@@ -29,6 +29,7 @@ export class SqsEventBroadcaster implements EventBroadcasterInterface {
       for (let chunkIndex = 0; chunkIndex < chunks.length; ++chunkIndex) {
         const chunk = chunks[chunkIndex];
         let errors = 0;
+        // eslint-disable-next-line no-constant-condition
         while (true) {
           try {
             await this.sqs
