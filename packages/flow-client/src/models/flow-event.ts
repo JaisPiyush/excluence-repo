@@ -1,6 +1,6 @@
 export interface FlowCollection {
   id: string;
-  transactionId: string[];
+  transactionIds: string[];
 }
 
 export interface FlowEvent {

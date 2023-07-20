@@ -1,4 +1,4 @@
-import { FlowEvent } from '../flow/models/flow-event';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export enum EventType {
   LatestBlockHeightUpdated = 'LatestBlockHeightUpdated',
@@ -6,6 +6,7 @@ export enum EventType {
   FlowEventsFetched = 'FlowEventsFetched'
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace EventPayloads {
   export type LatestBlockHeightUpdated = {
     blockHeight: number;
@@ -16,8 +17,7 @@ export namespace EventPayloads {
   };
 
   export type FlowEventsFetched = {
-    eventType: string;
     blockHeight: number;
-    events: FlowEvent[];
+    events: FlowFetchedEvent[];
   };
 }
