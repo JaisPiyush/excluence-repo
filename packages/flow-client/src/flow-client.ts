@@ -1,6 +1,7 @@
 import * as fcl from '@onflow/fcl';
 import { FlowBlock } from './models/flow-block';
 import { FlowCollection, FlowTransactionStatus } from './models/flow-event';
+import { customDecoders } from './decoder';
 
 export interface FlowClientInterface {
   getLatestBlock(): Promise<FlowBlock>;
@@ -10,7 +11,17 @@ export interface FlowClientInterface {
 }
 
 export class FlowClient implements FlowClientInterface {
-  constructor(private readonly accessNode: string) {}
+  constructor(private readonly accessNode: string) {
+    this.setCustomDecoders().then();
+  }
+
+  async setCustomDecoders() {
+    for (const [key, func] of Object.entries(customDecoders)) {
+      if ((await fcl.config().get(`decoder.${key}`, null)) === null) {
+        await fcl.config().put(`decoder.${key}`, func);
+      }
+    }
+  }
 
   getLatestBlock = async (): Promise<FlowBlock> => {
     const latestBlock = (await fcl
