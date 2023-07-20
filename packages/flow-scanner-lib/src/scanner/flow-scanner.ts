@@ -11,7 +11,6 @@ import {
 } from '../providers/event-bus-provider';
 import { RemovableListener } from '../event-bus/event-bus';
 import { EventPayloads, EventType } from '../event-bus/events';
-import { FlowEvent } from '../flow/models/flow-event';
 import _ from 'lodash';
 import { EventBroadcasterProvider } from '../providers/event-broadcaster-provider';
 import { SettingsServiceProvider } from '../providers/settings-service-provider';
@@ -23,6 +22,7 @@ import { ConfigProvider } from '../providers/config-provider';
 import { flowClientProvider } from '../providers/flow-client-provider';
 import { flowRateLimiterProvider } from '../providers/flow-rate-limiter-provider';
 import { onlyDefined } from '../helpers/js-helpers';
+import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 export const METRIC_SERVICE_NAME = 'FlowScanner';
 
@@ -55,13 +55,12 @@ export class FlowScanner {
   private listeners: RemovableListener[] = [];
   private running = false;
   private processedBlockHeight: number = 0;
-  private fetchedEvents: { [key: string]: { [key: string]: FlowEvent[] } } = {};
+  private fetchedEvents: {
+    [key: number]: FlowFetchedEvent[];
+  } = {};
   private readonly providers: Providers;
 
-  constructor(
-    private readonly eventTypes: string[],
-    providers: ProviderOptions
-  ) {
+  constructor(providers: ProviderOptions) {
     this.providers = {
       logProvider: nullLogProvider,
       flowServiceProvider: flowServiceProvider(
@@ -75,25 +74,20 @@ export class FlowScanner {
   }
 
   private createEventScanners = async () => {
-    for (const eventType of this.eventTypes) {
-      this.fetchedEvents[eventType] = {};
+    const eventScanner = new EventScanner(
+      {
+        processedBlockHeight: this.processedBlockHeight,
+        latestBlockHeight: undefined
+      },
+      {
+        eventBusProvider: this.providers.eventBusProvider,
+        flowServiceProvider: this.providers.flowServiceProvider,
+        logProvider: this.providers.logProvider,
+        metricServiceProvider: this.providers.metricServiceProvider
+      }
+    );
 
-      const eventScanner = new EventScanner(
-        {
-          processedBlockHeight: this.processedBlockHeight,
-          latestBlockHeight: undefined,
-          eventType: eventType
-        },
-        {
-          eventBusProvider: this.providers.eventBusProvider,
-          flowServiceProvider: this.providers.flowServiceProvider,
-          logProvider: this.providers.logProvider,
-          metricServiceProvider: this.providers.metricServiceProvider
-        }
-      );
-
-      this.eventScanners.push(eventScanner);
-    }
+    this.eventScanners.push(eventScanner);
   };
 
   private startEventScanners = async () => {
@@ -149,7 +143,7 @@ export class FlowScanner {
 
   private onEventsFetched = (ev: EventPayloads.FlowEventsFetched) => {
     // store the fetched events for processing
-    this.fetchedEvents[ev.eventType][String(ev.blockHeight)] = ev.events;
+    this.fetchedEvents[ev.blockHeight] = ev.events;
   };
 
   stop = async () => {
@@ -208,24 +202,14 @@ export class FlowScanner {
       while (!missing) {
         const startProcessingTime = new Date().getTime();
 
-        // check if we have all event types for the block we are currently processing
-        for (const eventType of this.eventTypes) {
-          if (!this.fetchedEvents[eventType][String(checkBlockHeight)]) {
-            missing = true;
-            break;
-          }
+        if (!this.fetchedEvents[checkBlockHeight]) {
+          missing = true;
+          break;
         }
 
         if (!missing) {
-          let allEvents: FlowEvent[] = [];
-          // we have all events for the current block, group them and broadcast them
-          for (const eventType of this.eventTypes) {
-            allEvents.push(
-              ...this.fetchedEvents[eventType][String(checkBlockHeight)]
-            );
-          }
-
-          // order events by transaction/event index
+          let allEvents: FlowFetchedEvent[] =
+            this.fetchedEvents[checkBlockHeight];
           allEvents = _.orderBy(allEvents, [
             (e) => e.transactionIndex,
             (e) => e.eventIndex
@@ -237,9 +221,7 @@ export class FlowScanner {
             await eventBroadcaster.broadcastEvents(checkBlockHeight, allEvents);
           }
 
-          for (const eventType of this.eventTypes) {
-            delete this.fetchedEvents[eventType][String(checkBlockHeight)];
-          }
+          delete this.fetchedEvents[checkBlockHeight];
 
           try {
             const metricService = await this.providers.metricServiceProvider();
