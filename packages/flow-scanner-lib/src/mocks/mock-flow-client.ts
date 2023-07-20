@@ -1,38 +1,31 @@
-import { FlowBlock } from '../flow/models/flow-block';
-import { FlowEvent } from '../flow/models/flow-event';
-import { FlowClientInterface } from '../flow/flow-client';
+import { FlowBlock, FlowCollection, FlowTransactionStatus } from 'flow-client';
+import { FlowClientInterface } from 'flow-client';
+import { blocks, collections, txns } from './mock-fixtures';
 
 export class MockFlowClient implements FlowClientInterface {
   constructor(
-    private latestBlock: FlowBlock,
-    private events: FlowEvent[],
-    private onGetEvents?: (
-      eventType: string,
-      startHeight: number,
-      endHeight: number
-    ) => void
+    public latestBlockHeight: number = Number(Object.keys(blocks)[0]),
+    private readonly _blocks: Record<number, FlowBlock> = blocks,
+    private readonly _collections: Record<string, FlowCollection> = collections,
+    private readonly _txns: Record<string, FlowTransactionStatus> = txns
   ) {}
+  async getBlockAtHeight(height: number): Promise<FlowBlock> {
+    return this._blocks[height];
+  }
 
-  getEvents = async (
-    eventType: string,
-    startHeight: number,
-    endHeight: number
-  ): Promise<FlowEvent[]> => {
-    if (this.onGetEvents) {
-      this.onGetEvents(eventType, startHeight, endHeight);
-    }
-    return this.events.filter(
-      (e) =>
-        e.type === eventType &&
-        e.blockHeight >= startHeight &&
-        e.blockHeight <= endHeight
-    );
-  };
+  async getCollection(collectionId: string): Promise<FlowCollection> {
+    return this._collections[collectionId];
+  }
+
+  async getTransactionStatus(txnId: string): Promise<FlowTransactionStatus> {
+    return this._txns[txnId];
+  }
 
   getLatestBlock = async (): Promise<FlowBlock> => {
-    return this.latestBlock;
+    return this._blocks[this.latestBlockHeight];
   };
 
-  setLatestBlock = (latestBlock: FlowBlock) => (this.latestBlock = latestBlock);
-  setEvents = (events: FlowEvent[]) => (this.events = events);
+  setLatestBlockHeight = (height: number) => {
+    this.latestBlockHeight = height;
+  };
 }
