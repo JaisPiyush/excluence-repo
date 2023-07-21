@@ -104,9 +104,7 @@ export class EventScanner {
           let minErrors = 0;
 
           try {
-            logger.debug(
-              `Fetching events from block ${currentHeight}-${endHeight}`
-            );
+            logger.debug(`Fetching events from block ${currentHeight}`);
             const startRequestTime = new Date().getTime();
             const events = await flowService.getEvents(currentHeight);
             const endRequestTime = new Date().getTime();

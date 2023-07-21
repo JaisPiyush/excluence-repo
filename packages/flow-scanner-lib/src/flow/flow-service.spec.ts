@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { FlowService } from './flow-service';
 import { TicketThrottler } from '../helpers/ticket-throttler';
-import { MockFlowClient } from '../mocks/mock-flow-client';
+import { MockFlowClient, blockNumbers } from '../mocks/mock-flow-client';
 import { getAllEventsForBlock } from '../mocks/mock-fixtures';
 
 describe('Flow service tests', () => {
@@ -32,12 +32,8 @@ describe('Flow service tests', () => {
     );
     const mockFlowClient = new MockFlowClient();
     const flowService = new FlowService(mockFlowClient, () => throttler);
-    const expectedEvents = getAllEventsForBlock(
-      mockFlowClient.latestBlockHeight
-    );
-    const events = await flowService.getEvents(
-      mockFlowClient.latestBlockHeight
-    );
+    const expectedEvents = getAllEventsForBlock(Number(blockNumbers[0]));
+    const events = await flowService.getEvents(Number(blockNumbers[0]));
 
     expect(events).to.deep.equals(expectedEvents);
   });

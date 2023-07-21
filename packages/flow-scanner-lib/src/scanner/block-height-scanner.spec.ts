@@ -24,7 +24,9 @@ describe('Test block height scanner', () => {
 
     eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
       EventType.LatestBlockHeightUpdated,
-      (ev) => (currentBlockHeight = ev.blockHeight)
+      (ev) => {
+        currentBlockHeight = ev.blockHeight;
+      }
     );
 
     expect(currentBlockHeight).undefined;
