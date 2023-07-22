@@ -10,6 +10,25 @@ services:
             - '5433:5432'
         volumes:
             - db:/var/lib/postgresql/data
+    queue:
+        image: redis:7-alpine
+        restart: always
+        ports:
+            - '6378:6379'
+        # command: redis-server --save 20 1 --loglevel warning --requirepass redisPass
+        volumes:
+            - queue:/data
+        networks:
+            - bullmq
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            timeout: 5s
+            retries: 3
 volumes:
     db:
         driver: local
+    queue:
+        driver: local
+networks:
+    bullmq:
+        driver: bridge
