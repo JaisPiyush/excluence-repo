@@ -2,18 +2,19 @@ import { Knex } from 'knex';
 import { tableName } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    knex.schema.withSchema('public').createTable(tableName, function (table) {
-        table.string('address');
-        table.string('contractName');
-        table.string('contract');
-        table.string('event');
-        table.string('eventName');
-        table.dateTime('timestamp');
-        table.string('collectionId');
-        table.string('transactionId');
-        table.string('blockId');
-        table.bigInteger('blockHeight');
-        table.jsonb('payload');
+    await knex.schema.createTable(tableName, function (table) {
+        table.string('address').notNullable();
+        table.string('contractName').notNullable();
+        table.string('contract').notNullable();
+        table.string('event').notNullable();
+        table.string('eventName').notNullable();
+        table.dateTime('timestamp').notNullable();
+        table.string('collectionId').notNullable();
+        table.string('transactionId').notNullable();
+        table.bigInteger('eventIndex').notNullable();
+        table.string('blockId').notNullable();
+        table.bigInteger('blockHeight').notNullable();
+        table.jsonb('payload').notNullable();
 
         table.primary(['transactionId', 'eventIndex']);
         // Index to find by address, contractName, event

@@ -7,7 +7,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "dev:frontend": "dotenv -- turbo run dev --filter=frontend",
     "sb:frontend": "yarn workspace frontend run storybook",
-    "test": "dotenv -- turbo run test"
+    "test": "dotenv -- turbo run test",
+    "script": "dotenv -- yarn workspace"
   },
   "devDependencies": {
     "@turbo/gen": "^1.9.7",

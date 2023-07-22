@@ -10,7 +10,7 @@ interface KnexConnection {
 
 export function connectDB(connection: KnexConnection): Knex {
     const conn = {
-        client: 'postgresql',
+        client: 'pg',
         connection,
         pool: {
             min: 2,
