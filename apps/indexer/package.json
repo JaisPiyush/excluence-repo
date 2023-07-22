@@ -1,0 +1,13 @@
+{
+  "name": "indexer",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "author": "Piyush Jaiswal",
+  "license": "MIT",
+  "devDependencies": {
+    "tsconfig": "*",
+    "steward": "*",
+    "flow-scanner-lib": "*",
+    "@excluence-repo/db": "*"
+  }
+}
