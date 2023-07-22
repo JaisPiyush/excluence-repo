@@ -8,55 +8,55 @@ import { nullMetricServiceProvider } from '../providers/metric-service-provider'
 import { EventPayloads, EventType } from '../event-bus/events';
 
 describe('Test block height scanner', () => {
-  it('Checking  that event is emitted on new block height', async () => {
-    const eventBus = new EventBus();
-    const mockFlowClient = new MockFlowClient();
-    const flowService = new FlowService(mockFlowClient);
+    it('Checking  that event is emitted on new block height', async () => {
+        const eventBus = new EventBus();
+        const mockFlowClient = new MockFlowClient();
+        const flowService = new FlowService(mockFlowClient);
 
-    const blockHeightScanner = new BlockHeightScanner({
-      eventBusProvider: () => eventBus,
-      logProvider: nullLogProvider,
-      flowServiceProvider: async () => flowService,
-      metricServiceProvider: nullMetricServiceProvider
+        const blockHeightScanner = new BlockHeightScanner({
+            eventBusProvider: () => eventBus,
+            logProvider: nullLogProvider,
+            flowServiceProvider: async () => flowService,
+            metricServiceProvider: nullMetricServiceProvider
+        });
+
+        let currentBlockHeight: number | undefined = undefined;
+
+        eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
+            EventType.LatestBlockHeightUpdated,
+            (ev) => {
+                currentBlockHeight = ev.blockHeight;
+            }
+        );
+
+        expect(currentBlockHeight).undefined;
+        await blockHeightScanner.__process();
+        expect(currentBlockHeight).equals(mockFlowClient.latestBlockHeight);
     });
 
-    let currentBlockHeight: number | undefined = undefined;
+    it('Checking that event is not emitted on same block height', async () => {
+        const eventBus = new EventBus();
+        const mockFlowClient = new MockFlowClient();
+        const flowService = new FlowService(mockFlowClient);
 
-    eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
-      EventType.LatestBlockHeightUpdated,
-      (ev) => {
-        currentBlockHeight = ev.blockHeight;
-      }
-    );
+        const blockHeightScanner = new BlockHeightScanner({
+            eventBusProvider: () => eventBus,
+            logProvider: nullLogProvider,
+            flowServiceProvider: async () => flowService,
+            metricServiceProvider: nullMetricServiceProvider
+        });
 
-    expect(currentBlockHeight).undefined;
-    await blockHeightScanner.__process();
-    expect(currentBlockHeight).equals(mockFlowClient.latestBlockHeight);
-  });
+        let eventEmitted = false;
 
-  it('Checking that event is not emitted on same block height', async () => {
-    const eventBus = new EventBus();
-    const mockFlowClient = new MockFlowClient();
-    const flowService = new FlowService(mockFlowClient);
+        eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
+            EventType.LatestBlockHeightUpdated,
+            () => (eventEmitted = true)
+        );
 
-    const blockHeightScanner = new BlockHeightScanner({
-      eventBusProvider: () => eventBus,
-      logProvider: nullLogProvider,
-      flowServiceProvider: async () => flowService,
-      metricServiceProvider: nullMetricServiceProvider
+        await blockHeightScanner.__process();
+        expect(eventEmitted).equals(true);
+        eventEmitted = false;
+        await blockHeightScanner.__process();
+        expect(eventEmitted).equals(false);
     });
-
-    let eventEmitted = false;
-
-    eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
-      EventType.LatestBlockHeightUpdated,
-      () => (eventEmitted = true)
-    );
-
-    await blockHeightScanner.__process();
-    expect(eventEmitted).equals(true);
-    eventEmitted = false;
-    await blockHeightScanner.__process();
-    expect(eventEmitted).equals(false);
-  });
 });

@@ -1,7 +1,7 @@
 export interface FlowScannerConfig {
-  maxFlowRequestsPerSecond: number;
+    maxFlowRequestsPerSecond: number;
 
-  defaultStartBlockHeight: number | undefined;
+    defaultStartBlockHeight: number | undefined;
 
-  flowAccessNode: string;
+    flowAccessNode: string;
 }

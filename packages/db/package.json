@@ -1,0 +1,10 @@
+{
+  "name": "@excluence-repo/db",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "author": "Piyush Jaiswal",
+  "license": "MIT",
+  "devDependencies": {
+    "tsconfig": "*"
+  }
+}

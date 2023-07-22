@@ -1,7 +1,7 @@
 export interface SettingsServiceInterface {
-  getProcessedBlockHeight(): Promise<number | undefined>;
+    getProcessedBlockHeight(): Promise<number | undefined>;
 
-  setProcessedBlockHeight(blockHeight: number): Promise<void>;
+    setProcessedBlockHeight(blockHeight: number): Promise<void>;
 
-  destroy?: () => Promise<void>;
+    destroy?: () => Promise<void>;
 }

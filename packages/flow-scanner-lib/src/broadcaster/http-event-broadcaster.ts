@@ -10,115 +10,126 @@ import hmacSHA512 from 'crypto-js/hmac-sha512';
 import { FlowFetchedEvent } from '../model/flow-fetched-event';
 
 type Options = {
-  endpoint: string;
-  hmacSharedSecret?: string;
+    endpoint: string;
+    hmacSharedSecret?: string;
 };
 
 type Payload = {
-  payload: {
-    timestamp: number;
-    data: {
-      transactionId: string;
-      blockHeight: number;
-      events: FlowFetchedEvent[];
+    payload: {
+        timestamp: number;
+        data: {
+            transactionId: string;
+            blockHeight: number;
+            events: FlowFetchedEvent[];
+        };
     };
-  };
-  hmac?: {
-    nonce: string;
-    hash: string;
-  };
+    hmac?: {
+        nonce: string;
+        hash: string;
+    };
 };
 
 export class HttpEventBroadcaster implements EventBroadcasterInterface {
-  constructor(
-    private readonly options: Options,
-    private readonly logProvider: LogProvider
-  ) {}
+    constructor(
+        private readonly options: Options,
+        private readonly logProvider: LogProvider
+    ) {}
 
-  buildPayload = (
-    blockHeight: number,
-    transactionId: string,
-    transactionEvents: FlowFetchedEvent[]
-  ): Payload => {
-    const payload: Payload = {
-      payload: {
-        timestamp: Math.floor(new Date().getTime() / 1000),
-        data: {
-          transactionId,
-          blockHeight,
-          events: transactionEvents
+    buildPayload = (
+        blockHeight: number,
+        transactionId: string,
+        transactionEvents: FlowFetchedEvent[]
+    ): Payload => {
+        const payload: Payload = {
+            payload: {
+                timestamp: Math.floor(new Date().getTime() / 1000),
+                data: {
+                    transactionId,
+                    blockHeight,
+                    events: transactionEvents
+                }
+            }
+        };
+
+        if (this.options.hmacSharedSecret) {
+            const nonce = uuidv4();
+            const message = JSON.stringify(payload.payload);
+            const hashDigest = sha256(nonce + message);
+            const hmacDigest = Base64.stringify(
+                hmacSHA512(message + hashDigest, this.options.hmacSharedSecret)
+            );
+            payload.hmac = {
+                nonce,
+                hash: hmacDigest
+            };
         }
-      }
+
+        return payload;
     };
 
-    if (this.options.hmacSharedSecret) {
-      const nonce = uuidv4();
-      const message = JSON.stringify(payload.payload);
-      const hashDigest = sha256(nonce + message);
-      const hmacDigest = Base64.stringify(
-        hmacSHA512(message + hashDigest, this.options.hmacSharedSecret)
-      );
-      payload.hmac = {
-        nonce,
-        hash: hmacDigest
-      };
-    }
+    broadcastEvents = async (
+        blockHeight: number,
+        events: FlowFetchedEvent[]
+    ) => {
+        const logger = this.logProvider();
 
-    return payload;
-  };
+        // we will send all events to an HTTP endpoint
 
-  broadcastEvents = async (blockHeight: number, events: FlowFetchedEvent[]) => {
-    const logger = this.logProvider();
+        let eventCount = 0;
+        let messageCount = 0;
 
-    // we will send all events to an HTTP endpoint
+        const groups = _.groupBy(events, (ev) => ev.transactionId);
 
-    let eventCount = 0;
-    let messageCount = 0;
+        for (const transactionId in groups) {
+            const transactionEvents = groups[transactionId];
 
-    const groups = _.groupBy(events, (ev) => ev.transactionId);
+            const client = axios.create({
+                maxContentLength: 50000000,
+                timeout: 600000
+            });
 
-    for (const transactionId in groups) {
-      const transactionEvents = groups[transactionId];
+            let errors = 0;
 
-      const client = axios.create({
-        maxContentLength: 50000000,
-        timeout: 600000
-      });
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const payload = this.buildPayload(
+                    blockHeight,
+                    transactionId,
+                    transactionEvents
+                );
 
-      let errors = 0;
+                try {
+                    try {
+                        await client.post(this.options.endpoint, payload);
+                    } catch (err) {
+                        if (axios.isAxiosError(err)) {
+                            throw Error(
+                                `Unable to post to HTTP endpoint: ${err.message}`
+                            );
+                        } else {
+                            throw Error(
+                                `Unable to post to HTTP endpoint: ${err}`
+                            );
+                        }
+                    }
 
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const payload = this.buildPayload(
-          blockHeight,
-          transactionId,
-          transactionEvents
-        );
-
-        try {
-          try {
-            await client.post(this.options.endpoint, payload);
-          } catch (err) {
-            if (axios.isAxiosError(err)) {
-              throw Error(`Unable to post to HTTP endpoint: ${err.message}`);
-            } else {
-              throw Error(`Unable to post to HTTP endpoint: ${err}`);
+                    eventCount += transactionEvents.length;
+                    ++messageCount;
+                    break;
+                } catch (err) {
+                    logger.error(err);
+                    ++errors;
+                    await delay(
+                        Math.floor(
+                            Math.min(4, errors) * 500 + Math.random() * 500
+                        )
+                    );
+                }
             }
-          }
-
-          eventCount += transactionEvents.length;
-          ++messageCount;
-          break;
-        } catch (err) {
-          logger.error(err);
-          ++errors;
-          await delay(
-            Math.floor(Math.min(4, errors) * 500 + Math.random() * 500)
-          );
         }
-      }
-    }
 
-    logger.debug(`Sent ${eventCount} events in ${messageCount} HTTP messages`);
-  };
+        logger.debug(
+            `Sent ${eventCount} events in ${messageCount} HTTP messages`
+        );
+    };
 }

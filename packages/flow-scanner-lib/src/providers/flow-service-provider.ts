@@ -7,17 +7,17 @@ export type FlowServiceProvider = () => Promise<FlowService>;
 let _flowService: FlowService | undefined = undefined;
 
 export const flowServiceProvider =
-  (
-    flowClientProvider: FlowClientProvider,
-    rateLimiterProvider: FlowRateLimiterProvider
-  ): FlowServiceProvider =>
-  async () => {
-    if (!_flowService) {
-      _flowService = new FlowService(
-        await flowClientProvider(),
-        rateLimiterProvider
-      );
-    }
+    (
+        flowClientProvider: FlowClientProvider,
+        rateLimiterProvider: FlowRateLimiterProvider
+    ): FlowServiceProvider =>
+    async () => {
+        if (!_flowService) {
+            _flowService = new FlowService(
+                await flowClientProvider(),
+                rateLimiterProvider
+            );
+        }
 
-    return _flowService;
-  };
+        return _flowService;
+    };
