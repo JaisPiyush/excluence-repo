@@ -20,5 +20,9 @@
     "ts-node": "^10.9.1",
     "tsconfig": "*",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "knex": "^2.5.1",
+    "pg": "^8.11.1"
   }
 }
