@@ -24,8 +24,20 @@ services:
             test: ['CMD', 'redis-cli', 'ping']
             timeout: 5s
             retries: 3
+    test_db:
+        image: postgres:14.1-alpine
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - '5434:5432'
+        volumes:
+            - test_db:/var/lib/postgresql/data
 volumes:
     db:
+        driver: local
+    test_db:
         driver: local
     queue:
         driver: local
