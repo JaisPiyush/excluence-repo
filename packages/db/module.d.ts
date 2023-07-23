@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { ScannerBlockConfig } from './src/types';
 
 declare module 'knex/types/tables' {
     interface Tables {
@@ -9,6 +10,13 @@ declare module 'knex/types/tables' {
             FlowEvents,
             // Types for `update()`
             null,
+            null
+        >;
+        scannerBlockConfig: ScannerBlockConfig;
+        scannerBlockConfig_composite: Knex.CompositeTableType<
+            ScannerBlockConfig,
+            ScannerBlockConfig,
+            Pick<ScannerBlockConfig, "currentBlockHeight">,
             null
         >;
     }

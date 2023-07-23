@@ -1,11 +1,12 @@
 import { Knex } from 'knex';
-import { tableName } from '../src/constants';
+import { flowEventsTableName } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(tableName, function (table) {
+    await knex.schema.createTable(flowEventsTableName, function (table) {
         table.string('address').notNullable();
         table.string('contractName').notNullable();
         table.string('contract').notNullable();
+        // Complete event address A.{address without '0x'}.{contractName}.{eventName}
         table.string('event').notNullable();
         table.string('eventName').notNullable();
         table.dateTime('timestamp').notNullable();
@@ -17,22 +18,31 @@ export async function up(knex: Knex): Promise<void> {
         table.jsonb('payload').notNullable();
 
         table.primary(['transactionId', 'eventIndex']);
-        // Index to find by address, contractName, event
+        // Index to find by address
         table.index(
-            ['address', 'contractName', 'eventName'],
-            'idx_address_contractName_eventName',
+            'address',
+            'idx_address',
+            {
+                storageEngineIndexType: 'hash'
+            }
+        );
+
+        // Index to find by contract A.{address without '0x'}.{contractName}
+        table.index(
+            'contract',
+            'idx_contract',
             {
                 storageEngineIndexType: 'hash'
             }
         );
 
         // Index for complete event name
-        table.index(['event'], 'idx_event', {
+        table.index('event', 'idx_event', {
             storageEngineIndexType: 'hash'
         });
     });
 }
 
 export async function down(knex: Knex): Promise<void> {
-    await knex.table(tableName).del();
+    await knex.schema.dropTableIfExists(flowEventsTableName);
 }

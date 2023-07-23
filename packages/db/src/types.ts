@@ -13,6 +13,12 @@ export interface FlowEvents {
     transactionId: string;
     eventIndex: number;
     blockId: string;
-    blockHeight: number | bigint;
+    blockHeight: number | bigint | string;
     payload: Record<string, unknown>;
+}
+
+export interface ScannerBlockConfig {
+    scannerId: string;
+    currentBlockHeight: number | bigint | string;
+    startBlockHeight: number | bigint | string;
 }

@@ -30,10 +30,7 @@ export class EventScanner {
     private fetchedBlockHeight: number | undefined;
     private listeners: RemovableListener[] = [];
 
-    constructor(
-        options: Options,
-        private readonly providers: Providers
-    ) {
+    constructor(options: Options, private readonly providers: Providers) {
         this.latestBlockHeight = options.latestBlockHeight;
         this.processedBlockHeight = options.processedBlockHeight;
         this.fetchedBlockHeight = options.processedBlockHeight;

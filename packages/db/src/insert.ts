@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { FlowEvents } from './types';
-import { tableName } from './constants';
+import { flowEventsTableName } from './constants';
 import { getUTCTime } from './utils';
 
 export async function createEvent(knex: Knex, event: FlowEvents) {
@@ -9,5 +9,5 @@ export async function createEvent(knex: Knex, event: FlowEvents) {
         event.timestamp = datetime;
     }
     event.payload = event.payload || {};
-    await knex(tableName).insert(event);
+    await knex(flowEventsTableName).insert(event);
 }
