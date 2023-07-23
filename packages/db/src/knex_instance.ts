@@ -1,17 +1,9 @@
 import knex, { Knex } from 'knex';
 
-interface KnexConnection {
-    host: string;
-    port: number;
-    database: string;
-    user: string;
-    password: string;
-}
-
-export function connectDB(connection: KnexConnection): Knex {
+export function connectDB(connection: Pick<Knex.Config, 'connection'>): Knex {
     const conn = {
         client: 'pg',
-        connection,
+        connection: connection.connection,
         pool: {
             min: 2,
             max: 10
