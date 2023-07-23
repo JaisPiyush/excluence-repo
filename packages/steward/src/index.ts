@@ -4,6 +4,7 @@ import { Knex } from '@excluence-repo/db';
 import { createWorker } from './workers';
 
 export * from './utils';
+export * from './jobs/jobs';
 export { Queue };
 
 export const createQueue = (queueName: string) => {

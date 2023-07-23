@@ -9,7 +9,9 @@
     "sb:frontend": "yarn workspace frontend run storybook",
     "test": "dotenv -e .env.test.local -e .env -- turbo run test",
     "script": "dotenv -- yarn workspace",
-    "script:test": "dotenv -e .env.test.local -e .env -- yarn workspace"
+    "script:test": "dotenv -e .env.test.local -e .env -- yarn workspace",
+    "start": "dotenv -- turbo run start",
+    "start:indexer": "dotenv -- turbo run start --filter=indexer"
   },
   "devDependencies": {
     "@turbo/gen": "^1.9.7",

@@ -1,7 +1,7 @@
 import { FlowFetchedEvent } from 'flow-scanner-lib';
 import { BaseJob, JobImp } from './job.definition';
 import { Logger } from 'logger';
-import { Knex, createEvent } from '@excluence-repo/db';
+import { Knex, createEvent, isEventInDatabase } from '@excluence-repo/db';
 import {
     getAddressOnly,
     getContractId,
@@ -20,8 +20,20 @@ export class CreateEventJob extends BaseJob implements JobImp {
         try {
             const data = this.payload as any as FlowFetchedEvent;
             Logger.info(
-                `Indexing event ${data.type} in transaction ${data.transactionIndex}`
+                `Indexing event ${data.type} in transaction ${data.transactionId} ${data.eventIndex}`
             );
+            if (
+                await isEventInDatabase(
+                    knex,
+                    data.transactionId,
+                    data.eventIndex
+                )
+            ) {
+                Logger.info(
+                    `Event with transactionId: ${data.transactionId} and eventIndex: ${data.eventIndex} already exists`
+                );
+                return;
+            }
             await createEvent(knex, {
                 address: getAddressOnly(data.type),
                 contractName: getContractNameOnly(data.type),
@@ -31,7 +43,7 @@ export class CreateEventJob extends BaseJob implements JobImp {
                 timestamp: data.block.timestamp as string,
                 collectionId: data.collectionId,
                 transactionId: data.transactionId,
-                eventIndex: data.transactionIndex,
+                eventIndex: data.eventIndex,
                 blockId: data.block.id as string,
                 blockHeight: data.block.height as number,
                 payload: data.data as Record<string, unknown>
@@ -40,7 +52,9 @@ export class CreateEventJob extends BaseJob implements JobImp {
                 `Indexed event ${data.type} in transaction ${data.transactionIndex}`
             );
         } catch (e) {
-            Logger.error(`${this.name}: ${e}`);
+            Logger.error(
+                `${this.name}: ${e} with data ${JSON.stringify(this.payload)}`
+            );
         }
     };
 }

@@ -18,23 +18,16 @@ export async function up(knex: Knex): Promise<void> {
         table.jsonb('payload').notNullable();
 
         table.primary(['transactionId', 'eventIndex']);
+
         // Index to find by address
-        table.index(
-            'address',
-            'idx_address',
-            {
-                storageEngineIndexType: 'hash'
-            }
-        );
+        table.index('address', 'idx_address', {
+            storageEngineIndexType: 'hash'
+        });
 
         // Index to find by contract A.{address without '0x'}.{contractName}
-        table.index(
-            'contract',
-            'idx_contract',
-            {
-                storageEngineIndexType: 'hash'
-            }
-        );
+        table.index('contract', 'idx_contract', {
+            storageEngineIndexType: 'hash'
+        });
 
         // Index for complete event name
         table.index('event', 'idx_event', {

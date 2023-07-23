@@ -5,15 +5,17 @@
   "author": "Piyush Jaiswal",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node ./src/index.ts"
   },
   "devDependencies": {
-    "@excluence-repo/db": "*",
-    "flow-scanner-lib": "*",
-    "logger": "*",
-    "steward": "*",
     "ts-node": "^10.9.1",
     "tsconfig": "*",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@excluence-repo/db": "*",
+    "flow-scanner-lib": "*",
+    "logger": "*",
+    "steward": "*"
   }
 }

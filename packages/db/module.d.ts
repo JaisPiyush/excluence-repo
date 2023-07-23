@@ -16,7 +16,7 @@ declare module 'knex/types/tables' {
         scannerBlockConfig_composite: Knex.CompositeTableType<
             ScannerBlockConfig,
             ScannerBlockConfig,
-            Pick<ScannerBlockConfig, "currentBlockHeight">,
+            Pick<ScannerBlockConfig, 'currentBlockHeight'>,
             null
         >;
     }

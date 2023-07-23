@@ -1,4 +1,4 @@
-import { Knex } from ".";
+import { Knex } from '.';
 
 export function getUTCTime(dateTimeString: string): Date {
     const dateTime = new Date(dateTimeString);
@@ -10,7 +10,7 @@ export function getUTCTime(dateTimeString: string): Date {
     return dateTimeUTC;
 }
 
-export function getTestDBKnexConnection(): Pick<Knex.Config, "connection"> {
+export function getTestDBKnexConnection(): Pick<Knex.Config, 'connection'> {
     return {
         connection: {
             host: process.env['PG_HOST'],
@@ -19,5 +19,5 @@ export function getTestDBKnexConnection(): Pick<Knex.Config, "connection"> {
             user: process.env['POSTGRES_USER'],
             password: process.env['POSTGRES_PASSWORD']
         }
-    }
+    };
 }

@@ -1,44 +1,40 @@
-import { FlowFetchedEvent, FlowScanner } from 'flow-scanner-lib';
+import { FlowScanner } from 'flow-scanner-lib';
 import { ConfigProvider } from 'flow-scanner-lib/src/providers/config-provider';
-import { MemorySettingsService } from 'flow-scanner-lib/src/settings/memory-settings-service';
-import { EventBroadcasterInterface } from 'flow-scanner-lib/src/broadcaster/event-broadcaster';
 import { Logger } from 'logger';
-// import { connectDB } from '@excluence-repo/db';
-// import { connection } from './connection';
+import { ExcluenceDBSettingsService } from './settings/excluence-db-settings-service';
+import { connectDB } from '@excluence-repo/db';
+import { connection } from './connection';
+import { BullMQEventBroadcaster } from './broadcaster/bullMQBroadcaster';
+import { eventQueue, eventQueueName } from './queue';
+import { setupBullMQProcess } from 'steward';
+import { logger } from './logger';
 
 // const flowNetwork = process.env['NEXT_PUBLIC_FLOW_NETWORK'];
 const flowNetworkAPI = process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'] as string;
 
 const configProvider: ConfigProvider = () => ({
-    defaultStartBlockHeight: undefined,
+    defaultStartBlockHeight: 57300887,
     flowAccessNode: flowNetworkAPI,
     maxFlowRequestsPerSecond: 5
 });
 
-const settingService = new MemorySettingsService();
-
-class CustomEventBroadcaster implements EventBroadcasterInterface {
-    broadcastEvents = async (
-        blockHeight: number,
-        events: FlowFetchedEvent[]
-    ) => {
-        Logger.info(
-            `Event at height ${blockHeight} and events ${JSON.stringify(
-                events
-            )}`
-        );
-    };
-}
-
-const eventBroadcaster = new CustomEventBroadcaster();
-
 export const main = async () => {
-    // const knex = connectDB(connection);
+    const knex = connectDB(connection);
+    const scannerId = 'event-indexer';
+    const settingService = new ExcluenceDBSettingsService(knex, scannerId);
+
+    const eventBroadcaster = new BullMQEventBroadcaster(eventQueue);
+
     const flowScanner = new FlowScanner({
         configProvider,
         eventBroadcasterProvider: async () => eventBroadcaster,
-        settingsServiceProvider: async () => settingService
+        settingsServiceProvider: async () => settingService,
+        logProvider: logger
     });
+    await settingService.initScannerConfig(
+        configProvider().defaultStartBlockHeight
+    );
+    const worker = await setupBullMQProcess(eventQueueName, knex);
     await flowScanner.start();
 
     await new Promise<void>((resolve) => {
@@ -65,6 +61,9 @@ export const main = async () => {
     });
     Logger.info('Stopping scanner');
     await flowScanner.stop();
+    await worker.close();
+    await knex.destroy();
+    process.exit(0);
 };
 
 main();
