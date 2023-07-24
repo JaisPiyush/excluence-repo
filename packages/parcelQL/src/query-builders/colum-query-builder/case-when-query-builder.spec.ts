@@ -43,4 +43,26 @@ describe('Test CaseWhenQueryBuilder', () => {
         );
         expect(sql.bindings).to.eql([2, 4, 3, 5, 0]);
     });
+    it('should return column in then', () => {
+        const args: ParcelQLCaseWhen = {
+            cases: [
+                {
+                    when: { column: 'a', operator: '>', value: 2 },
+                    then: 4
+                },
+                {
+                    when: { column: 'b', operator: '<', value: 3 },
+                    then: 5
+                }
+            ],
+            else: { column: 'r' }
+        };
+
+        const builder = new CaseWhenQueryBuilder(args);
+        const sql = builder.build(knex).toSQL();
+        expect(sql.sql).to.eq(
+            'CASE WHEN `a` > ? THEN ? WHEN `b` < ? THEN ? ELSE `r` END'
+        );
+        expect(sql.bindings).to.eql([2, 4, 3, 5]);
+    });
 });

@@ -17,14 +17,15 @@ export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
 } & (
         | {
               function: ParcelQLAggregationFunction | ParcelQLColumnFunction;
-              parameters?: (string | unknown)[];
+              parameters?: unknown[];
           }
         | { window: ParcelQLWindow; function: ParcelQLWindowFunction }
         // eslint-disable-next-line @typescript-eslint/ban-types
         | {}
     );
 
-export type ParcelQLDateTimeFunction = 'DATE_TRUNC' | 'DATE_PART';
+export const dateTimeFunctions = ['DATE_TRUNC', 'DATE_PART'] as const;
+export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
 export interface CompFilter extends ParcelQLSimpleColumn {
@@ -33,12 +34,12 @@ export interface CompFilter extends ParcelQLSimpleColumn {
 }
 export interface ParcelQLCase {
     when: { and: CompFilter[] } | { or: CompFilter[] } | CompFilter;
-    then: unknown;
+    then: unknown | ParcelQLSimpleColumn;
 }
 
 export interface ParcelQLCaseWhen {
     cases: ParcelQLCase[];
-    else: unknown;
+    else: unknown | ParcelQLSimpleColumn;
 }
 
 export interface ParcelQLJoin {

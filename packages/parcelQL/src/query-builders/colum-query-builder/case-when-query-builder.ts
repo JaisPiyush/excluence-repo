@@ -1,14 +1,19 @@
 import { Knex } from 'knex';
-import { ParcelQLCase, ParcelQLCaseWhen } from '../../schema';
+import {
+    ParcelQLCase,
+    ParcelQLCaseWhen,
+    ParcelQLSimpleColumn
+} from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
 import { CaseQueryBuilder } from './case-query-builder';
+import { SimpleColumnQueryBuilder } from './simple-column-query-builder';
 
 export class CaseWhenQueryBuilder
     extends BaseQueryBuilder<ParcelQLCaseWhen>
     implements ParcelQLCaseWhen
 {
     public readonly cases: ParcelQLCase[];
-    public readonly else: unknown;
+    public readonly else: unknown | ParcelQLSimpleColumn;
 
     private caseBuilders: CaseQueryBuilder[];
 
@@ -30,6 +35,11 @@ export class CaseWhenQueryBuilder
         queryArray.push('ELSE');
         queryArray.push('?');
         queryArray.push('END');
-        return knex.raw(queryArray.join(' '), caseRaws.concat([this.else]));
+        const _else = (this.else as ParcelQLSimpleColumn).column
+            ? new SimpleColumnQueryBuilder(
+                  this.else as ParcelQLSimpleColumn
+              ).build(knex)
+            : this.else;
+        return knex.raw(queryArray.join(' '), caseRaws.concat([_else]));
     }
 }

@@ -59,4 +59,14 @@ describe('Tes CaseQueryBuilder', () => {
         expect(sql.sql).to.eq('WHEN `a`::bigint > ? AND `c` = ? THEN ?');
         expect(sql.bindings).to.eql([2, 'r', true]);
     });
+    // Test with column as return value
+    it('should return column in then', () => {
+        const builder = new CaseQueryBuilder({
+            when: { column: 'a', operator: '>', value: 2 },
+            then: { column: 'c' }
+        });
+        const sql = builder.build(knex).toSQL();
+        expect(sql.sql).to.eq('WHEN `a` > ? THEN `c`');
+        expect(sql.bindings).to.eql([2]);
+    });
 });
