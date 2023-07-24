@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import _knex, { Knex } from 'knex';
-import { SimpleColumnQueryBuilder } from './column-query-builder';
+import { SimpleColumnQueryBuilder } from './simple-column-query-builder';
 
 describe('Testing SimpleColumnQueryBuilder', () => {
     let knex: Knex;

@@ -1,3 +1,7 @@
+export const comparisonOperators = ['=', '>', '<', '>=', '>=', '<>'] as const;
+
+export type ComparisonOps = (typeof comparisonOperators)[number];
+
 export type ParcelQLSimpleColumn = {
     column: string | string[];
     type?: string | string[];
@@ -23,15 +27,19 @@ export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
 export type ParcelQLDateTimeFunction = 'DATE_TRUNC' | 'DATE_PART';
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
-interface ParcelQLCase {
-    when: { column: ParcelQLSimpleColumn; operator: string; value: any };
-    then: any;
+export interface CompFilter extends ParcelQLSimpleColumn {
+    operator: ComparisonOps;
+    value: unknown;
+}
+export interface ParcelQLCase {
+    when: { and: CompFilter[] } | { or: CompFilter[] } | CompFilter;
+    then: unknown;
 }
 
 export interface ParcelQLCaseWhen {
     column: ParcelQLSimpleColumn;
     cases: ParcelQLCase[];
-    else: any;
+    else: unknown;
 }
 
 export interface ParcelQLJoin {
@@ -51,7 +59,7 @@ export type ParcelQLSubquery =
 export type ParcelQLFilter =
     | { and: ParcelQLFilter[] }
     | { or: ParcelQLFilter[] }
-    | { column: ParcelQLSimpleColumn; operator: string; value: any }
+    | CompFilter
     | ParcelQLSubquery;
 
 export interface ParcelQLHaving {

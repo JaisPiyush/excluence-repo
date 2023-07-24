@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
-import { ParcelQLSimpleColumn } from '../schema';
-import { BaseQueryBuilder } from './base-query-builder';
-import { ParcelQLError, ParcelQLValidationError } from '../error';
+import { ParcelQLSimpleColumn } from '../../schema';
+import { BaseQueryBuilder } from '../base-query-builder';
+import { ParcelQLError, ParcelQLValidationError } from '../../error';
 
 export const supportedTypeCast = [
     // Numbers
