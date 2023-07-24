@@ -6,7 +6,7 @@
   "author": "Piyush Jaiswal",
   "license": "MIT",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --watch",
     "build": "rimraf dist && tsc",
     "watch": "tsc --watch"
   },

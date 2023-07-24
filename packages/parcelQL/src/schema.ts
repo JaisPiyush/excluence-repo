@@ -1,27 +1,35 @@
-export type ParcelQLColumn = {
-    column: string | ParcelQLCaseWhen;
-    type?: string;
+export type ParcelQLSimpleColumn = {
+    column: string | string[];
+    type?: string | string[];
+};
+
+export interface ParcelQLSimpleColumnWithCase {
+    column: string | string[] | ParcelQLCaseWhen;
+    type?: string | string[];
+}
+
+export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
     alias?: string;
 } & (
-    | {
-          function: ParcelQLAggregationFunction | ParcelQLColumnFunction;
-          parameters?: (string | unknown)[];
-      }
-    | { window: ParcelQLWindow; function: ParcelQLWindowFunction }
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    | {}
-);
+        | {
+              function: ParcelQLAggregationFunction | ParcelQLColumnFunction;
+              parameters?: (string | unknown)[];
+          }
+        | { window: ParcelQLWindow; function: ParcelQLWindowFunction }
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        | {}
+    );
 
 export type ParcelQLDateTimeFunction = 'DATE_TRUNC' | 'DATE_PART';
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
 interface ParcelQLCase {
-    when: { column: string; operator: string; value: any };
+    when: { column: ParcelQLSimpleColumn; operator: string; value: any };
     then: any;
 }
 
 export interface ParcelQLCaseWhen {
-    column: string;
+    column: ParcelQLSimpleColumn;
     cases: ParcelQLCase[];
     else: any;
 }
@@ -32,20 +40,29 @@ export interface ParcelQLJoin {
     on: ParcelQLFilter[];
 }
 
+export type ParcelQLSubquery =
+    | {
+          column: ParcelQLSimpleColumn;
+          operator: 'IN';
+          subquery: ParcelQLQuery;
+      }
+    | { operator: 'EXISTS'; subquery: ParcelQLQuery };
+
 export type ParcelQLFilter =
     | { and: ParcelQLFilter[] }
     | { or: ParcelQLFilter[] }
-    | { column: string; operator: string; value: any };
+    | { column: ParcelQLSimpleColumn; operator: string; value: any }
+    | ParcelQLSubquery;
 
 export interface ParcelQLHaving {
     function: string;
-    column: string;
+    column: ParcelQLSimpleColumn;
     operator: string;
     value: any;
 }
 
 export interface ParcelQLOrderBy {
-    column: string;
+    column: ParcelQLSimpleColumn;
     order: 'asc' | 'desc';
 }
 

@@ -4,5 +4,17 @@
         "ipfs",
         "NEXTAUTH",
         "thirdweb"
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5433,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "excluence",
+            "database": "postgres",
+            "username": "postgres"
+        }
     ]
 }
