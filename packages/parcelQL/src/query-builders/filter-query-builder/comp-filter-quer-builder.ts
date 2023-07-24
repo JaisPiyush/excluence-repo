@@ -34,7 +34,7 @@ export class CompFilterQueryBuilder
         }
     }
 
-    build(knex: Knex<any, any[]>): Knex.Raw<any> {
+    protected _build(knex: Knex<any, any[]>): Knex.Raw<any> {
         const column = this._colBuilder.build(knex);
         return knex.raw(`?? ${this.operator} ?`, [column, this.value]);
     }

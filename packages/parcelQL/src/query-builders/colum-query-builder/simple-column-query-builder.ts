@@ -105,7 +105,7 @@ export class SimpleColumnQueryBuilder
         return [query, parameters];
     }
 
-    build(knex: Knex<any, any[]>): Knex.Raw {
+    protected _build(knex: Knex<any, any[]>): Knex.Raw {
         // eslint-disable-next-line prefer-const
         let [query, params] =
             typeof this.column === 'string'
