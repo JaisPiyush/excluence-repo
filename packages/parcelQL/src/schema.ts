@@ -37,7 +37,6 @@ export interface ParcelQLCase {
 }
 
 export interface ParcelQLCaseWhen {
-    column: ParcelQLSimpleColumn;
     cases: ParcelQLCase[];
     else: unknown;
 }
@@ -69,26 +68,33 @@ export interface ParcelQLHaving {
     value: any;
 }
 
+export const orderByOrders = ['ASC', 'DESC'] as const;
 export interface ParcelQLOrderBy {
     column: ParcelQLSimpleColumn;
-    order: 'asc' | 'desc';
+    order: (typeof orderByOrders)[number];
 }
 
-export type ParcelQLAggregationFunction =
-    | 'AVG'
-    | 'COUNT'
-    | 'MAX'
-    | 'MIN'
-    | 'SUM';
+export const aggregationFunctions = [
+    'AVG',
+    'COUNT',
+    'SUM',
+    'MAX',
+    'MIN'
+] as const;
+
+export type ParcelQLAggregationFunction = (typeof aggregationFunctions)[number];
+
+export const windowFunctions = [
+    'ROW_NUMBER',
+    'RANK',
+    'DENSE_RANK',
+    'LAG',
+    'LEAD'
+] as const;
 
 export type ParcelQLWindowFunction =
-    | ParcelQLAggregationFunction
-    | 'ROW_NUMBER'
-    | 'RANK'
-    | 'DENSE_RANK'
-    | 'LAG'
-    | 'LEAD';
-
+    | (typeof windowFunctions)[number]
+    | ParcelQLAggregationFunction;
 export interface ParcelQLWindow {
     order_by?: ParcelQLOrderBy;
     partition_by?: string[];

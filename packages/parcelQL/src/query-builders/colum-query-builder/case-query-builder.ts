@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { CompFilter, ParcelQLCase } from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
 import { CompFilterQueryBuilder } from '../filter-query-builder/comp-filter-quer-builder';
-import { ParcelQLError } from '../../error';
+import { ParcelQLError, ParcelQLValidationError } from '../../error';
 
 export class CaseQueryBuilder
     extends BaseQueryBuilder<ParcelQLCase>
@@ -21,6 +21,14 @@ export class CaseQueryBuilder
         super(query);
         this.when = query.when;
         this.then = query.then;
+    }
+
+    onInit(): void {
+        if (this.query.then === undefined) {
+            throw new ParcelQLValidationError(
+                `then value cannot be undefined.`
+            );
+        }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,6 +64,6 @@ export class CaseQueryBuilder
         const conditions = this.logicalOperator
             ? spots.join(` ${this.logicalOperator} `)
             : spots.join('');
-        return knex.raw(` WHEN ${conditions} THEN ? `, params);
+        return knex.raw(`WHEN ${conditions} THEN ?`, params);
     }
 }

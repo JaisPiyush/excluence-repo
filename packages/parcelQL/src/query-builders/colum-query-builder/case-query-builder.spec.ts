@@ -31,7 +31,7 @@ describe('Tes CaseQueryBuilder', () => {
         });
 
         const sql = caseBuilder.build(knex).toSQL();
-        expect(sql.sql).to.eq(' WHEN `a` > ? THEN ? ');
+        expect(sql.sql).to.eq('WHEN `a` > ? THEN ?');
         expect(sql.bindings).to.eql([2, true]);
     });
     // multiple test case
@@ -56,7 +56,7 @@ describe('Tes CaseQueryBuilder', () => {
         });
 
         const sql = caseBuilder.build(knex).toSQL();
-        expect(sql.sql).to.eq(' WHEN `a`::bigint > ? AND `c` = ? THEN ? ');
+        expect(sql.sql).to.eq('WHEN `a`::bigint > ? AND `c` = ? THEN ?');
         expect(sql.bindings).to.eql([2, 'r', true]);
     });
 });
