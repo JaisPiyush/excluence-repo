@@ -111,7 +111,7 @@ export type ParcelQLWindow =
     | {
           order_by: ParcelQLOrderBy;
       }
-    | { partition_by: ParcelQLSimpleColumn };
+    | { partition_by: ParcelQLSimpleColumn[] };
 
 // export interface ParcelQLTimeSeriesFunction {}
 
