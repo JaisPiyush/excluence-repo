@@ -52,7 +52,7 @@ export class QueryBuilder
         this.group_by = query.group_by;
         this.having = query.having;
         this.order_by = query.order_by;
-        this.limit = query.limit || 100;
+        this.limit = query.limit;
         this.offset = query.offset;
     }
 

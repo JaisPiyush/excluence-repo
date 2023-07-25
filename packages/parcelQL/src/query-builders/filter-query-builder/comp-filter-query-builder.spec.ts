@@ -52,5 +52,20 @@ describe('Test CompFilterQueueBuilder', () => {
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq('`a` > `b`');
     });
+    // Test using functions in column
+    it('should pass using functions in comparison filter', () => {
+        const builder = new CompFilterQueryBuilder({
+            column: {
+                column: 'a',
+                function: 'COUNT',
+                type: 'integer'
+            },
+            operator: '>',
+            value: 24
+        });
+        const sql = builder.build(knex).toSQL();
+        expect(sql.sql).to.eq('COUNT(`a`::integer) > ?');
+        expect(sql.bindings).to.eql([24]);
+    });
     //TODO: Test NOT, LIKE, IN and other operators
 });

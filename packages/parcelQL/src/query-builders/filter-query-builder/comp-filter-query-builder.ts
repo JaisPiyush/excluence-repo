@@ -5,41 +5,43 @@ import {
     ComparisonOps,
     CompFilter,
     comparisonOperators,
-    ParcelQLSimpleColumn
+    ParcelQLSimpleColumn,
+    ComparisonFilterColumn
 } from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
 import { SimpleColumnQueryBuilder } from '../colum-query-builder/simple-column-query-builder';
+import { ColumnQueryBuilder } from '../colum-query-builder/column-query-builder';
 
 export class CompFilterQueryBuilder extends BaseQueryBuilder<CompFilter> {
     public readonly operator: ComparisonOps;
     public readonly value?: unknown;
-    public readonly rightColumn?: ParcelQLSimpleColumn;
-    public readonly column: string | string[];
+    public readonly rightColumn?: ComparisonFilterColumn;
+    public readonly column: string | string[] | ComparisonFilterColumn;
     public readonly type?: string | string[] | undefined;
-    private readonly _colBuilder: SimpleColumnQueryBuilder;
-    private readonly rightColBuilder?: SimpleColumnQueryBuilder;
+    private _colBuilder: ColumnQueryBuilder;
+    private readonly rightColBuilder?: ColumnQueryBuilder;
 
     constructor(public readonly query: CompFilter) {
         super(query);
-        this._colBuilder = new SimpleColumnQueryBuilder({
-            column: query.column,
-            type: query.type
-        });
         this.column = query.column;
         this.type = query.type;
+        const colData =
+            typeof this.column === 'string' || Array.isArray(this.column)
+                ? { column: this.column, type: this.type }
+                : this.column;
+        this._colBuilder = new ColumnQueryBuilder(colData);
+        // this.type = query.type;
         this.operator = query.operator;
         if ((query as { value?: unknown }).value) {
             this.value = (query as { value: unknown }).value;
         } else if (
-            (query as unknown as { rightColumn: ParcelQLSimpleColumn })
+            (query as unknown as { rightColumn: ComparisonFilterColumn })
                 .rightColumn
         ) {
             this.rightColumn = (
-                query as { rightColumn?: ParcelQLSimpleColumn }
+                query as { rightColumn: ComparisonFilterColumn }
             ).rightColumn;
-            this.rightColBuilder = new SimpleColumnQueryBuilder(
-                this.rightColumn as ParcelQLSimpleColumn
-            );
+            this.rightColBuilder = new ColumnQueryBuilder(this.rightColumn);
         } else {
             throw new ParcelQLError(
                 `either value or rightColumn is required for comparison`

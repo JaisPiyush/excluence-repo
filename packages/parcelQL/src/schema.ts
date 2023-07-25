@@ -16,7 +16,6 @@ export const comparisonOperators = [
 // TODO: Add NOT in filter
 //TODO: Add DISTINCT column keyword
 // TODO: Add having in query
-// TODO: Replace ParcelQLSimpleColumn with ParcelQLColumn in ComFilters for adding functions supports
 
 export type ComparisonOps = (typeof comparisonOperators)[number];
 
@@ -51,12 +50,19 @@ export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
 export const columnFunctions = dateTimeFunctions;
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
-interface _CompFilter extends ParcelQLSimpleColumn {
+export interface ComparisonFilterColumn extends ParcelQLSimpleColumn {
+    function?: ParcelQLAggregationFunction | ParcelQLColumnFunction;
+    parameters?: unknown[];
+}
+
+interface _CompFilter {
+    column: string | string[] | ComparisonFilterColumn;
     operator: ComparisonOps;
+    type?: string | string[];
 }
 
 export type CompFilter = _CompFilter &
-    ({ value: unknown } | { rightColumn: ParcelQLSimpleColumn });
+    ({ value: unknown } | { rightColumn: ComparisonFilterColumn });
 export interface ParcelQLCase {
     when: { and: CompFilter[] } | { or: CompFilter[] } | CompFilter;
     then: unknown | ParcelQLSimpleColumn;
