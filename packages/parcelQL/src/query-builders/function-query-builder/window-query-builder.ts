@@ -25,6 +25,8 @@ type WindowType = Partial<{
     partition_by: ParcelQLSimpleColumn[];
 }>;
 
+//TODO: Add support for column function on window args such as PARTITION BY DATE_TRUNC('hour', timestamp)
+
 export class WindowFunctionQueryBuilder
     extends BaseQueryBuilder<WindowFunctionArgs>
     implements WindowFunctionArgs

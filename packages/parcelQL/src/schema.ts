@@ -30,6 +30,7 @@ export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
 
 export const dateTimeFunctions = ['DATE_TRUNC', 'DATE_PART'] as const;
 export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
+export const columnFunctions = dateTimeFunctions;
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
 export interface CompFilter extends ParcelQLSimpleColumn {
