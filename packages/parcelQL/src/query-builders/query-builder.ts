@@ -13,6 +13,7 @@ import {
 } from '../schema';
 import { BaseQueryBuilder } from './base-query-builder';
 import { ColumnQueryBuilder } from './colum-query-builder/column-query-builder';
+import { FilterBuilder } from './filter-query-builder/filter-builder';
 
 export class QueryBuilder
     extends BaseQueryBuilder<ParcelQLQuery, Knex.QueryBuilder>
@@ -75,15 +76,21 @@ export class QueryBuilder
         if (typeof this.table === 'string') {
             select.fromRaw(knex.raw('??', [this.table]));
         } else {
-            const subquery = new QueryBuilder(
+            const temporary_table = new QueryBuilder(
                 {
                     ...this.table,
-                    action: 'subquery'
+                    action: 'temporary_table'
                 },
                 true
             );
-            select.fromRaw(subquery.build(knex));
+            select.fromRaw(temporary_table.build(knex));
         }
+
+        if (this.filter) {
+            const filterBuilder = new FilterBuilder(this.filter);
+            select.where(filterBuilder.build(knex));
+        }
+
         return select;
     }
 }

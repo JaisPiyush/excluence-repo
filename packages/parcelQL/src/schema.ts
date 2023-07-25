@@ -1,4 +1,19 @@
-export const comparisonOperators = ['=', '>', '<', '>=', '>=', '<>'] as const;
+export const comparisonOperators = [
+    '=',
+    '>',
+    '<',
+    '>=',
+    '>=',
+    '<>',
+    'IN',
+    'NOT IN',
+    'IS NULL',
+    'NOT NULL',
+    'LIKE',
+    'ILIKE'
+] as const;
+
+// TODO: Add NOT in filter
 
 export type ComparisonOps = (typeof comparisonOperators)[number];
 
@@ -33,10 +48,12 @@ export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
 export const columnFunctions = dateTimeFunctions;
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
-export interface CompFilter extends ParcelQLSimpleColumn {
+interface _CompFilter extends ParcelQLSimpleColumn {
     operator: ComparisonOps;
-    value: unknown;
 }
+
+export type CompFilter = _CompFilter &
+    ({ value: unknown } | { rightColumn: ParcelQLSimpleColumn });
 export interface ParcelQLCase {
     when: { and: CompFilter[] } | { or: CompFilter[] } | CompFilter;
     then: unknown | ParcelQLSimpleColumn;
@@ -47,11 +64,15 @@ export interface ParcelQLCaseWhen {
     else: unknown | ParcelQLSimpleColumn;
 }
 
-export interface ParcelQLJoin {
-    type: 'INNER' | 'LEFT' | 'RIGHT';
-    table: ParcelQLQuery;
-    on: ParcelQLFilter[];
-}
+export const joins = ['INNER', 'FULL', 'LEFT', 'RIGHT'] as const;
+export type JoinTypes = (typeof joins)[number];
+export type ParcelQLJoin = {
+    type: JoinTypes;
+    on: ParcelQLFilter;
+} & (
+    | { table: string; alias?: string }
+    | { table: ParcelQLQuery<'temporary_table'>; alias: string }
+);
 
 export const subqueryOps = ['IN', 'EXISTS'] as const;
 

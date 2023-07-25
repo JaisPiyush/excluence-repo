@@ -40,4 +40,17 @@ describe('Test CompFilterQueueBuilder', () => {
         expect(sql.sql).to.eq('`a` > ?');
         expect(sql.bindings).to.eql([2]);
     });
+    // Test with rightColumn
+    it('should pass with rightColumn', () => {
+        const builder = new CompFilterQueryBuilder({
+            column: 'a',
+            operator: '>',
+            rightColumn: {
+                column: 'b'
+            }
+        });
+        const sql = builder.build(knex).toSQL();
+        expect(sql.sql).to.eq('`a` > `b`');
+    });
+    //TODO: Test NOT, LIKE, IN and other operators
 });

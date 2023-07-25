@@ -1,10 +1,5 @@
 import { Knex } from 'knex';
-import {
-    CompFilter,
-    ParcelQLFilter,
-    ParcelQLSubquery,
-    comparisonOperators
-} from '../../schema';
+import { CompFilter, ParcelQLFilter, ParcelQLSubquery } from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
 import { CompFilterQueryBuilder } from './comp-filter-query-builder';
 import { SubQueryBuilder } from '../subquery-builder';
@@ -41,7 +36,7 @@ export class FilterBuilder extends BaseQueryBuilder<ParcelQLFilter> {
             this.subqueryBuilder = new SubQueryBuilder(this.subquery);
         } else if (
             (query as CompFilter).operator &&
-            comparisonOperators.includes((query as CompFilter).operator)
+            (query as ParcelQLSubquery).subquery === undefined
         ) {
             this.filter = query as CompFilter;
             this.filterBuilder = new CompFilterQueryBuilder(this.filter);
