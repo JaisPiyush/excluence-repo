@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Knex } from 'knex';
 
-export class BaseQueryBuilder<T> {
+export class BaseQueryBuilder<T, R = Knex.Raw> {
     constructor(public readonly query: T) {
         this.onInit();
     }
 
-    build(knex: Knex): Knex.Raw {
+    build(knex: Knex): R {
         this._beforeBuild(knex);
         return this._build(knex);
     }
@@ -22,7 +22,7 @@ export class BaseQueryBuilder<T> {
      * Main query building goes here.
      * @param knex - Knex
      */
-    protected _build(knex: Knex): Knex.Raw {
+    protected _build(knex: Knex): R {
         throw new Error('Method not implemented');
     }
 
@@ -33,5 +33,5 @@ export class BaseQueryBuilder<T> {
      * reset during constructor call from child.
      * For updating states before build use `beforeBuild` hook
      */
-    onInit(): void {}
+    protected onInit(): void {}
 }

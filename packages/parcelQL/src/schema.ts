@@ -53,19 +53,24 @@ export interface ParcelQLJoin {
     on: ParcelQLFilter[];
 }
 
+export const subqueryOps = ['IN', 'EXISTS'] as const;
+
 export type ParcelQLSubquery =
-    | {
-          column: ParcelQLSimpleColumn;
-          operator: 'IN';
+    | ({
           subquery: ParcelQLQuery;
-      }
-    | { operator: 'EXISTS'; subquery: ParcelQLQuery };
+      } & {
+          column: ParcelQLSimpleColumn;
+          operator: (typeof subqueryOps)[0];
+          subquery: ParcelQLQuery;
+      })
+    | { operator: (typeof subqueryOps)[1]; subquery: ParcelQLQuery };
 
 export type ParcelQLFilter =
     | { and: ParcelQLFilter[] }
     | { or: ParcelQLFilter[] }
     | CompFilter
-    | ParcelQLSubquery;
+    | ParcelQLSubquery
+    | ParcelQLQuery;
 
 export interface ParcelQLHaving {
     function: string;
@@ -119,12 +124,12 @@ export type ParcelQLWindow =
 export interface ParcelQLQuery {
     action: 'query';
     table: string | ParcelQLQuery;
-    columns: (string | ParcelQLColumn)[];
+    columns: ParcelQLColumn[];
     filter?: ParcelQLFilter;
     joins?: ParcelQLJoin[];
-    group_by?: string[];
+    group_by?: ParcelQLSimpleColumn[];
     having?: ParcelQLHaving;
-    order_by: ParcelQLOrderBy[];
+    order_by?: ParcelQLOrderBy[];
     limit?: number;
     offset?: number;
 }
