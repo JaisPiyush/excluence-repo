@@ -35,11 +35,12 @@ export class CaseWhenQueryBuilder
         queryArray.push('ELSE');
         queryArray.push('?');
         queryArray.push('END');
-        const _else = (this.else as ParcelQLSimpleColumn).column
-            ? new SimpleColumnQueryBuilder(
-                  this.else as ParcelQLSimpleColumn
-              ).build(knex)
-            : this.else;
+        const _else =
+            this.else && (this.else as ParcelQLSimpleColumn).column
+                ? new SimpleColumnQueryBuilder(
+                      this.else as ParcelQLSimpleColumn
+                  ).build(knex)
+                : this.else;
         return knex.raw(queryArray.join(' '), caseRaws.concat([_else]));
     }
 }

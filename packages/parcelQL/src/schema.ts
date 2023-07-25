@@ -19,7 +19,11 @@ export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
               function: ParcelQLAggregationFunction | ParcelQLColumnFunction;
               parameters?: unknown[];
           }
-        | { window: ParcelQLWindow; function: ParcelQLWindowFunction }
+        | {
+              window: ParcelQLWindow;
+              function: ParcelQLWindowFunction;
+              parameters?: unknown[];
+          }
         // eslint-disable-next-line @typescript-eslint/ban-types
         | {}
     );
@@ -70,9 +74,12 @@ export interface ParcelQLHaving {
 }
 
 export const orderByOrders = ['ASC', 'DESC'] as const;
+
+export interface OrderByExpr extends ParcelQLSimpleColumn {
+    order?: (typeof orderByOrders)[number];
+}
 export interface ParcelQLOrderBy {
-    column: ParcelQLSimpleColumn;
-    order: (typeof orderByOrders)[number];
+    expressions: OrderByExpr[];
 }
 
 export const aggregationFunctions = [
@@ -96,10 +103,15 @@ export const windowFunctions = [
 export type ParcelQLWindowFunction =
     | (typeof windowFunctions)[number]
     | ParcelQLAggregationFunction;
-export interface ParcelQLWindow {
-    order_by?: ParcelQLOrderBy;
-    partition_by?: string[];
-}
+export type ParcelQLWindow =
+    | {
+          order_by: ParcelQLOrderBy;
+          partition_by: ParcelQLSimpleColumn[];
+      }
+    | {
+          order_by: ParcelQLOrderBy;
+      }
+    | { partition_by: ParcelQLSimpleColumn };
 
 // export interface ParcelQLTimeSeriesFunction {}
 

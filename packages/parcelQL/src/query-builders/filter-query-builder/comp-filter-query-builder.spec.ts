@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import _knex, { Knex } from 'knex';
-import { CompFilterQueryBuilder } from './comp-filter-quer-builder';
+import { CompFilterQueryBuilder } from './comp-filter-query-builder';
 
 describe('Test CompFilterQueueBuilder', () => {
     let knex: Knex;

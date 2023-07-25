@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { CompFilter, ParcelQLCase, ParcelQLSimpleColumn } from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
-import { CompFilterQueryBuilder } from '../filter-query-builder/comp-filter-quer-builder';
+import { CompFilterQueryBuilder } from '../filter-query-builder/comp-filter-query-builder';
 import { ParcelQLError, ParcelQLValidationError } from '../../error';
 import { SimpleColumnQueryBuilder } from './simple-column-query-builder';
 
@@ -61,11 +61,12 @@ export class CaseQueryBuilder
             spots.push('??');
         }
         let params: Knex.RawBinding[] = filters;
-        const then = (this.then as ParcelQLSimpleColumn).column
-            ? new SimpleColumnQueryBuilder(
-                  this.then as ParcelQLSimpleColumn
-              ).build(knex)
-            : this.then;
+        const then =
+            this.then && (this.then as ParcelQLSimpleColumn).column
+                ? new SimpleColumnQueryBuilder(
+                      this.then as ParcelQLSimpleColumn
+                  ).build(knex)
+                : this.then;
         params = params.concat([then]);
         const conditions = this.logicalOperator
             ? spots.join(` ${this.logicalOperator} `)
