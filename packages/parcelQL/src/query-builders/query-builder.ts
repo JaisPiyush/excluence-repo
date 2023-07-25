@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Knex } from 'knex';
+import knex, { Knex } from 'knex';
 import { ParcelQLError, ParcelQLValidationError } from '../error';
 import {
     ParcelQLColumn,
@@ -14,6 +14,8 @@ import {
 import { BaseQueryBuilder } from './base-query-builder';
 import { ColumnQueryBuilder } from './colum-query-builder/column-query-builder';
 import { FilterBuilder } from './filter-query-builder/filter-builder';
+import { JoinBuilder } from './join-builder';
+import { OrderByQueryBuilder } from './filter-query-builder/order-by-query-builder';
 
 export class QueryBuilder
     extends BaseQueryBuilder<ParcelQLQuery, Knex.QueryBuilder>
@@ -23,10 +25,10 @@ export class QueryBuilder
     public readonly table: string | ParcelQLQuery<'temporary_table'>;
     public readonly columns: ParcelQLColumn[];
     public readonly filter?: ParcelQLFilter | undefined;
-    public readonly joins?: ParcelQLJoin[] | undefined;
-    public readonly group_by?: ParcelQLSimpleColumn[] | undefined;
+    public readonly join?: ParcelQLJoin | undefined;
+    public readonly group_by?: Omit<ParcelQLColumn, 'alias'>[] | undefined;
     public readonly having?: ParcelQLHaving | undefined;
-    public readonly order_by?: ParcelQLOrderBy[];
+    public readonly order_by?: ParcelQLOrderBy;
     public readonly limit?: number | undefined;
     public readonly offset?: number | undefined;
 
@@ -46,7 +48,7 @@ export class QueryBuilder
         this.table = query.table;
         this.columns = query.columns;
         this.filter = query.filter;
-        this.joins = query.joins;
+        this.join = query.join;
         this.group_by = query.group_by;
         this.having = query.having;
         this.order_by = query.order_by;
@@ -69,6 +71,22 @@ export class QueryBuilder
         );
     }
 
+    private _buildGroupBy(knex: Knex): Knex.Raw {
+        if (!this.group_by)
+            throw new Error(
+                'group_by must be defined when calling this function'
+            );
+        const spots: string[] = [];
+        const colBuilders = this.group_by.map((g) => {
+            spots.push('?');
+            return new ColumnQueryBuilder(g);
+        });
+        return knex.raw(
+            spots.join(','),
+            colBuilders.map((c) => c.build(knex))
+        );
+    }
+
     protected _build(knex: Knex<any, any[]>): Knex.QueryBuilder {
         const select = knex.select(
             this.colBuilders.map((col) => col.build(knex))
@@ -86,11 +104,34 @@ export class QueryBuilder
             select.fromRaw(temporary_table.build(knex));
         }
 
+        if (this.join) {
+            const joinBuilder = new JoinBuilder(this.join);
+            select.join(joinBuilder.build(knex));
+        }
+
         if (this.filter) {
             const filterBuilder = new FilterBuilder(this.filter);
             select.where(filterBuilder.build(knex));
         }
 
+        if (this.group_by) {
+            select.groupBy(this._buildGroupBy(knex));
+        }
+        if (this.order_by) {
+            const orderByBuilder = new OrderByQueryBuilder(
+                this.order_by,
+                false
+            );
+            select.orderByRaw(orderByBuilder.build(knex));
+        }
+
+        if (this.limit) {
+            select.limit(this.limit);
+        }
+
+        if (this.offset) {
+            select.offset(this.offset);
+        }
         return select;
     }
 }

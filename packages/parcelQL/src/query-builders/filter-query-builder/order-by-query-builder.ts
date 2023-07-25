@@ -10,7 +10,10 @@ export class OrderByQueryBuilder
 {
     public readonly expressions: OrderByExpr[];
 
-    constructor(public readonly query: ParcelQLOrderBy) {
+    constructor(
+        public readonly query: ParcelQLOrderBy,
+        public readonly deflateQuery = true
+    ) {
         super(query);
         this.expressions = query.expressions;
     }
@@ -26,13 +29,17 @@ export class OrderByQueryBuilder
     }
 
     protected _build(knex: Knex<any, any[]>): Knex.Raw<any> {
+        const params: string[] = [];
         const expressions: Knex.RawBinding[] = this.expressions.map((expr) => {
             const builder = new SimpleColumnQueryBuilder({
                 column: expr.column,
                 type: expr.type
             });
+            params.push('?');
             return knex.raw(`?? ${expr.order || 'ASC'}`, [builder.build(knex)]);
         });
-        return knex.raw(`ORDER BY ${expressions.join(', ')}`);
+        if (!this.deflateQuery)
+            return knex.raw(`${params.join(', ')}`, expressions);
+        return knex.raw(`ORDER BY ${params.join(', ')}`, expressions);
     }
 }
