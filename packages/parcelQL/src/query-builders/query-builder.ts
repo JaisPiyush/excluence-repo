@@ -22,7 +22,7 @@ export class QueryBuilder
     implements ParcelQLQuery
 {
     public readonly action: 'query' | 'subquery' | 'temporary_table';
-    public readonly table: string | ParcelQLQuery<'temporary_table'>;
+    public readonly table: string | ParcelQLQuery<'subquery'>;
     public readonly columns: ParcelQLColumn[];
     public readonly filter?: ParcelQLFilter | undefined;
     public readonly join?: ParcelQLJoin | undefined;
@@ -41,12 +41,12 @@ export class QueryBuilder
     ) {
         super(query);
         this.action = query.action;
-        this.isSubquery = !isSubquery && this.action === 'query';
+        this.isSubquery = !(!isSubquery && this.action === 'query');
         if (this.isSubquery && typeof query.table !== 'string') {
             throw new ParcelQLError(`only 1 level deep query allowed`);
         }
         this.table = query.table;
-        this.columns = query.columns;
+        this.columns = query.columns || [{ column: '*' }];
         this.filter = query.filter;
         this.join = query.join;
         this.group_by = query.group_by;
@@ -101,6 +101,7 @@ export class QueryBuilder
                 },
                 true
             );
+            // This will bind all data immediately instead of propagating it to parent bindings
             select.fromRaw(temporary_table.build(knex));
         }
 

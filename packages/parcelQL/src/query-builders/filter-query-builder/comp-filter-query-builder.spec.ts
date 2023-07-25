@@ -56,9 +56,13 @@ describe('Test CompFilterQueueBuilder', () => {
     it('should pass using functions in comparison filter', () => {
         const builder = new CompFilterQueryBuilder({
             column: {
-                column: 'a',
                 function: 'COUNT',
-                type: 'integer'
+                parameters: [
+                    {
+                        column: 'a',
+                        type: 'integer'
+                    }
+                ]
             },
             operator: '>',
             value: 24

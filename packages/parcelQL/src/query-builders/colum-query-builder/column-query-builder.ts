@@ -1,12 +1,11 @@
 import { Knex } from 'knex';
-import { ParcelQLValidationError } from '../../error';
+import { ParcelQLError, ParcelQLValidationError } from '../../error';
 import {
     ParcelQLAggregationFunction,
     ParcelQLColumnFunction,
     ParcelQLWindow,
     ParcelQLWindowFunction,
     ParcelQLColumn,
-    ParcelQLCaseWhen,
     ParcelQLSimpleColumnWithCase,
     windowFunctions,
     aggregationFunctions,
@@ -36,7 +35,7 @@ export class ColumnQueryBuilder extends BaseQueryBuilder<ParcelQLColumn> {
     public readonly parameters?: unknown[];
     public readonly window?: ParcelQLWindow;
     public readonly functionType?: 'agg' | 'window';
-    public readonly column: string | string[] | ParcelQLCaseWhen;
+    public readonly column?: ParcelQLColumn['column'];
     public readonly type?: string | string[];
 
     constructor(public readonly query: ParcelQLColumn) {
@@ -65,36 +64,34 @@ export class ColumnQueryBuilder extends BaseQueryBuilder<ParcelQLColumn> {
                     `function ${this.function} is not supported.`
                 );
             }
+        } else if (!this.column) {
+            throw new ParcelQLError(
+                `either functions or column should be provided`
+            );
         }
     }
 
     protected _build(knex: Knex<any, any[]>): Knex.Raw<any> {
         let build: Knex.Raw;
-        if (!this.function) {
+        if (!this.function && this.column) {
             build = new SimpleColumnWithCaseQueryBuilder({
-                column: this.column,
+                column: this.column as ParcelQLSimpleColumnWithCase['column'],
                 type: this.type
             }).build(knex);
         } else if (this.functionType === 'window') {
-            const builder = new WindowFunctionQueryBuilder(
-                {
-                    window: this.window as ParcelQLWindow,
-                    function: this.function as ParcelQLWindowFunction,
-                    parameters: this.parameters
-                },
-                { column: this.column, type: this.type }
-            );
+            const builder = new WindowFunctionQueryBuilder({
+                window: this.window as ParcelQLWindow,
+                function: this.function as ParcelQLWindowFunction,
+                parameters: this.parameters
+            });
             build = builder.build(knex);
         } else {
-            const builder = new AggregationQueryBuilder(
-                {
-                    function: this.function as
-                        | ParcelQLAggregationFunction
-                        | ParcelQLColumnFunction,
-                    parameters: this.parameters
-                },
-                { column: this.column, type: this.type }
-            );
+            const builder = new AggregationQueryBuilder({
+                function: this.function as
+                    | ParcelQLAggregationFunction
+                    | ParcelQLColumnFunction,
+                parameters: this.parameters
+            });
             build = builder.build(knex);
         }
         if (this.alias) {

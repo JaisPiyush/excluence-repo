@@ -87,9 +87,9 @@ describe('Tes ColumnQueryBuilder', () => {
             }
         };
         const builder = new ColumnQueryBuilder({
-            column: col.column,
             function: 'COUNT',
-            alias: 'sale_count'
+            alias: 'sale_count',
+            parameters: [col]
         });
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq(
@@ -120,7 +120,7 @@ describe('Tes ColumnQueryBuilder', () => {
                 ]
             },
             function: 'COUNT',
-            column: 'salePrice',
+            parameters: [{ column: 'salePrice' }],
             alias: 'sale_count'
         });
 

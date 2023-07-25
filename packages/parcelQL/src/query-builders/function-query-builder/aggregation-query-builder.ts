@@ -22,17 +22,12 @@ export class AggregationQueryBuilder
     public readonly function:
         | ParcelQLAggregationFunction
         | ParcelQLColumnFunction;
-    public readonly parameters: unknown[];
-    private colBuilder: SimpleColumnWithCaseQueryBuilder;
+    public readonly parameters: (unknown | ParcelQLSimpleColumnWithCase)[];
 
-    constructor(
-        public readonly query: AggregationFunctionArgs,
-        public readonly column: ParcelQLSimpleColumnWithCase
-    ) {
+    constructor(public readonly query: AggregationFunctionArgs) {
         super(query);
         this.function = query.function;
         this.parameters = query.parameters || [];
-        this.colBuilder = new SimpleColumnWithCaseQueryBuilder(this.column);
     }
 
     onInit(): void {
@@ -47,12 +42,19 @@ export class AggregationQueryBuilder
     }
 
     protected _build(knex: Knex<any, any[]>): Knex.Raw<any> {
-        const query = [`${this.function}(??`];
-        const bindings: Knex.RawBinding[] = [this.colBuilder.build(knex)];
+        const query: string[] = [];
+        const bindings: Knex.RawBinding[] = [];
         this.parameters.forEach((param) => {
             query.push('?');
-            bindings.push(param as any);
+            if ((param as ParcelQLSimpleColumnWithCase).column) {
+                const col = new SimpleColumnWithCaseQueryBuilder(
+                    param as ParcelQLSimpleColumnWithCase
+                );
+                bindings.push(col.build(knex));
+            } else {
+                bindings.push(param as any);
+            }
         });
-        return knex.raw(query.join(',') + ')', bindings);
+        return knex.raw(`${this.function}(${query.join(',')})`, bindings);
     }
 }

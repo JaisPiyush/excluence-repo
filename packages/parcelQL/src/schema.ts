@@ -29,17 +29,17 @@ export interface ParcelQLSimpleColumnWithCase {
     type?: string | string[];
 }
 
-export type ParcelQLColumn = ParcelQLSimpleColumnWithCase & {
+export type ParcelQLColumn = Partial<ParcelQLSimpleColumnWithCase> & {
     alias?: string;
 } & (
         | {
               function: ParcelQLAggregationFunction | ParcelQLColumnFunction;
-              parameters?: unknown[];
+              parameters?: (unknown | ParcelQLSimpleColumnWithCase)[];
           }
         | {
               window: ParcelQLWindow;
               function: ParcelQLWindowFunction;
-              parameters?: unknown[];
+              parameters?: (unknown | ParcelQLSimpleColumnWithCase)[];
           }
         // eslint-disable-next-line @typescript-eslint/ban-types
         | {}
@@ -50,9 +50,10 @@ export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
 export const columnFunctions = dateTimeFunctions;
 export type ParcelQLColumnFunction = ParcelQLDateTimeFunction;
 
-export interface ComparisonFilterColumn extends ParcelQLSimpleColumn {
+export interface ComparisonFilterColumn
+    extends Partial<ParcelQLSimpleColumnWithCase> {
     function?: ParcelQLAggregationFunction | ParcelQLColumnFunction;
-    parameters?: unknown[];
+    parameters?: (unknown | ParcelQLSimpleColumnWithCase)[];
 }
 
 interface _CompFilter {
@@ -157,8 +158,8 @@ export type QueryAction = (typeof queryActions)[number];
 
 export interface ParcelQLQuery<Q = QueryAction> {
     action: Q;
-    table: string | ParcelQLQuery<'temporary_table'>;
-    columns: ParcelQLColumn[];
+    table: string | ParcelQLQuery<'subquery'>;
+    columns?: ParcelQLColumn[];
     filter?: ParcelQLFilter;
     join?: ParcelQLJoin;
     group_by?: Omit<ParcelQLColumn, 'alias'>[];

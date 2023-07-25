@@ -33,12 +33,9 @@ export class WindowFunctionQueryBuilder
 {
     public readonly window: ParcelQLWindow;
     public readonly function: ParcelQLWindowFunction;
-    public readonly parameters?: unknown[] | undefined;
+    public readonly parameters?: (unknown | ParcelQLSimpleColumnWithCase)[];
 
-    constructor(
-        public readonly query: WindowFunctionArgs,
-        public readonly column: ParcelQLSimpleColumnWithCase
-    ) {
+    constructor(public readonly query: WindowFunctionArgs) {
         super(query);
         this.window = query.window;
         this.function = query.function;
@@ -77,14 +74,18 @@ export class WindowFunctionQueryBuilder
 
     protected _buildFunction(knex: Knex): Knex.Raw {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const spots = (this.parameters || []).map((e) => '?');
-        let params = ['??'];
-        params = params.concat(spots);
-        let bindings = [
-            new SimpleColumnWithCaseQueryBuilder(this.column).build(knex)
-        ];
-        bindings = bindings.concat((this.parameters || []) as any[]);
-        return knex.raw(`${this.function}(${params.join(', ')})`, bindings);
+        const spots: string[] = [];
+        const bindings = (this.parameters || []).map((param) => {
+            spots.push('?');
+            if ((param as ParcelQLSimpleColumnWithCase).column) {
+                return new SimpleColumnWithCaseQueryBuilder(
+                    param as ParcelQLSimpleColumnWithCase
+                ).build(knex);
+            }
+            return param;
+        });
+        // bindings = bindings.concat((this.parameters || []) as any[]);
+        return knex.raw(`${this.function}(${spots.join(', ')})`, bindings);
     }
 
     protected _build(knex: Knex<any, any[]>): Knex.Raw<any> {

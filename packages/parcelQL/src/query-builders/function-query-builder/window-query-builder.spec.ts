@@ -22,46 +22,43 @@ describe('Test AggregationQueryBuilder', () => {
     // Test without order_by and partition_by to throw error
     it('should throw error when empty window', () => {
         expect(() => {
-            new WindowFunctionQueryBuilder(
-                {
-                    window: {} as any,
-                    function: 'LAG'
-                },
-                { column: 'salePrice' }
-            );
+            new WindowFunctionQueryBuilder({
+                window: {} as any,
+                function: 'LAG',
+                parameters: [{ column: 'salePrice' }]
+            });
         }).to.throw('either order_by or partition_by is required');
     });
     // Test with un-supported functions
     it('should throw error when empty window', () => {
         expect(() => {
-            new WindowFunctionQueryBuilder(
-                {
-                    window: { partition_by: [{ column: 'salePrice' }] },
-                    function: 'LAGER' as any
-                },
-                { column: 'salePrice' }
-            );
+            new WindowFunctionQueryBuilder({
+                window: { partition_by: [{ column: 'salePrice' }] },
+                function: 'LAGER' as any,
+                parameters: [{ column: 'salePrice' }]
+            });
         }).to.throw('function "LAGER" is not supported.');
     });
     // Test with only partition by and multi-params
     it('should pass when using partition_by with parameters', () => {
-        const builder = new WindowFunctionQueryBuilder(
-            {
-                window: {
-                    partition_by: [
-                        {
-                            column: 'salePrice',
-                            type: 'bigint'
-                        }
-                    ]
-                },
-                function: 'LAG',
-                parameters: [1, 0]
+        const builder = new WindowFunctionQueryBuilder({
+            window: {
+                partition_by: [
+                    {
+                        column: 'salePrice',
+                        type: 'bigint'
+                    }
+                ]
             },
-            {
-                column: 'salePrice'
-            }
-        );
+            function: 'LAG',
+            parameters: [
+                {
+                    column: 'salePrice'
+                },
+                1,
+                0
+            ]
+        });
 
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.equal(
@@ -71,27 +68,27 @@ describe('Test AggregationQueryBuilder', () => {
     });
     // Test with only order_by and single-params
     it('should pass when using order_by without parameters', () => {
-        const builder = new WindowFunctionQueryBuilder(
-            {
-                window: {
-                    order_by: {
-                        expressions: [
-                            {
-                                column: 'salePrice'
-                            },
-                            {
-                                column: 'date',
-                                order: 'DESC'
-                            }
-                        ]
-                    }
-                },
-                function: 'COUNT'
+        const builder = new WindowFunctionQueryBuilder({
+            window: {
+                order_by: {
+                    expressions: [
+                        {
+                            column: 'salePrice'
+                        },
+                        {
+                            column: 'date',
+                            order: 'DESC'
+                        }
+                    ]
+                }
             },
-            {
-                column: 'salePrice'
-            }
-        );
+            function: 'COUNT',
+            parameters: [
+                {
+                    column: 'salePrice'
+                }
+            ]
+        });
 
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.equal(
@@ -101,33 +98,33 @@ describe('Test AggregationQueryBuilder', () => {
     });
     // Test with both wit partition_byfirst
     it('should pass when using both window args but partition_by first', () => {
-        const builder = new WindowFunctionQueryBuilder(
-            {
-                window: {
-                    partition_by: [
-                        {
-                            column: 'salePrice',
-                            type: 'bigint'
-                        }
-                    ],
-                    order_by: {
-                        expressions: [
-                            {
-                                column: 'salePrice'
-                            },
-                            {
-                                column: 'date',
-                                order: 'DESC'
-                            }
-                        ]
+        const builder = new WindowFunctionQueryBuilder({
+            window: {
+                partition_by: [
+                    {
+                        column: 'salePrice',
+                        type: 'bigint'
                     }
-                },
-                function: 'COUNT'
+                ],
+                order_by: {
+                    expressions: [
+                        {
+                            column: 'salePrice'
+                        },
+                        {
+                            column: 'date',
+                            order: 'DESC'
+                        }
+                    ]
+                }
             },
-            {
-                column: 'salePrice'
-            }
-        );
+            function: 'COUNT',
+            parameters: [
+                {
+                    column: 'salePrice'
+                }
+            ]
+        });
 
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.equal(
@@ -137,33 +134,33 @@ describe('Test AggregationQueryBuilder', () => {
     });
     // Test both with order_by first
     it('should pass when using both window args but order_by first', () => {
-        const builder = new WindowFunctionQueryBuilder(
-            {
-                window: {
-                    order_by: {
-                        expressions: [
-                            {
-                                column: 'salePrice'
-                            },
-                            {
-                                column: 'date',
-                                order: 'DESC'
-                            }
-                        ]
-                    },
-                    partition_by: [
+        const builder = new WindowFunctionQueryBuilder({
+            window: {
+                order_by: {
+                    expressions: [
                         {
-                            column: 'salePrice',
-                            type: 'bigint'
+                            column: 'salePrice'
+                        },
+                        {
+                            column: 'date',
+                            order: 'DESC'
                         }
                     ]
                 },
-                function: 'COUNT'
+                partition_by: [
+                    {
+                        column: 'salePrice',
+                        type: 'bigint'
+                    }
+                ]
             },
-            {
-                column: 'salePrice'
-            }
-        );
+            function: 'COUNT',
+            parameters: [
+                {
+                    column: 'salePrice'
+                }
+            ]
+        });
 
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.equal(

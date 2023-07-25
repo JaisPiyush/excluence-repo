@@ -23,35 +23,33 @@ describe('Test AggregationQueryBuilder', () => {
     // Test function validation
     it('should throw validation error on function', () => {
         expect(() => {
-            new AggregationQueryBuilder({ function: 'TIME' } as any, {
-                column: 'a'
-            });
+            new AggregationQueryBuilder({ function: 'TIME' } as any);
         }).to.throw('function "TIME" is not supported.');
     });
     // Test with * as column value
     it('should pass with "*" as column', () => {
-        const builder = new AggregationQueryBuilder(
-            { function: 'COUNT' },
-            { column: '*' }
-        );
+        const builder = new AggregationQueryBuilder({
+            function: 'COUNT',
+            parameters: [{ column: '*' }]
+        });
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq('COUNT(*)');
     });
     // Test with named column value
     it('should pass with names as column', () => {
-        const builder = new AggregationQueryBuilder(
-            { function: 'COUNT' },
-            { column: 'a' }
-        );
+        const builder = new AggregationQueryBuilder({
+            function: 'COUNT',
+            parameters: [{ column: 'a' }]
+        });
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq('COUNT(`a`)');
     });
     // Test with other parameters
     it('should pass with names as column with parameters', () => {
-        const builder = new AggregationQueryBuilder(
-            { function: 'COUNT', parameters: [1, 0] },
-            { column: 'a' }
-        );
+        const builder = new AggregationQueryBuilder({
+            function: 'COUNT',
+            parameters: [{ column: 'a' }, 1, 0]
+        });
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq('COUNT(`a`,?,?)');
         expect(sql.bindings).to.eql([1, 0]);
@@ -73,7 +71,10 @@ describe('Test AggregationQueryBuilder', () => {
                 else: null
             }
         };
-        const builder = new AggregationQueryBuilder({ function: 'COUNT' }, col);
+        const builder = new AggregationQueryBuilder({
+            function: 'COUNT',
+            parameters: [col]
+        });
         const sql = builder.build(knex).toSQL();
         expect(sql.sql).to.eq(
             'COUNT(CASE WHEN `a` > ? THEN `salePrice` ELSE ? END)'
