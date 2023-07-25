@@ -70,8 +70,7 @@ export type ParcelQLFilter =
     | { and: ParcelQLFilter[] }
     | { or: ParcelQLFilter[] }
     | CompFilter
-    | ParcelQLSubquery
-    | ParcelQLQuery;
+    | ParcelQLSubquery;
 
 export interface ParcelQLHaving {
     function: string;
@@ -122,9 +121,13 @@ export type ParcelQLWindow =
 
 // export interface ParcelQLTimeSeriesFunction {}
 
-export interface ParcelQLQuery<Q = 'query' | 'subquery'> {
+export const queryActions = ['query', 'subquery', 'temporary_table'] as const;
+
+export type QueryAction = (typeof queryActions)[number];
+
+export interface ParcelQLQuery<Q = QueryAction> {
     action: Q;
-    table: string | ParcelQLQuery;
+    table: string | ParcelQLQuery<'temporary_table'>;
     columns: ParcelQLColumn[];
     filter?: ParcelQLFilter;
     joins?: ParcelQLJoin[];

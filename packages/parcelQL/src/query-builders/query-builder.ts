@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Knex } from 'knex';
-import { ParcelQLError } from '../error';
+import { ParcelQLError, ParcelQLValidationError } from '../error';
 import {
     ParcelQLColumn,
     ParcelQLFilter,
@@ -8,7 +8,8 @@ import {
     ParcelQLJoin,
     ParcelQLOrderBy,
     ParcelQLQuery,
-    ParcelQLSimpleColumn
+    ParcelQLSimpleColumn,
+    queryActions
 } from '../schema';
 import { BaseQueryBuilder } from './base-query-builder';
 import { ColumnQueryBuilder } from './colum-query-builder/column-query-builder';
@@ -17,8 +18,8 @@ export class QueryBuilder
     extends BaseQueryBuilder<ParcelQLQuery, Knex.QueryBuilder>
     implements ParcelQLQuery
 {
-    public readonly action: 'query' | 'subquery';
-    public readonly table: string | ParcelQLQuery;
+    public readonly action: 'query' | 'subquery' | 'temporary_table';
+    public readonly table: string | ParcelQLQuery<'temporary_table'>;
     public readonly columns: ParcelQLColumn[];
     public readonly filter?: ParcelQLFilter | undefined;
     public readonly joins?: ParcelQLJoin[] | undefined;
@@ -29,13 +30,15 @@ export class QueryBuilder
     public readonly offset?: number | undefined;
 
     private colBuilders: ColumnQueryBuilder[] = [];
+    public readonly isSubquery: boolean;
 
     constructor(
         public readonly query: ParcelQLQuery,
-        public readonly isSubquery: boolean = false
+        isSubquery: boolean | undefined = undefined
     ) {
         super(query);
-        this.action = this.isSubquery ? 'subquery' : 'query';
+        this.action = query.action;
+        this.isSubquery = !isSubquery && this.action === 'query';
         if (this.isSubquery && typeof query.table !== 'string') {
             throw new ParcelQLError(`only 1 level deep query allowed`);
         }
@@ -48,6 +51,14 @@ export class QueryBuilder
         this.order_by = query.order_by;
         this.limit = query.limit || 100;
         this.offset = query.offset;
+    }
+
+    protected onInit(): void {
+        if (!queryActions.includes(this.query.action)) {
+            throw new ParcelQLValidationError(
+                'query does not contains valid action'
+            );
+        }
     }
 
     protected _beforeBuild(knex: Knex<any, any[]>): void {
@@ -64,7 +75,13 @@ export class QueryBuilder
         if (typeof this.table === 'string') {
             select.fromRaw(knex.raw('??', [this.table]));
         } else {
-            const subquery = new QueryBuilder(this.table, true);
+            const subquery = new QueryBuilder(
+                {
+                    ...this.table,
+                    action: 'subquery'
+                },
+                true
+            );
             select.fromRaw(subquery.build(knex));
         }
         return select;

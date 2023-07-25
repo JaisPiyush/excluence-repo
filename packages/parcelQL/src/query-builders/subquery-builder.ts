@@ -33,6 +33,11 @@ export class SubQueryBuilder extends BaseQueryBuilder<
     }
 
     onInit(): void {
+        if (this.query.subquery.action !== 'subquery') {
+            throw new ParcelQLValidationError(
+                'action must be in "subquery" context'
+            );
+        }
         if (!subqueryOps.includes(this.query.operator)) {
             throw new ParcelQLValidationError(
                 `operator is not supported in the subquery.`
