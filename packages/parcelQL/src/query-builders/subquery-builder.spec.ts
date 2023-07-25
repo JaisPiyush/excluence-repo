@@ -24,7 +24,7 @@ describe('Test SubQueryBuilder', () => {
         expect(() => {
             new SubQueryBuilder({
                 subquery: {
-                    action: 'query',
+                    action: 'subquery',
                     table: 'table_1',
                     columns: [
                         {
@@ -41,7 +41,7 @@ describe('Test SubQueryBuilder', () => {
         expect(() => {
             new SubQueryBuilder({
                 subquery: {
-                    action: 'query',
+                    action: 'subquery',
                     table: 'table_1',
                     columns: [
                         {
@@ -57,7 +57,7 @@ describe('Test SubQueryBuilder', () => {
     it('should PASS with IN', () => {
         const builder = new SubQueryBuilder({
             subquery: {
-                action: 'query',
+                action: 'subquery',
                 table: 'table_1',
                 columns: [
                     {
@@ -77,7 +77,7 @@ describe('Test SubQueryBuilder', () => {
     it('should pass with EXISTS', () => {
         const builder = new SubQueryBuilder({
             subquery: {
-                action: 'query',
+                action: 'subquery',
                 table: 'table_1',
                 columns: [
                     {

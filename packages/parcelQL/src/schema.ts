@@ -56,14 +56,15 @@ export interface ParcelQLJoin {
 export const subqueryOps = ['IN', 'EXISTS'] as const;
 
 export type ParcelQLSubquery =
-    | ({
-          subquery: ParcelQLQuery;
-      } & {
+    | {
           column: ParcelQLSimpleColumn;
           operator: (typeof subqueryOps)[0];
-          subquery: ParcelQLQuery;
-      })
-    | { operator: (typeof subqueryOps)[1]; subquery: ParcelQLQuery };
+          subquery: ParcelQLQuery<'subquery'>;
+      }
+    | {
+          operator: (typeof subqueryOps)[1];
+          subquery: ParcelQLQuery<'subquery'>;
+      };
 
 export type ParcelQLFilter =
     | { and: ParcelQLFilter[] }
@@ -121,8 +122,8 @@ export type ParcelQLWindow =
 
 // export interface ParcelQLTimeSeriesFunction {}
 
-export interface ParcelQLQuery {
-    action: 'query';
+export interface ParcelQLQuery<Q = 'query' | 'subquery'> {
+    action: Q;
     table: string | ParcelQLQuery;
     columns: ParcelQLColumn[];
     filter?: ParcelQLFilter;

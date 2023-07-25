@@ -14,7 +14,7 @@ export class SubQueryBuilder extends BaseQueryBuilder<
     ParcelQLSubquery,
     Knex.Raw
 > {
-    public readonly subquery: ParcelQLQuery;
+    public readonly subquery: ParcelQLQuery<'subquery'>;
     public readonly column?: ParcelQLSimpleColumn;
     public readonly operator: (typeof subqueryOps)[number];
 

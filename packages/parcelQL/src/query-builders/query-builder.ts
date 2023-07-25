@@ -17,7 +17,7 @@ export class QueryBuilder
     extends BaseQueryBuilder<ParcelQLQuery, Knex.QueryBuilder>
     implements ParcelQLQuery
 {
-    public readonly action: 'query';
+    public readonly action: 'query' | 'subquery';
     public readonly table: string | ParcelQLQuery;
     public readonly columns: ParcelQLColumn[];
     public readonly filter?: ParcelQLFilter | undefined;
@@ -35,7 +35,7 @@ export class QueryBuilder
         public readonly isSubquery: boolean = false
     ) {
         super(query);
-        this.action = query.action;
+        this.action = this.isSubquery ? 'subquery' : 'query';
         if (this.isSubquery && typeof query.table !== 'string') {
             throw new ParcelQLError(`only 1 level deep query allowed`);
         }
