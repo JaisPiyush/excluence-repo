@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { QueryModule } from './query/query.module';
 
 @Module({
-  imports: [QueryModule],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [QueryModule],
+    controllers: [AppController],
+    providers: [AppService]
 })
 export class AppModule {}
