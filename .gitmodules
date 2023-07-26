@@ -1,1 +1,4 @@
 
+[submodule "packages/parcelQL"]
+	path = packages/parcelQL
+	url = git@github.com:excluence/parcelQL.git
