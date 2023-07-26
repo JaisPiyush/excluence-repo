@@ -14,7 +14,6 @@ export const comparisonOperators = [
 ] as const;
 
 // TODO: Add NOT in filter
-//TODO: Add DISTINCT column keyword
 
 export type ComparisonOps = (typeof comparisonOperators)[number];
 
@@ -43,6 +42,12 @@ export type ParcelQLColumn = Partial<ParcelQLSimpleColumnWithCase> & {
         // eslint-disable-next-line @typescript-eslint/ban-types
         | {}
     );
+export interface ParcelQLColumnWithoutWindow
+    extends Partial<ParcelQLSimpleColumnWithCase> {
+    alias?: string;
+    function?: ParcelQLAggregationFunction | ParcelQLColumnFunction;
+    parameters?: (unknown | ParcelQLSimpleColumnWithCase)[];
+}
 
 export const dateTimeFunctions = ['DATE_TRUNC', 'DATE_PART'] as const;
 export type ParcelQLDateTimeFunction = (typeof dateTimeFunctions)[number];
@@ -155,10 +160,16 @@ export const queryActions = ['query', 'subquery', 'temporary_table'] as const;
 
 export type QueryAction = (typeof queryActions)[number];
 
+export interface ParcelQLDistinct {
+    on?: ParcelQLSimpleColumn;
+    columns: ParcelQLColumnWithoutWindow[];
+}
+
 export interface ParcelQLQuery<Q = QueryAction> {
     action: Q;
     table: string | ParcelQLQuery<'subquery'>;
     columns?: ParcelQLColumn[];
+    distinct?: ParcelQLDistinct;
     filter?: ParcelQLFilter;
     join?: ParcelQLJoin;
     group_by?: Omit<ParcelQLColumn, 'alias'>[];

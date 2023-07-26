@@ -31,6 +31,7 @@ export class QueryBuilder
     public readonly order_by?: ParcelQLOrderBy;
     public readonly limit?: number | undefined;
     public readonly offset?: number | undefined;
+    public readonly distinct?: ParcelQLQuery['distinct'];
 
     private colBuilders: ColumnQueryBuilder[] = [];
     public readonly isSubquery: boolean;
@@ -54,6 +55,7 @@ export class QueryBuilder
         this.order_by = query.order_by;
         this.limit = query.limit;
         this.offset = query.offset;
+        this.distinct = query.distinct;
     }
 
     protected onInit(): void {
@@ -87,10 +89,33 @@ export class QueryBuilder
         );
     }
 
+    protected _buildDistinct(knex: Knex): Knex.Raw {
+        if (!this.distinct)
+            throw new Error(
+                'distinct must be defined when calling this function'
+            );
+        const spot: string[] = [];
+        const colBuilds = this.distinct.columns.map((col) => {
+            spot.push('?');
+            const builders = new ColumnQueryBuilder(col);
+            return builders.build(knex);
+        });
+        if (this.distinct.on) {
+            const onColBuilder = new ColumnQueryBuilder(this.distinct.on);
+            return knex.raw(
+                `DISTINCT ON (?) ${spot.join(', ')}`,
+                [onColBuilder.build(knex)].concat(colBuilds)
+            );
+        }
+        return knex.raw(`DISTINCT ${spot.join(', ')}`, colBuilds);
+    }
+
     protected _build(knex: Knex<any, any[]>): Knex.QueryBuilder {
-        const select = knex.select(
-            this.colBuilders.map((col) => col.build(knex))
-        );
+        const selectBuilders = this.colBuilders.map((col) => col.build(knex));
+        if (this.distinct) {
+            selectBuilders.push(this._buildDistinct(knex));
+        }
+        const select = knex.select(selectBuilders);
         if (typeof this.table === 'string') {
             select.fromRaw(knex.raw('??', [this.table]));
         } else {
