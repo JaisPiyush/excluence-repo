@@ -1,7 +1,7 @@
 ## Getting Started
 
-
 ### Features
+
 1. Login (using crypto wallet & social logins).
 2. Load all NFTs created, owned by the address.
 3. Discord oauth for connecting with discord server of any owned NFT.

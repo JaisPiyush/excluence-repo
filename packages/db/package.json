@@ -1,0 +1,20 @@
+{
+  "name": "@excluence-repo/db",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "author": "Piyush Jaiswal",
+  "license": "MIT",
+  "scripts": {
+    "migrate:latest": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "test": "mocha --watch"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.4.4",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "tsconfig": "*"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "flow-scanner-lib",
+  "version": "1.0.1",
+  "description": "Monitors the Flow blockchain for specific event types",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "watch": "tsc --watch",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "@types/chai": "^4.2.22",
+    "@types/crypto-js": "^4.0.2",
+    "@types/lodash": "^4.14.176",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11.6",
+    "@types/uuid": "^8.3.1",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4",
+    "tsconfig": "*"
+  },
+  "dependencies": {
+    "@onflow/sdk": "0.0.55",
+    "@onflow/types": "0.0.5",
+    "aws-sdk": "^2.1017.0",
+    "axios": "^0.24.0",
+    "crypto-js": "^4.1.1",
+    "knex": "^0.95.12",
+    "lodash": "^4.17.21",
+    "sqlite3": "^5.0.2",
+    "uuid": "^8.3.2",
+    "flow-client": "*"
+  },
+  "files": [
+    "lib/**/*"
+  ]
+}

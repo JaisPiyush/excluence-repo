@@ -1,21 +1,46 @@
-import type { AppProps } from "next/app";
-import { ThirdwebProvider, ChainId } from "@thirdweb-dev/react";
-import { SessionProvider } from "next-auth/react";
-import "../styles/globals.css";
+import type { AppProps } from 'next/app';
+import '../styles/globals.css';
+import { Provider } from 'react-redux';
+import store from '@/redux-store/index';
+import { ThemeProvider } from '@mui/material/styles';
+import createEmotionCache from '../utility/createEmotionCache';
+import darkTheme from '../styles/theme/darkTheme';
+import { EmotionCache } from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
+import { Box, CssBaseline } from '@mui/material';
+import 'react-loading-skeleton/dist/skeleton.css';
+import * as fcl from '@onflow/fcl';
 
-// This is the chain your dApp will work on.
-// Change this to the chain your app is built for.
-// You can also import additional chains from `@thirdweb-dev/chains` and pass them directly.
-const activeChain = ChainId.Mumbai;
+// import flowJSON from "@excluence-repo/flow/flow.json"
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <ThirdwebProvider activeChain={activeChain}>
-      <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
-      </SessionProvider> 
-    </ThirdwebProvider>
-  );
+const clientSideEmotionCache = createEmotionCache();
+
+fcl.config({
+    'accessNode.api': process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'],
+    'flow.network': process.env['NEXT_PUBLIC_FLOW_NETWORK'],
+    'discovery.wallet': 'https://fcl-discovery.onflow.org/testnet/authn',
+    env: process.env['NEXT_PUBLIC_FLOW_NETWORK']
+});
+
+function MyApp(props: AppProps & { emotionCache: EmotionCache }) {
+    const {
+        Component,
+        pageProps,
+        emotionCache = clientSideEmotionCache
+    } = props;
+    return (
+        <Provider store={store}>
+            <CacheProvider value={emotionCache}>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+
+                    <Box>
+                        <Component {...pageProps} />
+                    </Box>
+                </ThemeProvider>
+            </CacheProvider>
+        </Provider>
+    );
 }
 
 export default MyApp;
