@@ -143,12 +143,12 @@ export type ParcelQLWindowFunction =
 export type ParcelQLWindow =
     | {
           order_by: ParcelQLOrderBy;
-          partition_by: ParcelQLSimpleColumn[];
+          partition_by: ParcelQLColumn[];
       }
     | {
           order_by: ParcelQLOrderBy;
       }
-    | { partition_by: ParcelQLSimpleColumn[] };
+    | { partition_by: ParcelQLColumn[] };
 
 // export interface ParcelQLTimeSeriesFunction {}
 

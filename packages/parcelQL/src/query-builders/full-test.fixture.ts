@@ -151,16 +151,11 @@ const queryWithWindowFunction: TestCase = {
                     }
                 },
                 function: 'ROW_NUMBER',
-                alias: 'row_num',
-                parameters: [
-                    {
-                        column: 'a'
-                    }
-                ]
+                alias: 'row_num'
             }
         ]
     },
-    sql: 'select `name`, ROW_NUMBER(`a`) OVER (ORDER BY `age` ASC) as `row_num` from `users`',
+    sql: 'select `name`, ROW_NUMBER() OVER (ORDER BY `age` ASC) as `row_num` from `users`',
     bindings: []
 };
 

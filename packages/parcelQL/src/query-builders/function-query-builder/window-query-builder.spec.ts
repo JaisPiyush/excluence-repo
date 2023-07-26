@@ -168,4 +168,46 @@ describe('Test AggregationQueryBuilder', () => {
         );
         expect(sql.bindings).to.eql([]);
     });
+
+    // Test using custom functions in partition by
+    it('should pass when using both window args but order_by first', () => {
+        const builder = new WindowFunctionQueryBuilder({
+            window: {
+                order_by: {
+                    expressions: [
+                        {
+                            column: 'salePrice'
+                        },
+                        {
+                            column: 'date',
+                            order: 'DESC'
+                        }
+                    ]
+                },
+                partition_by: [
+                    {
+                        function: 'DATE_TRUNC',
+                        parameters: [
+                            'hour',
+                            {
+                                column: 'timestamp'
+                            }
+                        ]
+                    }
+                ]
+            },
+            function: 'COUNT',
+            parameters: [
+                {
+                    column: 'salePrice'
+                }
+            ]
+        });
+
+        const sql = builder.build(knex).toSQL();
+        expect(sql.sql).to.equal(
+            'COUNT(`salePrice`) OVER (ORDER BY `salePrice` ASC, `date` DESC PARTITION BY DATE_TRUNC(?,`timestamp`))'
+        );
+        expect(sql.bindings).to.eql(['hour']);
+    });
 });

@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
 import { ParcelQLValidationError } from '../../error';
 import {
+    ParcelQLColumn,
     ParcelQLOrderBy,
-    ParcelQLSimpleColumn,
     ParcelQLSimpleColumnWithCase,
     ParcelQLWindow,
     ParcelQLWindowFunction,
@@ -11,8 +11,8 @@ import {
 } from '../../schema';
 import { BaseQueryBuilder } from '../base-query-builder';
 import { OrderByQueryBuilder } from '../filter-query-builder/order-by-query-builder';
-import { SimpleColumnQueryBuilder } from '../colum-query-builder/simple-column-query-builder';
 import { SimpleColumnWithCaseQueryBuilder } from '../colum-query-builder/simple-column-with-case-query-builder';
+import { ColumnQueryBuilder } from '../colum-query-builder/column-query-builder';
 
 interface WindowFunctionArgs {
     window: ParcelQLWindow;
@@ -22,10 +22,8 @@ interface WindowFunctionArgs {
 
 type WindowType = Partial<{
     order_by: ParcelQLOrderBy;
-    partition_by: ParcelQLSimpleColumn[];
+    partition_by: ParcelQLColumn[];
 }>;
-
-//TODO: Add support for column function on window args such as PARTITION BY DATE_TRUNC('hour', timestamp)
 
 export class WindowFunctionQueryBuilder
     extends BaseQueryBuilder<WindowFunctionArgs>
@@ -62,9 +60,7 @@ export class WindowFunctionQueryBuilder
     protected _buildPartitionBy(knex: Knex): Knex.Raw {
         const expressions: Knex.Raw[] = (
             this.window as Pick<Required<WindowType>, 'partition_by'>
-        ).partition_by.map((p_by) =>
-            new SimpleColumnQueryBuilder(p_by).build(knex)
-        );
+        ).partition_by.map((p_by) => new ColumnQueryBuilder(p_by).build(knex));
         return knex.raw(
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             `PARTITION BY ${expressions.map((e) => '?').join(', ')}`,
