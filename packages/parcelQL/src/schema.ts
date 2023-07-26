@@ -7,13 +7,14 @@ export const comparisonOperators = [
     '<>',
     'IN',
     'NOT IN',
-    'IS NULL',
-    'NOT NULL',
+    // 'IS NULL',
+    // 'NOT NULL',
     'LIKE',
     'ILIKE'
 ] as const;
 
 // TODO: Add NOT in filter
+// TODO: Add support in functions where value is not required like IS NULL, NOT NULL and NOT
 
 export type ComparisonOps = (typeof comparisonOperators)[number];
 
