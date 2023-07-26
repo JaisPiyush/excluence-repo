@@ -15,7 +15,6 @@ export const comparisonOperators = [
 
 // TODO: Add NOT in filter
 //TODO: Add DISTINCT column keyword
-// TODO: Add having in query
 
 export type ComparisonOps = (typeof comparisonOperators)[number];
 
@@ -163,7 +162,7 @@ export interface ParcelQLQuery<Q = QueryAction> {
     filter?: ParcelQLFilter;
     join?: ParcelQLJoin;
     group_by?: Omit<ParcelQLColumn, 'alias'>[];
-    having?: ParcelQLHaving;
+    having?: ParcelQLFilter;
     order_by?: ParcelQLOrderBy;
     limit?: number;
     offset?: number;

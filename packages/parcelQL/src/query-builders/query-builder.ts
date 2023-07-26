@@ -27,7 +27,7 @@ export class QueryBuilder
     public readonly filter?: ParcelQLFilter | undefined;
     public readonly join?: ParcelQLJoin | undefined;
     public readonly group_by?: Omit<ParcelQLColumn, 'alias'>[] | undefined;
-    public readonly having?: ParcelQLHaving | undefined;
+    public readonly having?: ParcelQLQuery['having'];
     public readonly order_by?: ParcelQLOrderBy;
     public readonly limit?: number | undefined;
     public readonly offset?: number | undefined;
@@ -117,6 +117,10 @@ export class QueryBuilder
 
         if (this.group_by) {
             select.groupBy(this._buildGroupBy(knex));
+        }
+        if (this.having) {
+            const havingBuilder = new FilterBuilder(this.having);
+            select.having(havingBuilder.build(knex));
         }
         if (this.order_by) {
             const orderByBuilder = new OrderByQueryBuilder(

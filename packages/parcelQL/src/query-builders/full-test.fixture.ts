@@ -38,7 +38,7 @@ const selectQueryWithWhereAndTypecasting: TestCase = {
     bindings: [25]
 };
 
-const selectQueryWithGroupByTestCast: TestCase = {
+const selectQueryWithGroupByHavingTestCast: TestCase = {
     query: {
         action: 'query',
         table: 'users',
@@ -56,10 +56,18 @@ const selectQueryWithGroupByTestCast: TestCase = {
             {
                 column: 'city'
             }
-        ]
+        ],
+        having: {
+            column: {
+                function: 'COUNT',
+                parameters: [{ column: '*' }]
+            },
+            operator: '>',
+            value: 5
+        }
     },
-    sql: 'select `city`, COUNT(*) as `count` from `users` group by `city`',
-    bindings: []
+    sql: 'select `city`, COUNT(*) as `count` from `users` group by `city` having (COUNT(*) > ?)',
+    bindings: [5]
 };
 
 const queryWithASubquery: TestCase = {
@@ -162,7 +170,7 @@ const queryWithWindowFunction: TestCase = {
 export const testCases: TestCase[] = [
     simpleSelectQueryTestCase,
     selectQueryWithWhereAndTypecasting,
-    selectQueryWithGroupByTestCast,
+    selectQueryWithGroupByHavingTestCast,
     queryWithASubquery,
     queryWithCaseWhen,
     queryWithWindowFunction
