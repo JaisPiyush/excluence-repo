@@ -17,7 +17,7 @@ export class QueryService {
     }
 
     preSanitizeQuery(query: ParcelQLQuery): ParcelQLQuery {
-        if (!query.table || typeof query.table === 'string') {
+        if (!query.table) {
             query.table = 'flow_events';
         }
         query.limit = !query.limit || query.limit > 100 ? 100 : query.limit;

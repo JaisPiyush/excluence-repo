@@ -6,8 +6,8 @@ export const useKnexModuleConfig = () => ({
         host: process.env['PG_HOST'] || 'localhost',
         port: Number(process.env['PG_PORT']),
         database: process.env['POSTGRES_DB'],
-        user: process.env['POSTGRES_USER'],
-        password: process.env['POSTGRES_PASSWORD']
+        user: process.env['PG_READ_ONLY_USER'],
+        password: process.env['PG_READ_ONLY_PASSWORD']
     },
     pool: {
         min: 2,
