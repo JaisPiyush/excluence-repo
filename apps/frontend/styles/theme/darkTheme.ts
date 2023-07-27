@@ -2,7 +2,7 @@ import { createTheme } from '@mui/material/styles';
 
 const darkTheme = createTheme({
     typography: {
-        fontFamily: ['Work Sans', 'sans-serif'].join(',')
+        fontFamily: ['Euclid Circular A', 'sans-serif'].join(',')
     },
     palette: {
         mode: 'dark',
@@ -18,10 +18,10 @@ const darkTheme = createTheme({
     breakpoints: {
         values: {
             xs: 0,
-            sm: 600,
+            sm: 320,
             md: 834,
             lg: 1280,
-            xl: 1536
+            xl: 1440
         }
     },
     components: {
