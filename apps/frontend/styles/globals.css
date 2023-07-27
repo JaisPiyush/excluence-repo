@@ -2,3 +2,7 @@
 *{
     box-sizing: border-box;
 }
+
+body {
+    background: linear-gradient(270deg, #030111 0%, #0F0F24 100%);
+}
