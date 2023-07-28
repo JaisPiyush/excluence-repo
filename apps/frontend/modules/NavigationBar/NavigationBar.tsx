@@ -1,9 +1,11 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Logo from '../../public/img/excluence-logo.png';
 import Image from 'next/image';
 import PaddedBox from '@/component/PaddedBox';
 
 export default function NavigationBar() {
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.up('md'));
     return (
         <Box sx={{ width: '100%', position: 'fixed', zIndex: 10 }}>
             <PaddedBox>
@@ -29,7 +31,16 @@ export default function NavigationBar() {
                         alignItems: 'center'
                     }}
                 >
-                    <Image width={36} height={36} src={Logo} alt="logo" />
+                    <Image
+                        width={36}
+                        height={36}
+                        src={Logo}
+                        alt="logo"
+                        style={{
+                            width: isMd ? 36 : 22,
+                            height: isMd ? 36 : 22
+                        }}
+                    />
                     <Typography
                         variant="body1"
                         sx={{

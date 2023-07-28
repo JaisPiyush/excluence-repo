@@ -1,5 +1,7 @@
+import Footer from '@/modules/Footer';
 import IndexFeaturesSection from '@/modules/IndexPage/IndexFeaturesSection';
 import IndexHeroSection from '@/modules/IndexPage/IndexHeroSection';
+import IndexParcelQLSection from '@/modules/IndexPage/IndexParceQLSection';
 import NavigationBar from '@/modules/NavigationBar';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -17,6 +19,8 @@ const Home: NextPage = () => {
             <NavigationBar />
             <IndexHeroSection />
             <IndexFeaturesSection />
+            <IndexParcelQLSection />
+            <Footer />
         </div>
     );
 };

@@ -32,6 +32,7 @@ without manual labor.`
 function featureBox(title: string, desc: string) {
     return (
         <Box
+            key={title}
             sx={{
                 width: {
                     xl: '350px',
@@ -53,7 +54,8 @@ function featureBox(title: string, desc: string) {
 
 export default function IndexFeaturesSection() {
     const theme = useTheme();
-    const isMd = useMediaQuery(theme.breakpoints.up('md'));
+    const isServer = typeof window === 'undefined';
+    const isMd = useMediaQuery(theme.breakpoints.up('md')) || isServer;
     return (
         <Box
             sx={{
