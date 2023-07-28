@@ -140,12 +140,12 @@ darkTheme.typography.body1 = {
 
 darkTheme.typography.body2 = {
     fontSize: '1rem',
-    fontWeight: 600,
+    fontWeight: 300,
     color: palette.secondary.contrastText,
     fontFamily: darkTheme.typography.fontFamily,
     [breakpoints.up('xs')]: {
         fontSize: '0.125rem',
-        fontWeight: 600,
+        fontWeight: 300,
         color: palette.secondary.contrastText
     },
     [breakpoints.up('sm')]: {

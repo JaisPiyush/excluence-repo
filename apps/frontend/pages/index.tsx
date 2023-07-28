@@ -1,4 +1,5 @@
 import IndexHeroSection from '@/modules/IndexPage/IndexHeroSection';
+import NavigationBar from '@/modules/NavigationBar';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 
@@ -12,6 +13,7 @@ const Home: NextPage = () => {
                     content="initial-scale=1.0, width=device-width"
                 />
             </Head>
+            <NavigationBar />
             <IndexHeroSection />
         </div>
     );

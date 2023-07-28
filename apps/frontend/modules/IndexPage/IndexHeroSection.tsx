@@ -10,7 +10,10 @@ export default function IndexHeroSection() {
                 height: '100vh',
                 backgroundImage: `url(${HeroBg.src})`,
                 backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat'
+                backgroundRepeat: 'no-repeat',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center '
             }}
         >
             <PaddedBox>
