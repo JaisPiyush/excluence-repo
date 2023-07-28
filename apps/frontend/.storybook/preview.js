@@ -26,16 +26,7 @@ const withThemeProvider = (Story, context) => {
     // <Emotion10ThemeProvider theme={darkTheme}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-          <Box sx={{
-            paddingX: {
-              xl: '7.5rem',
-              lg: '6rem',
-              sm: '2.75rem',
-              xs: '2rem'
-            }
-          }}>
-            <Story {...context} />
-          </Box>
+          <Story {...context} />
       </ThemeProvider>
     // </Emotion10ThemeProvider>
   )

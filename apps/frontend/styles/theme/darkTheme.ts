@@ -26,21 +26,22 @@ const darkTheme = createTheme({
         },
         button: {
             fontSize: '1rem',
-            fontWeight: 500
+            fontWeight: 500,
+            textTransform: 'none'
         }
     },
     palette: {
         mode: 'dark',
         primary: {
             main: '#696CFE', // Purple
-            light: '#A6A8A8', // Light purple
-            dark: '#0F0F24', // Purple dark
-            contrastText: '#8B8B93' // Light grey text
+            light: '#A6A8A8' // Light purple
+            // dark: '#0F0F24' // Purple dark
         },
         secondary: {
             main: '#69FEB6', // Highlight
-            light: '#FFFFFF', // White
+            // light: '#FFFFFF', // White
             dark: '#030111' // Purple strong
+            // contrastText: '#8B8B93'
         }
     },
     breakpoints: {
@@ -70,12 +71,12 @@ const theme = {
         MuiTypography: {
             h1: {
                 fontSize: '5.5rem',
-                lineHeight: 90,
+                lineHeight: 1,
                 fontWeight: 'bold',
                 color: palette.secondary.light,
                 [breakpoints.down('xs')]: {
                     fontSize: '1.75rem',
-                    lineHeight: 40,
+                    // lineHeight: 40,
                     fontWeight: 'bold',
                     color: palette.secondary.light
                 },
@@ -83,8 +84,8 @@ const theme = {
                     fontSize: '2rem'
                 },
                 [breakpoints.down('lg')]: {
-                    fontSize: '6.5rem',
-                    lineHeight: 90
+                    fontSize: '6.5rem'
+                    // lineHeight: 90
                 },
                 [breakpoints.down('lg')]: {
                     fontSize: '7.5rem'

@@ -7,7 +7,7 @@ import createEmotionCache from '../utility/createEmotionCache';
 import theme from '../styles/theme/darkTheme';
 import { EmotionCache } from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { Box, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 
 // import flowJSON from "@excluence-repo/flow/flow.json"
 
@@ -24,21 +24,7 @@ function MyApp(props: AppProps & { emotionCache: EmotionCache }) {
             <CacheProvider value={emotionCache}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-
-                    <Box
-                        sx={{
-                            width: '100vw',
-                            height: '100vh',
-                            paddingX: {
-                                xl: '7.5rem',
-                                lg: '6rem',
-                                sm: '2.75rem',
-                                xs: '2rem'
-                            }
-                        }}
-                    >
-                        <Component {...pageProps} />
-                    </Box>
+                    <Component {...pageProps} />
                 </ThemeProvider>
             </CacheProvider>
         </Provider>
