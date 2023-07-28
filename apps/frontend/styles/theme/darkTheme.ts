@@ -97,7 +97,7 @@ darkTheme.typography.h4 = {
         fontSize: '2rem'
     },
     [breakpoints.up('lg')]: {
-        fontSize: '2.25rem'
+        fontSize: '2rem'
     }
 };
 
@@ -116,7 +116,7 @@ darkTheme.typography.h5 = {
         fontSize: '1.5rem'
     },
     [breakpoints.up('lg')]: {
-        fontSize: '1.75rem'
+        fontSize: '1.5rem'
     }
 };
 

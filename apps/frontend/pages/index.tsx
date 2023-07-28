@@ -1,3 +1,4 @@
+import IndexFeaturesSection from '@/modules/IndexPage/IndexFeaturesSection';
 import IndexHeroSection from '@/modules/IndexPage/IndexHeroSection';
 import NavigationBar from '@/modules/NavigationBar';
 import type { NextPage } from 'next';
@@ -15,6 +16,7 @@ const Home: NextPage = () => {
             </Head>
             <NavigationBar />
             <IndexHeroSection />
+            <IndexFeaturesSection />
         </div>
     );
 };

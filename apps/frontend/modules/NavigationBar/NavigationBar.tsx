@@ -15,11 +15,13 @@ export default function NavigationBar() {
                             sm: '36px',
                             xs: '24px'
                         },
-                        bgcolor: 'secondary.dark',
+                        bgcolor: 'black',
+                        border: `1px solid`,
+                        borderColor: 'primary.main',
                         display: 'flex',
                         paddingX: '1rem',
                         paddingY: '0.5rem',
-                        borderRadius: '1rem',
+                        borderRadius: '0.5rem',
                         marginTop: {
                             lg: '44px',
                             xs: '16px'
