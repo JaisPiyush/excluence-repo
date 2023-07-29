@@ -10,7 +10,7 @@ const Home: NextPage = () => {
     return (
         <div>
             <Head>
-                <title>My page title</title>
+                <title>Excluence</title>
                 <meta
                     name="viewport"
                     content="initial-scale=1.0, width=device-width"
