@@ -2,3 +2,6 @@
 [submodule "packages/parcelQL"]
 	path = packages/parcelQL
 	url = git@github.com:excluence/parcelQL.git
+[submodule "apps/excluence-docs"]
+	path = apps/excluence-docs
+	url = git@github.com:excluence/excluence-docs.git
