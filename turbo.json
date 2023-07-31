@@ -6,8 +6,24 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
+    "backend#build": {
+      "dependsOn": ["parcelQL#build", "^build"],
+      "output": ["dist/**"]
+    },
     "lint": {},
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "backend#dev": {
+      "dependsOn": ["parcelQL#build", "^dev"],
+      "output": ["dist/**"],
+      "cache": false,
+      "persistent": true
+    },
+    "backend#test": {
+      "dependsOn": ["parcelQL#build", "^test"],
+      "output": ["dist/**"],
       "cache": false,
       "persistent": true
     },

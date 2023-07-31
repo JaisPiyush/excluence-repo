@@ -2,8 +2,9 @@
 import { ThemeProvider } from '@mui/material/styles';
 // import { ThemeProvider as Emotion10ThemeProvider } from 'emotion-theming';
 import darkTheme from "../styles/theme/darkTheme"
-import 'react-loading-skeleton/dist/skeleton.css'
-import { CssBaseline } from '@mui/material';
+import "../styles/globals.css";
+import "../styles/font.css";
+import { Box, CssBaseline } from '@mui/material';
 
 
 const preview = {
@@ -25,7 +26,7 @@ const withThemeProvider = (Story, context) => {
     // <Emotion10ThemeProvider theme={darkTheme}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Story {...context} />
+          <Story {...context} />
       </ThemeProvider>
     // </Emotion10ThemeProvider>
   )

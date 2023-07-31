@@ -1,0 +1,3 @@
+//TODO: find solution for using nest start with typescript modules
+// TODO: remove magic number from timeout in QueryService.fetchData
+// TODO: Implement strict data checking before running the query, like missing columns, table, etc
