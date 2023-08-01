@@ -13,7 +13,9 @@ import { logger } from './logger';
 const flowNetworkAPI = process.env['NEXT_PUBLIC_FLOW_ACCESS_NODE'] as string;
 
 const configProvider: ConfigProvider = () => ({
-    defaultStartBlockHeight: 57300887,
+    defaultStartBlockHeight: Number(
+        process.env['DEFAULT_INDEX_STARTING_BLOCK'] || 0
+    ),
     flowAccessNode: flowNetworkAPI,
     maxFlowRequestsPerSecond: 5
 });
