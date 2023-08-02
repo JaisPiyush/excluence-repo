@@ -10,6 +10,8 @@
     "test": "dotenv -e .env.test.local -e .env -- turbo run test",
     "script": "dotenv -- yarn workspace",
     "script:test": "dotenv -e .env.test.local -e .env -- yarn workspace",
+    "indexer:prod": "dotenv -e .env.production.local -e .env -- turbo run start --filter=indexer",
+    "run:prod": "dotenv -e .env.production.local -e .env -- yarn workspace",
     "start": "dotenv -- turbo run start",
     "start:indexer": "dotenv -- turbo run start --filter=indexer"
   },
