@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 6969",
     "lint": "next lint",
     "export": "next export",
     "deploy": "next build && next export && npx thirdweb@latest upload out",
