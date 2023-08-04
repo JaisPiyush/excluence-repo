@@ -11,11 +11,42 @@ import Image from 'next/image';
 import { FaDiscord } from 'react-icons/fa';
 import { AiOutlineMail } from 'react-icons/ai';
 import { BsFiletypeDoc } from 'react-icons/bs';
+import { useRouter } from 'next/router';
+import { DISCORD_URL, DOCS_URL, EMAIL_URL } from '@/utility/constants';
+
+enum SocialButtonType {
+    Discord,
+    Docs,
+    Email
+}
 
 export default function Footer() {
     const theme = useTheme();
     const isServer = typeof window === 'undefined';
     const isMd = useMediaQuery(theme.breakpoints.up('md')) || isServer;
+
+    const router = useRouter();
+
+    const _handleSocialClick = (socialType: SocialButtonType) => {
+        switch (socialType) {
+            case SocialButtonType.Discord:
+                router.push(DISCORD_URL);
+                return;
+            case SocialButtonType.Docs:
+                router.push(DOCS_URL);
+                return;
+            case SocialButtonType.Email:
+                router.push(EMAIL_URL);
+                return;
+        }
+    };
+
+    const handleSocialClick = (socialType: SocialButtonType) => {
+        return () => {
+            _handleSocialClick(socialType);
+        };
+    };
+
     return (
         <Box
             sx={{
@@ -53,14 +84,29 @@ export default function Footer() {
                         For any query, suggestion, idea, partnership, feedback
                         or bug report contact directly on discord or email.
                     </Typography>
+                    <Typography variant="body1" sx={{ mt: '0.5rem' }}>
+                        Email: iampiyushjaiswal103@gmail.com,
+                        business@excluence.com
+                    </Typography>
                     <Box sx={{ display: 'flex', mt: '1.5rem' }}>
-                        <IconButton sx={{ mx: '1rem' }}>
+                        <IconButton
+                            sx={{ mx: '1rem' }}
+                            onClick={handleSocialClick(
+                                SocialButtonType.Discord
+                            )}
+                        >
                             <FaDiscord color="white" />
                         </IconButton>
-                        <IconButton sx={{ mx: '1rem' }}>
+                        <IconButton
+                            sx={{ mx: '1rem' }}
+                            onClick={handleSocialClick(SocialButtonType.Docs)}
+                        >
                             <BsFiletypeDoc color="white" />
                         </IconButton>
-                        <IconButton sx={{ mx: '1rem' }}>
+                        <IconButton
+                            sx={{ mx: '1rem' }}
+                            onClick={handleSocialClick(SocialButtonType.Email)}
+                        >
                             <AiOutlineMail color="white" />
                         </IconButton>
                     </Box>

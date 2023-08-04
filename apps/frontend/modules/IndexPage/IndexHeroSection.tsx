@@ -1,8 +1,15 @@
 import { Box, Button, Typography } from '@mui/material';
 import HeroBg from '../../public/img/hero-bg.png';
 import PaddedBox from '@/component/PaddedBox';
+import { useRouter } from 'next/router';
+import { DOCS_URL } from '@/utility/constants';
 
 export default function IndexHeroSection() {
+    const router = useRouter();
+    const handleOnGetStartedClick = () => {
+        router.push(DOCS_URL);
+    };
+
     return (
         <Box
             sx={{
@@ -42,6 +49,9 @@ export default function IndexHeroSection() {
                         sx={{
                             paddingX: '1rem',
                             paddingY: '0.5rem'
+                        }}
+                        onClick={() => {
+                            handleOnGetStartedClick();
                         }}
                     >
                         Get Started

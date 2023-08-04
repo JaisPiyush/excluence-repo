@@ -1,13 +1,32 @@
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    Typography,
+    useMediaQuery,
+    useTheme
+} from '@mui/material';
 import Logo from '../../public/img/excluence-logo.png';
 import Image from 'next/image';
 import PaddedBox from '@/component/PaddedBox';
+import { useRouter } from 'next/router';
+import { DOCS_URL } from '@/utility/constants';
 
 export default function NavigationBar() {
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.up('md'));
+    const router = useRouter();
+    const handleOnDocsClick = () => {
+        router.push(DOCS_URL);
+    };
     return (
-        <Box sx={{ width: '100%', position: 'fixed', zIndex: 10 }}>
+        <Box
+            sx={{
+                width: '100%',
+                maxWidth: `${theme.breakpoints.values.xl}px`,
+                position: 'fixed',
+                zIndex: 10
+            }}
+        >
             <PaddedBox>
                 <Box
                     sx={{
@@ -53,18 +72,26 @@ export default function NavigationBar() {
                     >
                         Excluence
                     </Typography>
-                    <Typography
-                        variant="body2"
+                    <Button
                         sx={{
-                            cursor: 'pointer',
                             ml: {
                                 lg: '32px',
                                 xs: '8px'
                             }
                         }}
+                        onClick={() => {
+                            handleOnDocsClick();
+                        }}
                     >
-                        Docs
-                    </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Docs
+                        </Typography>
+                    </Button>
                 </Box>
             </PaddedBox>
         </Box>

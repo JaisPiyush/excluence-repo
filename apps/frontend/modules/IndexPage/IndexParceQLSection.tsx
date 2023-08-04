@@ -59,7 +59,11 @@ export default function IndexParcelQLSection() {
                                     xs: '100%'
                                 },
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                ml: {
+                                    md: '2rem',
+                                    xs: 0
+                                }
                             }}
                         >
                             <Typography variant="h3">ParcelQL</Typography>
