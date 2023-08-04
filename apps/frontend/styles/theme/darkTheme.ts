@@ -23,7 +23,7 @@ const darkTheme = createTheme({
             sm: 375,
             md: 834,
             lg: 1280,
-            xl: 1440
+            xl: 1536
         }
     },
     spacing: 8,
